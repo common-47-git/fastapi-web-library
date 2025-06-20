@@ -1,6 +1,7 @@
 fastapi[standard]
 sqlalchemy
 alembic
+alembic-postgresql-enum
 asyncpg
 pyjwt[crypto]
 python-jose
@@ -9,7 +10,6 @@ passlib
 redis
 python-dotenv
 ruff
-alembic-postgresql-enum
 pytest
 pytest-asyncio
 aiohttp
