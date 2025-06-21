@@ -1,10 +1,10 @@
 from fastapi import APIRouter, status
 
-from src import crud, status_codes
-from src.chapters import crud as chapter_crud
-from src.chapters import schemas as chapters_schemas
-from src.chapters.models import ChaptersModel
-from src.database import async_session_dependency
+from backend.src import crud, status_codes
+from backend.src.chapters import crud as chapter_crud
+from backend.src.chapters import schemas as chapters_schemas
+from backend.src.chapters.models import ChaptersModel
+from backend.src.database import async_session_dependency
 
 router = APIRouter(prefix="/chapters", tags=["chapters"])
 

@@ -1,10 +1,10 @@
 from logging.config import fileConfig
 
 import alembic_postgresql_enum  # noqa: F401
+from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from alembic import context
-from src.database import Base, db_url
+from backend.src.database import Base, db_url
 
 config = context.config
 
@@ -16,7 +16,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-from src.library.models import (  # noqa: F401
+from backend.src.library.models import (  # noqa: F401
     authors,
     books,
     books_authors,
@@ -25,7 +25,7 @@ from src.library.models import (  # noqa: F401
     tags,
     volumes,
 )
-from src.users.models import users, users_books  # noqa: F401
+from backend.src.users.models import users, users_books  # noqa: F401
 
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata

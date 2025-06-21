@@ -1,8 +1,8 @@
 from sqlalchemy import and_, select
 
-from src.books_tags import schemas as books_tags_schemas
-from src.books_tags.models import BooksTagsModel
-from src.database import async_session_dependency
+from backend.src.books_tags import schemas as books_tags_schemas
+from backend.src.books_tags.models import BooksTagsModel
+from backend.src.database import async_session_dependency
 
 
 async def read_books_tags_by_id(

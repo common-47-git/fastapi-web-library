@@ -3,13 +3,13 @@ import uuid
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from src import crud, status_codes
-from src.authors import crud as authors_crud
-from src.books import crud as books_crud
-from src.books import schemas as books_schemas
-from src.books.models import BooksModel
-from src.database import async_session_dependency
-from src.tags import crud as tags_crud
+from backend.src import crud, status_codes
+from backend.src.authors import crud as authors_crud
+from backend.src.books import crud as books_crud
+from backend.src.books import schemas as books_schemas
+from backend.src.books.models import BooksModel
+from backend.src.database import async_session_dependency
+from backend.src.tags import crud as tags_crud
 
 router = APIRouter(prefix="/books", tags=["books"])
 

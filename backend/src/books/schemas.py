@@ -2,9 +2,9 @@ from datetime import date
 
 from pydantic import UUID4, BaseModel, Field
 
-from src.authors import schemas as authors_schemas
-from src.enums import TranslationStatusEnum
-from src.tags import schemas as tags_schemas
+from backend.src.authors import schemas as authors_schemas
+from backend.src.enums import TranslationStatusEnum
+from backend.src.tags import schemas as tags_schemas
 
 
 class BookBase(BaseModel):

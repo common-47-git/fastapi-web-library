@@ -1,8 +1,8 @@
 from sqlalchemy import and_, select
 
-from src.books_authors import schemas as books_authors_schemas
-from src.books_authors.models import BooksAuthorsModel
-from src.database import async_session_dependency
+from backend.src.books_authors import schemas as books_authors_schemas
+from backend.src.books_authors.models import BooksAuthorsModel
+from backend.src.database import async_session_dependency
 
 
 async def read_books_authors_by_id(

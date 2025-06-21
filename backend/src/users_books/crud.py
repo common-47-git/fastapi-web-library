@@ -2,10 +2,10 @@
 from fastapi import HTTPException
 from sqlalchemy import insert, select
 
-from src.books.models import BooksModel
-from src.database import async_session_dependency
-from src.users.models.users import UsersModel
-from src.users.models.users_books import UsersBooksModel
+from backend.src.books.models import BooksModel
+from backend.src.database import async_session_dependency
+from backend.src.users.models.users import UsersModel
+from backend.src.users.models.users_books import UsersBooksModel
 
 
 async def get_user_books(session: async_session_dependency, username: str):

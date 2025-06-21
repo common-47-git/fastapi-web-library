@@ -5,17 +5,17 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.exc import IntegrityError
 
-from env.config import ACCESS_TOKEN_EXPIRE_MINUTES
-from src import status_codes
-from src.database import async_session_dependency
-from src.users.auth import create_access_token
-from src.users.crud import (
+from backend.env.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from backend.src import status_codes
+from backend.src.database import async_session_dependency
+from backend.src.users.auth import create_access_token
+from backend.src.users.crud import (
     authenticate_user,
     create_user,
     read_current_user,
 )
-from src.users.schemas import tokens as tokens_schemas
-from src.users.schemas import users as users_schemas
+from backend.src.users.schemas import tokens as tokens_schemas
+from backend.src.users.schemas import users as users_schemas
 
 router = APIRouter(prefix="/users", tags=["users"])
 

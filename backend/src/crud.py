@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
-from src.database import Base, async_session_dependency
+from backend.src.database import Base, async_session_dependency
 
 
 async def create_entity(

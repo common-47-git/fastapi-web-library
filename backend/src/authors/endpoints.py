@@ -2,10 +2,10 @@ from uuid import UUID
 
 from fastapi import APIRouter, status
 
-from src import crud, status_codes
-from src.authors import schemas as authors_schemas
-from src.authors.models import AuthorsModel
-from src.database import async_session_dependency
+from backend.src import crud, status_codes
+from backend.src.authors import schemas as authors_schemas
+from backend.src.authors.models import AuthorsModel
+from backend.src.database import async_session_dependency
 
 router = APIRouter(prefix="/authors", tags=["authors"])
 

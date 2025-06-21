@@ -6,8 +6,8 @@ from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.database import Base
-from src.enums import TranslationStatusEnum
+from backend.src.database import Base
+from backend.src.enums import TranslationStatusEnum
 
 
 class BooksModel(Base):

@@ -2,7 +2,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
+from backend.src.database import Base
 
 
 class BooksTagsModel(Base):

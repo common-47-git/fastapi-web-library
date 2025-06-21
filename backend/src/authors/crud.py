@@ -2,10 +2,10 @@ import uuid
 
 from sqlalchemy import select
 
-from src.authors.models import AuthorsModel
-from src.books.models import BooksModel
-from src.books_authors.models import BooksAuthorsModel
-from src.database import async_session_dependency
+from backend.src.authors.models import AuthorsModel
+from backend.src.books.models import BooksModel
+from backend.src.books_authors.models import BooksAuthorsModel
+from backend.src.database import async_session_dependency
 
 
 async def read_authors_by_book_id(

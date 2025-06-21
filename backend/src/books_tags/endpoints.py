@@ -1,11 +1,11 @@
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from src import crud, status_codes
-from src.books_tags import crud as books_tags_crud
-from src.books_tags import schemas as books_tags_schemas
-from src.books_tags.models import BooksTagsModel
-from src.database import async_session_dependency
+from backend.src import crud, status_codes
+from backend.src.books_tags import crud as books_tags_crud
+from backend.src.books_tags import schemas as books_tags_schemas
+from backend.src.books_tags.models import BooksTagsModel
+from backend.src.database import async_session_dependency
 
 router = APIRouter(prefix="/books_tags", tags=["books_tags"])
 

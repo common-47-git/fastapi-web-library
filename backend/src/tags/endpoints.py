@@ -3,10 +3,10 @@ from uuid import UUID
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from src import crud, status_codes
-from src.database import async_session_dependency
-from src.tags import schemas as tags_schemas
-from src.tags.models import TagsModel
+from backend.src import crud, status_codes
+from backend.src.database import async_session_dependency
+from backend.src.tags import schemas as tags_schemas
+from backend.src.tags.models import TagsModel
 
 router = APIRouter(prefix="/tags", tags=["tags"])
 

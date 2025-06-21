@@ -1,16 +1,20 @@
 from typing import Annotated
 
 from fastapi import Depends
-from jose import JWTError, jwt  # noqa: F401
+from jose import JWTError, jwt
 from sqlalchemy import select
 
-from env.config import ALGORITHM, SECRET_KEY
-from src import status_codes
-from src.database import async_session_dependency
-from src.users.auth import get_password_hash, oauth2_scheme, verify_password
-from src.users.models import UsersModel
-from src.users.schemas import tokens as tokens_schemas
-from src.users.schemas import users as users_schemas
+from backend.env.config import ALGORITHM, SECRET_KEY
+from backend.src import status_codes
+from backend.src.database import async_session_dependency
+from backend.src.users.auth import (
+    get_password_hash,
+    oauth2_scheme,
+    verify_password,
+)
+from backend.src.users.models import UsersModel
+from backend.src.users.schemas import tokens as tokens_schemas
+from backend.src.users.schemas import users as users_schemas
 
 
 async def read_user(session: async_session_dependency, username: str):

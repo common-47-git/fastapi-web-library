@@ -1,10 +1,10 @@
 from sqlalchemy import select
 
-from src.books.models import BooksModel
-from src.chapters import schemas as chapters_schemas
-from src.chapters.models import ChaptersModel
-from src.database import async_session_dependency
-from src.volumes.models import VolumesModel
+from backend.src.books.models import BooksModel
+from backend.src.chapters import schemas as chapters_schemas
+from backend.src.chapters.models import ChaptersModel
+from backend.src.database import async_session_dependency
+from backend.src.volumes.models import VolumesModel
 
 
 async def read_book_chapter(

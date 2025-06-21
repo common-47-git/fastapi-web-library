@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
-from env.config import DBNAME, LOGIN_USER, PASSWORD, SERVERNAME
+from backend.env.config import DBNAME, LOGIN_USER, PASSWORD, SERVERNAME
 
 db_url = f"postgresql+asyncpg://{LOGIN_USER}:{PASSWORD}@{SERVERNAME}/{DBNAME}"
 

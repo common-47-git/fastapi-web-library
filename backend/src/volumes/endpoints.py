@@ -1,10 +1,10 @@
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from src import crud, status_codes
-from src.database import async_session_dependency
-from src.volumes import schemas as volumes_schemas
-from src.volumes.models import VolumesModel
+from backend.src import crud, status_codes
+from backend.src.database import async_session_dependency
+from backend.src.volumes import schemas as volumes_schemas
+from backend.src.volumes.models import VolumesModel
 
 router = APIRouter(prefix="/volumes", tags=["volumes"])
 

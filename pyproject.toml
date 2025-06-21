@@ -38,6 +38,7 @@ dependencies = [
     "markupsafe==3.0.2",
     "mdurl==0.1.2",
     "multidict==6.5.0",
+    "nicegui>=2.20.0",
     "packaging==25.0",
     "passlib==1.7.4",
     "platformdirs==4.3.8",

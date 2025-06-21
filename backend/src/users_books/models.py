@@ -6,8 +6,8 @@ from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base
-from src.enums import BookShelfEnum
+from backend.src.database import Base
+from backend.src.enums import BookShelfEnum
 
 # class UsersBooksModel(Base):
 #    __tablename__ = "users_books"

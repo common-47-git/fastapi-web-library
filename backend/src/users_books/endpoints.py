@@ -2,14 +2,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from src.books import schemas as books_schemas
-from src.database import async_session_dependency
-from src.users.crud import (
+from backend.src.books import schemas as books_schemas
+from backend.src.database import async_session_dependency
+from backend.src.users.crud import (
     get_user_books,
     post_book_to_current_users_library,
     read_current_user,
 )
-from src.users.schemas import users as users_schemas
+from backend.src.users.schemas import users as users_schemas
 
 router = APIRouter(prefix="/users_books", tags=["users_books"])
 
