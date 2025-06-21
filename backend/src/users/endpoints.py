@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from backend.env.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.src import status_codes
 from backend.src.database import async_session_dependency
+from backend.src.enums import ModulesEnum
 from backend.src.users.auth import create_access_token
 from backend.src.users.crud import (
     authenticate_user,
@@ -17,7 +18,10 @@ from backend.src.users.crud import (
 from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.schemas import users as users_schemas
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(
+    prefix=f"/{ModulesEnum.USERS.value}",
+    tags=[ModulesEnum.USERS],
+)
 
 
 @router.post("/login")
@@ -62,4 +66,3 @@ async def users_me(
     ],
 ) -> users_schemas.UserRead:
     return current_user
-

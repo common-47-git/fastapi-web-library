@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 
 from backend.src.books import schemas as books_schemas
 from backend.src.database import async_session_dependency
+from backend.src.enums import ModulesEnum
 from backend.src.users.crud import (
     get_user_books,
     post_book_to_current_users_library,
@@ -11,7 +12,10 @@ from backend.src.users.crud import (
 )
 from backend.src.users.schemas import users as users_schemas
 
-router = APIRouter(prefix="/users_books", tags=["users_books"])
+router = APIRouter(
+    prefix=f"/{ModulesEnum.USERS_BOOKS.value}",
+    tags=[ModulesEnum.USERS_BOOKS],
+)
 
 
 @router.get("/books", response_model=list[books_schemas.BookRead])

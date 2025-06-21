@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+
 def add_middlewares(app: FastAPI) -> None:
     origins = [
         "http://localhost",

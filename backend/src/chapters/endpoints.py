@@ -5,8 +5,12 @@ from backend.src.chapters import crud as chapter_crud
 from backend.src.chapters import schemas as chapters_schemas
 from backend.src.chapters.models import ChaptersModel
 from backend.src.database import async_session_dependency
+from backend.src.enums import ModulesEnum
 
-router = APIRouter(prefix="/chapters", tags=["chapters"])
+router = APIRouter(
+    prefix=f"/{ModulesEnum.CHAPTERS.value}",
+    tags=[ModulesEnum.CHAPTERS],
+)
 
 
 @router.post(
@@ -19,7 +23,9 @@ async def chapters_post_add(
     chapter: chapters_schemas.ChapterCreate,
 ):
     tags = await crud.create_entity(
-        alchemy_model=ChaptersModel, pydantic_schema=chapter, session=session,
+        alchemy_model=ChaptersModel,
+        pydantic_schema=chapter,
+        session=session,
     )
     if not tags:
         raise status_codes.NotFound_404()

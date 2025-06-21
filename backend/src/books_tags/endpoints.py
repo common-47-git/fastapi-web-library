@@ -6,8 +6,12 @@ from backend.src.books_tags import crud as books_tags_crud
 from backend.src.books_tags import schemas as books_tags_schemas
 from backend.src.books_tags.models import BooksTagsModel
 from backend.src.database import async_session_dependency
+from backend.src.enums import ModulesEnum
 
-router = APIRouter(prefix="/books_tags", tags=["books_tags"])
+router = APIRouter(
+    prefix=f"/{ModulesEnum.BOOKS_TAGS.value}",
+    tags=[ModulesEnum.BOOKS_TAGS],
+)
 
 
 @router.get("/all", response_model=list[books_tags_schemas.BooksTagsRead])
@@ -15,7 +19,8 @@ async def books_tags_all(
     session: async_session_dependency,
 ):
     books_tags_model = await crud.read_entities(
-        alchemy_model=BooksTagsModel, session=session,
+        alchemy_model=BooksTagsModel,
+        session=session,
     )
     if not books_tags_model:
         raise status_codes.NotFound_404()
@@ -48,5 +53,6 @@ async def books_tags_delete(
     session: async_session_dependency,
 ):
     return await books_tags_crud.delete_books_tags_by_id(
-        books_tags=books_tags, session=session,
+        books_tags=books_tags,
+        session=session,
     )

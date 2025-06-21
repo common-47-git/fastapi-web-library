@@ -6,18 +6,24 @@ from backend.src.books_authors import crud as books_authors_crud
 from backend.src.books_authors import schemas as books_authors_schemas
 from backend.src.books_authors.models import BooksAuthorsModel
 from backend.src.database import async_session_dependency
+from backend.src.enums import ModulesEnum
 
-router = APIRouter(prefix="/books_authors", tags=["books_authors"])
+router = APIRouter(
+    prefix=f"/{ModulesEnum.BOOKS_AUTHORS.value}",
+    tags=[ModulesEnum.BOOKS_AUTHORS],
+)
 
 
 @router.get(
-    "/all", response_model=list[books_authors_schemas.BooksAuthorsRead],
+    "/all",
+    response_model=list[books_authors_schemas.BooksAuthorsRead],
 )
 async def books_authors_all(
     session: async_session_dependency,
 ):
     books_authors_model = await crud.read_entities(
-        alchemy_model=BooksAuthorsModel, session=session,
+        alchemy_model=BooksAuthorsModel,
+        session=session,
     )
     if not books_authors_model:
         raise status_codes.NotFound_404()
@@ -50,7 +56,8 @@ async def books_authors_delete(
     session: async_session_dependency,
 ):
     deleted = await books_authors_crud.delete_books_authors_by_id(
-        books_authors=books_authors, session=session,
+        books_authors=books_authors,
+        session=session,
     )
     if not deleted:
         raise status_codes.NotFound_404()

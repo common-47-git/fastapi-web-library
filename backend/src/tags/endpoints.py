@@ -5,10 +5,14 @@ from sqlalchemy.exc import IntegrityError
 
 from backend.src import crud, status_codes
 from backend.src.database import async_session_dependency
+from backend.src.enums import ModulesEnum
 from backend.src.tags import schemas as tags_schemas
 from backend.src.tags.models import TagsModel
 
-router = APIRouter(prefix="/tags", tags=["tags"])
+router = APIRouter(
+    prefix=f"/{ModulesEnum.TAGS.value}",
+    tags=[ModulesEnum.TAGS],
+)
 
 
 @router.get("/all", response_model=list[tags_schemas.TagRead])
@@ -30,7 +34,9 @@ async def tags_add(
 ):
     try:
         entity = await crud.create_entity(
-            alchemy_model=TagsModel, pydantic_schema=tag, session=session,
+            alchemy_model=TagsModel,
+            pydantic_schema=tag,
+            session=session,
         )
         return entity
     except IntegrityError as e:
