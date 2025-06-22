@@ -43,12 +43,10 @@ async def authenticate_user(
     session: async_session_dependency,
     username: str,
     password: str,
-) -> users_schemas.UserInDB | bool:
+) -> users_schemas.UserInDB | None:
     user = await read_user(session=session, username=username)
-    if not user:
-        return False
     if not verify_password(password, user.password):
-        return False
+        return None
     return user
 
 

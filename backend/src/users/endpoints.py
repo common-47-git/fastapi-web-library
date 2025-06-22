@@ -35,22 +35,26 @@ async def login_for_access_token(
         username=form_data.username,
         password=form_data.password,
     )
+    if not user:
+        raise http_exceptions.Unauthorized401
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username},
         expires_delta=access_token_expires,
     )
-
-    if not user:
-        raise http_exceptions.Unauthorized401
     return tokens_schemas.Token(access_token=access_token, token_type="bearer")
 
 
-@router.post("/add", response_model=users_schemas.UserRead)
+@router.post(
+    "/add",
+    response_model=users_schemas.UserRead,
+    summary="Create a user.",
+)
 async def users_add(
     session: async_session_dependency,
     user: users_schemas.UserCreate,
 ) -> UsersModel:
+    """Create a user with properties specified in given schema."""
     try:
         new_user = await create_user(session=session, user=user)
     except IntegrityError as e:
@@ -59,11 +63,16 @@ async def users_add(
         return new_user
 
 
-@router.get("/me", response_model=users_schemas.UserRead)
+@router.get(
+    "/me",
+    response_model=users_schemas.UserRead,
+    summary="Get current user.",
+)
 async def users_me(
     current_user: Annotated[
         users_schemas.UserRead,
         Depends(read_current_user),
     ],
 ) -> users_schemas.UserRead:
+    """Get current user as a user schema."""
     return current_user

@@ -17,11 +17,13 @@ router = APIRouter(
     "/add",
     response_model=volumes_schemas.VolumeCreate,
     status_code=status.HTTP_201_CREATED,
+    summary="Add a volume to a book.",
 )
 async def volumes_add(
     session: async_session_dependency,
     volume: volumes_schemas.VolumeCreate,
 ) -> VolumesModel:
+    """Add a volume to a book linked by book_id."""
     try:
         entity = await crud.create_entity(
             alchemy_model=VolumesModel,

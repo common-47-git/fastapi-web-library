@@ -46,7 +46,7 @@ async def books_get_by_id(
     """Get full book info by id, including authors, tags and the shelf."""
     book = await crud.read_entity_by_field(
         alchemy_model=BooksModel,
-        field_name="book_id",
+        field_name=BooksModel.book_id.key,
         field_value=book_id,
         session=session,
     )
@@ -100,11 +100,13 @@ async def get_books_with_author_id(
     "/add",
     response_model=books_schemas.BookRead,
     status_code=status.HTTP_201_CREATED,
+    summary="Create a book.",
 )
 async def books_add(
     session: async_session_dependency,
     book: books_schemas.BookCreate,
 ) -> BooksModel:
+    """Create a book with properties specified in given schema."""
     try:
         return await crud.create_entity(
             alchemy_model=BooksModel,
@@ -115,14 +117,19 @@ async def books_add(
         raise http_exceptions.Conflict409(exception=e) from e
 
 
-@router.delete("/delete/{book_id}", response_model=books_schemas.BookRead)
+@router.delete(
+    "/delete/{book_id}",
+    response_model=books_schemas.BookDelete,
+    summary="Delete a book.",
+)
 async def books_delete_by_id(
     book_id: uuid.UUID,
     session: async_session_dependency,
 ) -> BooksModel:
+    """Delete a book by id."""
     deleted = await crud.delete_entity_by_field(
         alchemy_model=BooksModel,
-        field_name="book_id",
+        field_name=BooksModel.book_id.key,
         field_value=book_id,
         session=session,
     )

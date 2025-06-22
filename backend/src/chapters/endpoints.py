@@ -17,11 +17,13 @@ router = APIRouter(
     "/add",
     response_model=chapters_schemas.ChapterCreate,
     status_code=status.HTTP_201_CREATED,
+    summary="Add a chapter to a volume.",
 )
 async def chapters_add(
     session: async_session_dependency,
     chapter: chapters_schemas.ChapterCreate,
 ) -> ChaptersModel:
+    """Add a chapter to an existing volume linked by volume_id."""
     tags = await crud.create_entity(
         alchemy_model=ChaptersModel,
         pydantic_schema=chapter,
@@ -32,20 +34,24 @@ async def chapters_add(
     return tags
 
 
-@router.get("/read/{book_name}", response_model=chapters_schemas.ChapterRead)
+@router.get(
+    "/read/{book_name}",
+    response_model=chapters_schemas.ChapterRead,
+    summary="Read a chapter.",
+)
 async def books_get_read_by_name(
     session: async_session_dependency,
     book_name: str,
     volume_number: int = 1,
     chapter_number: int = 1,
 ) -> ChaptersModel | None:
+    """Read a chapter linked with book by volume_id and book_id."""
     chapter = await chapter_crud.read_book_chapter(
         book_name=book_name,
         volume_number=volume_number,
         chapter_number=chapter_number,
         session=session,
     )
-
     if not chapter:
         raise http_exceptions.NotFound404
     return chapter

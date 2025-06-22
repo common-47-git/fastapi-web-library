@@ -16,10 +16,15 @@ router = APIRouter(
 )
 
 
-@router.get("/all", response_model=list[authors_schemas.AuthorRead])
+@router.get(
+    "/all",
+    response_model=list[authors_schemas.AuthorRead],
+    summary="Get a list of authors.",
+)
 async def authors_all(
     session: async_session_dependency,
 ) -> Sequence[AuthorsModel] | None:
+    """Get a list of authors with full info: id, name etc."""
     authors = await crud.read_entities(
         alchemy_model=AuthorsModel,
         session=session,
@@ -33,11 +38,13 @@ async def authors_all(
     "/add",
     response_model=authors_schemas.AuthorCreate,
     status_code=status.HTTP_201_CREATED,
+    summary="Create an author.",
 )
 async def authors_add(
     author: authors_schemas.AuthorCreate,
     session: async_session_dependency,
 ) -> AuthorsModel:
+    """Create an author with properties specified in given schema."""
     try:
         return await crud.create_entity(
             alchemy_model=AuthorsModel,
@@ -51,14 +58,16 @@ async def authors_add(
 @router.delete(
     "/delete/{author_id}",
     response_model=authors_schemas.AuthorDelete,
+    summary="Delete an author.",
 )
 async def authors_delete_by_id(
     author_id: UUID,
     session: async_session_dependency,
 ) -> AuthorsModel | None:
+    """Delete an author by id."""
     deleted = await crud.delete_entity_by_field(
         alchemy_model=AuthorsModel,
-        field_name="author_id",
+        field_name=AuthorsModel.author_id.key,
         field_value=author_id,
         session=session,
     )
