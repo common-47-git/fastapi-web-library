@@ -1,10 +1,11 @@
-"""empty message
+"""empty message.
 
 Revision ID: 9c5e7313186a
 Revises: 62caa81583ec
 Create Date: 2025-06-20 03:43:35.418593
 
 """
+
 from collections.abc import Sequence
 
 # revision identifiers, used by Alembic.

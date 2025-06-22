@@ -1,9 +1,10 @@
+from collections.abc import Sequence
 from uuid import UUID
 
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, status_codes
+from backend.src import crud, http_exceptions
 from backend.src.database import async_session_dependency
 from backend.src.enums import ModulesEnum
 from backend.src.tags import schemas as tags_schemas
@@ -16,10 +17,12 @@ router = APIRouter(
 
 
 @router.get("/all", response_model=list[tags_schemas.TagRead])
-async def tags_all(session: async_session_dependency):
+async def tags_all(
+    session: async_session_dependency,
+) -> Sequence[TagsModel]:
     tags = await crud.read_entities(alchemy_model=TagsModel, session=session)
     if not tags:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
     return tags
 
 
@@ -31,23 +34,22 @@ async def tags_all(session: async_session_dependency):
 async def tags_add(
     session: async_session_dependency,
     tag: tags_schemas.TagCreate,
-):
+) -> TagsModel:
     try:
-        entity = await crud.create_entity(
+        return await crud.create_entity(
             alchemy_model=TagsModel,
             pydantic_schema=tag,
             session=session,
         )
-        return entity
     except IntegrityError as e:
-        raise status_codes.Conflict_409(exception=e)
+        raise http_exceptions.Conflict409(exception=e) from e
 
 
 @router.delete("/delete/{tag_id}", response_model=tags_schemas.TagDelete)
 async def tags_delete_by_id(
     session: async_session_dependency,
     tag_id: UUID,
-):
+) -> TagsModel:
     deleted = await crud.delete_entity_by_field(
         alchemy_model=TagsModel,
         field_name="tag_id",
@@ -55,5 +57,5 @@ async def tags_delete_by_id(
         session=session,
     )
     if not deleted:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
     return deleted

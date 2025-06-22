@@ -10,7 +10,8 @@ from backend.src.tags.models import TagsModel
 
 
 async def read_tags_by_book_id(
-    book_id: UUID, session: async_session_dependency,
+    book_id: UUID,
+    session: async_session_dependency,
 ) -> list[tags_schemas.TagRead]:
     stmt = (
         select(TagsModel)
@@ -19,6 +20,4 @@ async def read_tags_by_book_id(
         .where(BooksModel.book_id == book_id)
     )
     result = await session.execute(stmt)
-    tags = result.scalars().all()
-
-    return tags
+    return result.scalars().all()

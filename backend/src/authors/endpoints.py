@@ -1,8 +1,10 @@
+from collections.abc import Sequence
 from uuid import UUID
 
 from fastapi import APIRouter, status
+from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, status_codes
+from backend.src import crud, http_exceptions
 from backend.src.authors import schemas as authors_schemas
 from backend.src.authors.models import AuthorsModel
 from backend.src.database import async_session_dependency
@@ -15,13 +17,15 @@ router = APIRouter(
 
 
 @router.get("/all", response_model=list[authors_schemas.AuthorRead])
-async def authors_all(session: async_session_dependency):
+async def authors_all(
+    session: async_session_dependency,
+) -> Sequence[AuthorsModel] | None:
     authors = await crud.read_entities(
         alchemy_model=AuthorsModel,
         session=session,
     )
     if not authors:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
     return authors
 
 
@@ -33,12 +37,15 @@ async def authors_all(session: async_session_dependency):
 async def authors_add(
     author: authors_schemas.AuthorCreate,
     session: async_session_dependency,
-):
-    return await crud.create_entity(
-        alchemy_model=AuthorsModel,
-        pydantic_schema=author,
-        session=session,
-    )
+) -> AuthorsModel:
+    try:
+        return await crud.create_entity(
+            alchemy_model=AuthorsModel,
+            pydantic_schema=author,
+            session=session,
+        )
+    except IntegrityError as e:
+        raise http_exceptions.Conflict409(exception=e) from e
 
 
 @router.delete(
@@ -48,10 +55,13 @@ async def authors_add(
 async def authors_delete_by_id(
     author_id: UUID,
     session: async_session_dependency,
-):
-    return await crud.delete_entity_by_field(
+) -> AuthorsModel | None:
+    deleted = await crud.delete_entity_by_field(
         alchemy_model=AuthorsModel,
         field_name="author_id",
         field_value=author_id,
         session=session,
     )
+    if not deleted:
+        raise http_exceptions.NotFound404
+    return deleted

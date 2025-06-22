@@ -6,11 +6,11 @@ from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.src.database import Base
+from backend.src.database import BaseAlchemyModel
 from backend.src.enums import TranslationStatusEnum
 
 
-class BooksModel(Base):
+class BooksModel(BaseAlchemyModel):
     __tablename__ = "books"
     # [python] - [sqlalch] types
     book_id: Mapped[uuid.UUID] = mapped_column(
@@ -20,7 +20,9 @@ class BooksModel(Base):
         nullable=False,
     )
     book_name: Mapped[str] = mapped_column(
-        String(50), unique=True, nullable=False,
+        String(50),
+        unique=True,
+        nullable=False,
     )
     book_country: Mapped[str] = mapped_column(String(50), nullable=True)
     book_release_date: Mapped[DATE] = mapped_column(DATE, nullable=True)
@@ -43,7 +45,8 @@ class BooksModel(Base):
     )
 
     book_volumes: Mapped[list["VolumesModel"]] = relationship(  # noqa: F821
-        back_populates="volume_book", cascade="all, delete-orphan",
+        back_populates="volume_book",
+        cascade="all, delete-orphan",
     )
 
     book_tags: Mapped[list["TagsModel"]] = relationship(  # noqa: F821

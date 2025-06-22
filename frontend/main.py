@@ -5,7 +5,7 @@ from nicegui import ui
 
 def init(fastapi_app: FastAPI) -> None:
     @ui.page("/")
-    async def show():
+    async def show() -> None:
         ui.dark_mode().enable()
 
         async with httpx.AsyncClient() as client:
@@ -27,7 +27,7 @@ def init(fastapi_app: FastAPI) -> None:
                     )
 
     @ui.page("/book/{book_id}")
-    async def book_detail(book_id: str):
+    async def book_detail(book_id: str) -> None:
         ui.dark_mode().enable()
 
         async with httpx.AsyncClient() as client:
@@ -54,7 +54,7 @@ def init(fastapi_app: FastAPI) -> None:
                 )
                 ui.label(f"Description: {book['book_description']}")
                 authors = [
-                    f'{author["author_name"]} {author["author_surname"]}'
+                    f"{author['author_name']} {author['author_surname']}"
                     for author in book["book_authors"]
                     if author is not None
                 ]

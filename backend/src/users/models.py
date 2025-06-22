@@ -5,10 +5,10 @@ from sqlalchemy import DATE, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.src.database import Base
+from backend.src.database import BaseAlchemyModel
 
 
-class UsersModel(Base):
+class UsersModel(BaseAlchemyModel):
     __tablename__ = "users"
 
     user_id: Mapped[uuid.UUID] = mapped_column(

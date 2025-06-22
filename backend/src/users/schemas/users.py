@@ -28,4 +28,3 @@ class UserInDB(UserBase):
     disabled: bool | None = None
     registration_date: date
     password: str
-

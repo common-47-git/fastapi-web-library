@@ -1,4 +1,5 @@
 import uuid
+from collections.abc import Sequence
 
 from sqlalchemy import select
 
@@ -9,8 +10,9 @@ from backend.src.database import async_session_dependency
 
 
 async def read_books_by_author_id(
-    author_id: uuid.UUID, session: async_session_dependency,
-):
+    author_id: uuid.UUID,
+    session: async_session_dependency,
+) -> Sequence[BooksModel] | None:
     stmt = (
         select(BooksModel)
         .join(BooksAuthorsModel)
@@ -18,5 +20,4 @@ async def read_books_by_author_id(
         .where(AuthorsModel.author_id == author_id)
     )
     result = await session.execute(stmt)
-    books = result.scalars().all()
-    return books
+    return result.scalars().all()

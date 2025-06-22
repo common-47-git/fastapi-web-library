@@ -4,7 +4,7 @@ import alembic_postgresql_enum  # noqa: F401
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from backend.src.database import Base, db_url
+from backend.src.database import BaseAlchemyModel, db_url
 
 config = context.config
 
@@ -27,15 +27,9 @@ from backend.src.library.models import (  # noqa: F401
 )
 from backend.src.users.models import users, users_books  # noqa: F401
 
-# target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
+target_metadata = BaseAlchemyModel.metadata
 
 config.set_main_option("sqlalchemy.url", db_url + "?async_fallback=True")
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
 
 
 def run_migrations_offline() -> None:

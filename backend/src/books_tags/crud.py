@@ -8,7 +8,7 @@ from backend.src.database import async_session_dependency
 async def read_books_tags_by_id(
     session: async_session_dependency,
     books_tags: books_tags_schemas.BooksTagsBase,
-):
+) -> BooksTagsModel | None:
     stmt = select(BooksTagsModel).where(
         and_(
             BooksTagsModel.book_id == books_tags.book_id,
@@ -22,9 +22,10 @@ async def read_books_tags_by_id(
 async def delete_books_tags_by_id(
     books_tags: books_tags_schemas.BooksTagsDelete,
     session: async_session_dependency,
-):
+) -> BooksTagsModel | None:
     entry_to_delete = await read_books_tags_by_id(
-        session=session, books_tags=books_tags,
+        session=session,
+        books_tags=books_tags,
     )
     if not entry_to_delete:
         return None

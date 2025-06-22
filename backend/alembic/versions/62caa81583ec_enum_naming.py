@@ -1,10 +1,11 @@
-"""enum naming
+"""enum naming.
 
 Revision ID: 62caa81583ec
 Revises: cdd7eb92d35e
 Create Date: 2025-06-19 23:54:28.347772
 
 """
+
 from collections.abc import Sequence
 
 from alembic import op
@@ -24,7 +25,13 @@ def upgrade() -> None:
         enum_schema="public",
         enum_name="book_shelf_enum",
         new_values=["Reading", "Have read", "To read", "Favorites"],
-        affected_columns=[TableReference(table_schema="public", table_name="users_books", column_name="book_shelf")],
+        affected_columns=[
+            TableReference(
+                table_schema="public",
+                table_name="users_books",
+                column_name="book_shelf",
+            ),
+        ],
         enum_values_to_rename=[],
     )
     # ### end Alembic commands ###
@@ -37,7 +44,13 @@ def downgrade() -> None:
         enum_schema="public",
         enum_name="book_shelf_enum",
         new_values=["Reading", "Have read", "TO read", "Favorites"],
-        affected_columns=[TableReference(table_schema="public", table_name="users_books", column_name="book_shelf")],
+        affected_columns=[
+            TableReference(
+                table_schema="public",
+                table_name="users_books",
+                column_name="book_shelf",
+            ),
+        ],
         enum_values_to_rename=[],
     )
     # ### end Alembic commands ###

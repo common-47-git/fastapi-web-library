@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, status_codes
+from backend.src import crud, http_exceptions
 from backend.src.database import async_session_dependency
 from backend.src.enums import ModulesEnum
 from backend.src.volumes import schemas as volumes_schemas
@@ -21,7 +21,7 @@ router = APIRouter(
 async def volumes_add(
     session: async_session_dependency,
     volume: volumes_schemas.VolumeCreate,
-):
+) -> VolumesModel:
     try:
         entity = await crud.create_entity(
             alchemy_model=VolumesModel,
@@ -29,6 +29,6 @@ async def volumes_add(
             session=session,
         )
     except IntegrityError as e:
-        raise status_codes.Conflict_409(exception=e)
+        raise http_exceptions.Conflict409(exception=e) from e
     else:
         return entity

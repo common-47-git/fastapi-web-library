@@ -23,4 +23,3 @@ class UsersBooksUpdate(UsersBooksBase):
 
 class UsersBooksInDB(UsersBooksBase):
     pass
-

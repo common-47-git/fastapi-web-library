@@ -4,10 +4,10 @@ from sqlalchemy import TEXT, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.src.database import Base
+from backend.src.database import BaseAlchemyModel
 
 
-class ChaptersModel(Base):
+class ChaptersModel(BaseAlchemyModel):
     __tablename__ = "chapters"
 
     chapter_id: Mapped[uuid.UUID] = mapped_column(
@@ -17,7 +17,9 @@ class ChaptersModel(Base):
         nullable=False,
     )
     volume_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("volumes.volume_id"), nullable=False,
+        UUID(as_uuid=True),
+        ForeignKey("volumes.volume_id"),
+        nullable=False,
     )
     chapter_number: Mapped[int] = mapped_column(Integer, nullable=False)
     chapter_name: Mapped[str] = mapped_column(String(50), nullable=False)

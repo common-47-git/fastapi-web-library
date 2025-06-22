@@ -1,7 +1,9 @@
+from collections.abc import Sequence
+
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, status_codes
+from backend.src import crud, http_exceptions
 from backend.src.books_authors import crud as books_authors_crud
 from backend.src.books_authors import schemas as books_authors_schemas
 from backend.src.books_authors.models import BooksAuthorsModel
@@ -20,13 +22,13 @@ router = APIRouter(
 )
 async def books_authors_all(
     session: async_session_dependency,
-):
+) -> Sequence[BooksAuthorsModel]:
     books_authors_model = await crud.read_entities(
         alchemy_model=BooksAuthorsModel,
         session=session,
     )
     if not books_authors_model:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
     return books_authors_model
 
 
@@ -38,27 +40,29 @@ async def books_authors_all(
 async def books_authors_add(
     session: async_session_dependency,
     books_authors: books_authors_schemas.BooksAuthorsCreate,
-):
+) -> BooksAuthorsModel:
     try:
-        entity = await crud.create_entity(
+        return await crud.create_entity(
             alchemy_model=BooksAuthorsModel,
             pydantic_schema=books_authors,
             session=session,
         )
-        return entity
     except IntegrityError as e:
-        raise status_codes.Conflict_409(exception=e)
+        raise http_exceptions.Conflict409(exception=e) from e
 
 
-@router.delete("/delete")
+@router.delete(
+    "/delete",
+    response_model=books_authors_schemas.BooksAuthorsDelete,
+)
 async def books_authors_delete(
     books_authors: books_authors_schemas.BooksAuthorsDelete,
     session: async_session_dependency,
-):
-    deleted = await books_authors_crud.delete_books_authors_by_id(
+) -> BooksAuthorsModel:
+    deleted = await books_authors_crud.delete_books_authors_entry_by_id(
         books_authors=books_authors,
         session=session,
     )
     if not deleted:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
     return deleted

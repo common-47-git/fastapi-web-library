@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from sqlalchemy import select
 
 from backend.env.config import ALGORITHM, SECRET_KEY
-from backend.src import status_codes
+from backend.src import http_exceptions
 from backend.src.database import async_session_dependency
 from backend.src.users.auth import (
     get_password_hash,
@@ -17,7 +17,10 @@ from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.schemas import users as users_schemas
 
 
-async def read_user(session: async_session_dependency, username: str):
+async def read_user(
+    session: async_session_dependency,
+    username: str,
+) -> users_schemas.UserInDB:
     stmt = select(UsersModel).filter(UsersModel.username == username)
     result = await session.execute(stmt)
     user = result.scalars().first()
@@ -25,8 +28,9 @@ async def read_user(session: async_session_dependency, username: str):
 
 
 async def create_user(
-    session: async_session_dependency, user: users_schemas.UserCreate,
-):
+    session: async_session_dependency,
+    user: users_schemas.UserCreate,
+) -> UsersModel:
     user.password = get_password_hash(user.password)
     new_user = UsersModel(**user.model_dump())
     session.add(new_user)
@@ -36,8 +40,10 @@ async def create_user(
 
 
 async def authenticate_user(
-    session: async_session_dependency, username: str, password: str,
-):
+    session: async_session_dependency,
+    username: str,
+    password: str,
+) -> users_schemas.UserInDB | bool:
     user = await read_user(session=session, username=username)
     if not user:
         return False
@@ -49,18 +55,17 @@ async def authenticate_user(
 async def read_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     session: async_session_dependency,
-):
+) -> users_schemas.UserInDB:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise status_codes.Unauthorized_401()
+            raise http_exceptions.Unauthorized401
         token_data = tokens_schemas.TokenData(username=username)
 
         user = await read_user(session=session, username=token_data.username)
         if user is None:
-            raise status_codes.Unauthorized_401()
-    except JWTError:
-        raise status_codes.Unauthorized_401()
+            raise http_exceptions.Unauthorized401
+    except JWTError as jwt_e:
+        raise http_exceptions.Unauthorized401 from jwt_e
     return user
-

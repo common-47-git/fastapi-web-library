@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.exc import IntegrityError
 
 from backend.env.config import ACCESS_TOKEN_EXPIRE_MINUTES
-from backend.src import status_codes
+from backend.src import http_exceptions
 from backend.src.database import async_session_dependency
 from backend.src.enums import ModulesEnum
 from backend.src.users.auth import create_access_token
@@ -15,6 +15,7 @@ from backend.src.users.crud import (
     create_user,
     read_current_user,
 )
+from backend.src.users.models import UsersModel
 from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.schemas import users as users_schemas
 
@@ -41,7 +42,7 @@ async def login_for_access_token(
     )
 
     if not user:
-        raise status_codes.Unauthorized_401()
+        raise http_exceptions.Unauthorized401
     return tokens_schemas.Token(access_token=access_token, token_type="bearer")
 
 
@@ -49,13 +50,13 @@ async def login_for_access_token(
 async def users_add(
     session: async_session_dependency,
     user: users_schemas.UserCreate,
-):
+) -> UsersModel:
     try:
-        user = await create_user(session=session, user=user)
+        new_user = await create_user(session=session, user=user)
     except IntegrityError as e:
-        raise status_codes.Conflict_409(exception=e)
+        raise http_exceptions.Conflict409(exception=e) from e
     else:
-        return user
+        return new_user
 
 
 @router.get("/me", response_model=users_schemas.UserRead)

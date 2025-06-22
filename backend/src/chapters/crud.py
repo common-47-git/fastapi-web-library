@@ -1,7 +1,6 @@
 from sqlalchemy import select
 
 from backend.src.books.models import BooksModel
-from backend.src.chapters import schemas as chapters_schemas
 from backend.src.chapters.models import ChaptersModel
 from backend.src.database import async_session_dependency
 from backend.src.volumes.models import VolumesModel
@@ -12,7 +11,7 @@ async def read_book_chapter(
     volume_number: int,
     chapter_number: int,
     session: async_session_dependency,
-) -> chapters_schemas.ChapterRead:
+) -> ChaptersModel | None:
     query = (
         select(ChaptersModel)
         .join(VolumesModel, VolumesModel.volume_id == ChaptersModel.volume_id)
@@ -23,5 +22,4 @@ async def read_book_chapter(
     )
 
     result = await session.execute(query)
-    chapter = result.scalars().first()
-    return chapter
+    return result.scalars().first()

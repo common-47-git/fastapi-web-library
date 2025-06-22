@@ -6,18 +6,11 @@ from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.src.database import Base
+from backend.src.database import BaseAlchemyModel
 from backend.src.enums import BookShelfEnum
 
-# class UsersBooksModel(Base):
-#    __tablename__ = "users_books"
-#
-#    book_id: Mapped[int] = mapped_column(Integer, ForeignKey("books.book_id"), primary_key=True, nullable=False)
-#    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.user_id"), primary_key=True, nullable=False)
-#    book_shelf: Mapped[str] = mapped_column(String(30), nullable=True)
 
-
-class UsersBooksModel(Base):
+class UsersBooksModel(BaseAlchemyModel):
     __tablename__ = "users_books"
 
     book_id: Mapped[uuid.UUID] = mapped_column(

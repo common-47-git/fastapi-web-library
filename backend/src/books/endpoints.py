@@ -1,9 +1,10 @@
 import uuid
+from collections.abc import Sequence
 
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, status_codes
+from backend.src import crud, http_exceptions
 from backend.src.authors import crud as authors_crud
 from backend.src.books import crud as books_crud
 from backend.src.books import schemas as books_schemas
@@ -18,21 +19,31 @@ router = APIRouter(
 )
 
 
-@router.get("/all", response_model=list[books_schemas.BookRead])
+@router.get(
+    "/all",
+    response_model=list[books_schemas.BookRead],
+    summary="Get a list of books.",
+)
 async def books_all(
     session: async_session_dependency,
-) -> list[books_schemas.BookRead]:
+) -> Sequence[BooksModel]:
+    """Get a list of books with full info: id, name etc."""
     books = await crud.read_entities(alchemy_model=BooksModel, session=session)
     if not books:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
     return books
 
 
-@router.get("/{book_id}", response_model=books_schemas.BookFullInfo)
+@router.get(
+    "/{book_id}",
+    response_model=books_schemas.BookFullInfo,
+    summary="Get the book by id.",
+)
 async def books_get_by_id(
     book_id: uuid.UUID,
     session: async_session_dependency,
 ):
+    """Get full book info by id, including authors, tags and the shelf."""
     book = await crud.read_entity_by_field(
         alchemy_model=BooksModel,
         field_name="book_id",
@@ -40,7 +51,7 @@ async def books_get_by_id(
         session=session,
     )
     if not book:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
 
     book_tags = await tags_crud.read_tags_by_book_id(
         book_id=book_id,
@@ -66,17 +77,22 @@ async def books_get_by_id(
     }
 
 
-@router.get("/with-author/{author_id}")
+@router.get(
+    "/with-author/{author_id}",
+    response_model=books_schemas.BookRead,
+    summary="Get book by author.",
+)
 async def get_books_with_author_id(
     author_id: uuid.UUID,
     session: async_session_dependency,
-):
+) -> Sequence[BooksModel]:
+    """Get book by it's author id if one exists."""
     books = await books_crud.read_books_by_author_id(
         author_id=author_id,
         session=session,
     )
     if not books:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
     return books
 
 
@@ -88,23 +104,22 @@ async def get_books_with_author_id(
 async def books_add(
     session: async_session_dependency,
     book: books_schemas.BookCreate,
-):
+) -> BooksModel:
     try:
-        entity = await crud.create_entity(
+        return await crud.create_entity(
             alchemy_model=BooksModel,
             pydantic_schema=book,
             session=session,
         )
-        return entity
     except IntegrityError as e:
-        raise status_codes.Conflict_409(exception=e)
+        raise http_exceptions.Conflict409(exception=e) from e
 
 
 @router.delete("/delete/{book_id}", response_model=books_schemas.BookRead)
 async def books_delete_by_id(
     book_id: uuid.UUID,
     session: async_session_dependency,
-):
+) -> BooksModel:
     deleted = await crud.delete_entity_by_field(
         alchemy_model=BooksModel,
         field_name="book_id",
@@ -112,5 +127,5 @@ async def books_delete_by_id(
         session=session,
     )
     if not deleted:
-        raise status_codes.NotFound_404()
+        raise http_exceptions.NotFound404
     return deleted

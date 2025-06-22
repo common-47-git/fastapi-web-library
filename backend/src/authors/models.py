@@ -4,10 +4,10 @@ from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.src.database import Base
+from backend.src.database import BaseAlchemyModel
 
 
-class AuthorsModel(Base):
+class AuthorsModel(BaseAlchemyModel):
     __tablename__ = "authors"
 
     author_id: Mapped[uuid.UUID] = mapped_column(
