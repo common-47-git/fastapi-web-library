@@ -41,8 +41,8 @@ async def books_get_by_id(
 ):
     """Get full book info by id, including authors, tags and the shelf."""
     book = await BooksRepository().read_one_by_property(
-        field_name=BooksModel.book_id.key,
-        field_value=book_id,
+        property_name=BooksModel.book_id.key,
+        property_value=book_id,
     )
     if not book:
         raise http_exceptions.NotFound404
@@ -114,8 +114,8 @@ async def books_delete_by_id(
 ) -> BooksModel:
     """Delete a book by id."""
     deleted = await BooksRepository().delete_one_by_property(
-        field_name=BooksModel.book_id.key,
-        field_value=book_id,
+        property_name=BooksModel.book_id.key,
+        property_value=book_id,
     )
     if not deleted:
         raise http_exceptions.NotFound404

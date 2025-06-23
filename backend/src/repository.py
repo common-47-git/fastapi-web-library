@@ -40,11 +40,11 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.refresh(new_entity)
             return new_entity
 
-    async def read_one_by_property(self, field_name: str, field_value: Any):
+    async def read_one_by_property(self, property_name: str, property_value: Any):
         """Read one entry of a specified model by a specified field from db."""
         async with session_local() as session:
             query = select(self.alchemy_model).where(
-                getattr(self.alchemy_model, field_name) == field_value,
+                getattr(self.alchemy_model, property_name) == property_value,
             )
             result = await session.execute(query)
             return result.scalars().first()
@@ -56,12 +56,12 @@ class SQLAlchemyRepository(AbstractRepository):
             result = await session.execute(stmt)
             return result.scalars().all()
 
-    async def delete_one_by_property(self, field_name: str, field_value: Any):
+    async def delete_one_by_property(self, property_name: str, property_value: Any):
         """Delete one entry of a specified model by a specified field from db."""
         async with session_local() as session:
             entry = await self.read_one_by_property(
-                field_name=field_name,
-                field_value=field_value,
+                property_name=property_name,
+                property_value=property_value,
             )
             if not entry:
                 return None

@@ -4,6 +4,11 @@ from datetime import date
 from pydantic import BaseModel, EmailStr
 
 
+class UserAuth(BaseModel):
+    username: str
+    password: str
+
+
 class UserBase(BaseModel):
     username: str
     email: EmailStr
@@ -19,7 +24,7 @@ class UserRead(UserBase):
     disabled: bool | None = None
 
 
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
     pass
 
 

@@ -7,14 +7,9 @@ from sqlalchemy.exc import IntegrityError
 
 from backend.env.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from backend.src import http_exceptions
-from backend.src.database import async_session_dependency
 from backend.src.enums import ModulesEnum
 from backend.src.users.auth import create_access_token
-from backend.src.users.crud import (
-    authenticate_user,
-    create_user,
-    read_current_user,
-)
+from backend.src.users import services
 from backend.src.users.models import UsersModel
 from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.schemas import users as users_schemas
@@ -28,15 +23,16 @@ router = APIRouter(
 @router.post("/login")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: async_session_dependency,
 ) -> tokens_schemas.Token:
-    user = await authenticate_user(
-        session=session,
-        username=form_data.username,
-        password=form_data.password,
+    user = await services.authenticate_user(
+        user_to_auth=users_schemas.UserAuth(
+            username=form_data.username,
+            password=form_data.password,
+        ),
     )
     if not user:
         raise http_exceptions.Unauthorized401
+
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user.username},
@@ -51,12 +47,11 @@ async def login_for_access_token(
     summary="Create a user.",
 )
 async def users_add(
-    session: async_session_dependency,
     user: users_schemas.UserCreate,
 ) -> UsersModel:
     """Create a user with properties specified in given schema."""
     try:
-        new_user = await create_user(session=session, user=user)
+        new_user = await services.create_user(user=user)
     except IntegrityError as e:
         raise http_exceptions.Conflict409(exception=e) from e
     else:
@@ -71,7 +66,7 @@ async def users_add(
 async def users_me(
     current_user: Annotated[
         users_schemas.UserRead,
-        Depends(read_current_user),
+        Depends(services.read_current_user),
     ],
 ) -> users_schemas.UserRead:
     """Get current user as a user schema."""

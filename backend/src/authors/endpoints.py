@@ -57,8 +57,8 @@ async def authors_delete_by_id(
 ) -> AuthorsModel | None:
     """Delete an author by id."""
     deleted = await AuthorsRepository().delete_one_by_property(
-        field_name=AuthorsModel.author_id.key,
-        field_value=author_id,
+        property_name=AuthorsModel.author_id.key,
+        property_value=author_id,
     )
     if not deleted:
         raise http_exceptions.NotFound404

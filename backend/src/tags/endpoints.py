@@ -57,8 +57,8 @@ async def tags_delete_by_id(
 ) -> TagsModel:
     """Delete a tag by id."""
     deleted = await TagsRepository().delete_one_by_property(
-        field_name=TagsModel.tag_id.key,
-        field_value=tag_id,
+        property_name=TagsModel.tag_id.key,
+        property_value=tag_id,
     )
     if not deleted:
         raise http_exceptions.NotFound404
