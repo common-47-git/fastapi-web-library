@@ -1,10 +1,10 @@
 from fastapi import APIRouter, status
+from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, http_exceptions
-from backend.src.chapters import crud as chapter_crud
+from backend.src import http_exceptions
 from backend.src.chapters import schemas as chapters_schemas
 from backend.src.chapters.models import ChaptersModel
-from backend.src.database import async_session_dependency
+from backend.src.chapters.repository import ChaptersRepository
 from backend.src.enums import ModulesEnum
 
 router = APIRouter(
@@ -20,18 +20,17 @@ router = APIRouter(
     summary="Add a chapter to a volume.",
 )
 async def chapters_add(
-    session: async_session_dependency,
     chapter: chapters_schemas.ChapterCreate,
-) -> ChaptersModel:
+):
     """Add a chapter to an existing volume linked by volume_id."""
-    tags = await crud.create_entity(
-        alchemy_model=ChaptersModel,
-        pydantic_schema=chapter,
-        session=session,
-    )
-    if not tags:
-        raise http_exceptions.NotFound404
-    return tags
+    try:
+        entry = await ChaptersRepository().create_one(
+            pydantic_schema=chapter,
+        )
+    except IntegrityError as e:
+        raise http_exceptions.Conflict409(exception=e) from e
+    else:
+        return entry
 
 
 @router.get(
@@ -40,17 +39,15 @@ async def chapters_add(
     summary="Read a chapter.",
 )
 async def books_get_read_by_name(
-    session: async_session_dependency,
     book_name: str,
     volume_number: int = 1,
     chapter_number: int = 1,
 ) -> ChaptersModel | None:
     """Read a chapter linked with book by volume_id and book_id."""
-    chapter = await chapter_crud.read_book_chapter(
+    chapter = await ChaptersRepository().read_book_chapter(
         book_name=book_name,
         volume_number=volume_number,
         chapter_number=chapter_number,
-        session=session,
     )
     if not chapter:
         raise http_exceptions.NotFound404

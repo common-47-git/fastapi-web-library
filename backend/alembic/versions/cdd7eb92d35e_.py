@@ -30,7 +30,11 @@ def upgrade() -> None:
         name="translation_status_enum",
     ).create(op.get_bind())
     sa.Enum(
-        "Reading", "Have read", "TO read", "Favorites", name="book_shelf_enum",
+        "Reading",
+        "Have read",
+        "TO read",
+        "Favorites",
+        name="book_shelf_enum",
     ).create(op.get_bind())
     op.create_table(
         "authors",
@@ -152,7 +156,11 @@ def downgrade() -> None:
     op.drop_table("books")
     op.drop_table("authors")
     sa.Enum(
-        "Reading", "Have read", "TO read", "Favorites", name="book_shelf_enum",
+        "Reading",
+        "Have read",
+        "TO read",
+        "Favorites",
+        name="book_shelf_enum",
     ).drop(op.get_bind())
     sa.Enum(
         "Translated",

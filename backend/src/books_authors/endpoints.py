@@ -3,11 +3,10 @@ from collections.abc import Sequence
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, http_exceptions
-from backend.src.books_authors import crud as books_authors_crud
+from backend.src import http_exceptions
 from backend.src.books_authors import schemas as books_authors_schemas
 from backend.src.books_authors.models import BooksAuthorsModel
-from backend.src.database import async_session_dependency
+from backend.src.books_authors.repository import BooksAuthorsRepository
 from backend.src.enums import ModulesEnum
 
 router = APIRouter(
@@ -21,14 +20,9 @@ router = APIRouter(
     response_model=list[books_authors_schemas.BooksAuthorsRead],
     summary="Get a list of books and authors.",
 )
-async def books_authors_all(
-    session: async_session_dependency,
-) -> Sequence[BooksAuthorsModel]:
+async def books_authors_all() -> Sequence[BooksAuthorsModel]:
     """Get a list of entries book_id-author_id."""
-    books_authors_model = await crud.read_entities(
-        alchemy_model=BooksAuthorsModel,
-        session=session,
-    )
+    books_authors_model = await BooksAuthorsRepository().read_all()
     if not books_authors_model:
         raise http_exceptions.NotFound404
     return books_authors_model
@@ -41,15 +35,12 @@ async def books_authors_all(
     summary="Create a book-author entry.",
 )
 async def books_authors_add(
-    session: async_session_dependency,
     books_authors: books_authors_schemas.BooksAuthorsCreate,
 ) -> BooksAuthorsModel:
     """Create an entry book_id-author_id."""
     try:
-        return await crud.create_entity(
-            alchemy_model=BooksAuthorsModel,
+        return await BooksAuthorsRepository().create_one(
             pydantic_schema=books_authors,
-            session=session,
         )
     except IntegrityError as e:
         raise http_exceptions.Conflict409(exception=e) from e
@@ -62,12 +53,10 @@ async def books_authors_add(
 )
 async def books_authors_delete(
     books_authors: books_authors_schemas.BooksAuthorsDelete,
-    session: async_session_dependency,
 ) -> BooksAuthorsModel:
     """Delete an entry book_id-author_id."""
-    deleted = await books_authors_crud.delete_books_authors_entry_by_id(
+    deleted = await BooksAuthorsRepository().delete_books_authors_entry_by_id(
         books_authors=books_authors,
-        session=session,
     )
     if not deleted:
         raise http_exceptions.NotFound404

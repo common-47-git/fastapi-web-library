@@ -8,11 +8,9 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
-from backend.env.config import DBNAME, LOGIN_USER, PASSWORD, SERVERNAME
+from backend.env import db_config
 
-db_url = f"postgresql+asyncpg://{LOGIN_USER}:{PASSWORD}@{SERVERNAME}/{DBNAME}"
-
-engine = create_async_engine(url=db_url, echo=True)
+engine = create_async_engine(url=db_config.pg_dsn, echo=True)
 
 session_local = async_sessionmaker(
     autocommit=False,

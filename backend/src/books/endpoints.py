@@ -4,14 +4,13 @@ from collections.abc import Sequence
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, http_exceptions
-from backend.src.authors import crud as authors_crud
-from backend.src.books import crud as books_crud
+from backend.src import http_exceptions
+from backend.src.authors.repository import AuthorsRepository
 from backend.src.books import schemas as books_schemas
 from backend.src.books.models import BooksModel
-from backend.src.database import async_session_dependency
+from backend.src.books.repository import BooksRepository
 from backend.src.enums import ModulesEnum
-from backend.src.tags import crud as tags_crud
+from backend.src.tags.repository import TagsRepository
 
 router = APIRouter(
     prefix=f"/{ModulesEnum.BOOKS.value}",
@@ -24,11 +23,9 @@ router = APIRouter(
     response_model=list[books_schemas.BookRead],
     summary="Get a list of books.",
 )
-async def books_all(
-    session: async_session_dependency,
-) -> Sequence[BooksModel]:
+async def books_all() -> Sequence[BooksModel]:
     """Get a list of books with full info: id, name etc."""
-    books = await crud.read_entities(alchemy_model=BooksModel, session=session)
+    books = await BooksRepository().read_all()
     if not books:
         raise http_exceptions.NotFound404
     return books
@@ -41,25 +38,20 @@ async def books_all(
 )
 async def books_get_by_id(
     book_id: uuid.UUID,
-    session: async_session_dependency,
 ):
     """Get full book info by id, including authors, tags and the shelf."""
-    book = await crud.read_entity_by_field(
-        alchemy_model=BooksModel,
+    book = await BooksRepository().read_one_by_property(
         field_name=BooksModel.book_id.key,
         field_value=book_id,
-        session=session,
     )
     if not book:
         raise http_exceptions.NotFound404
 
-    book_tags = await tags_crud.read_tags_by_book_id(
+    book_tags = await TagsRepository().read_tags_by_book_id(
         book_id=book_id,
-        session=session,
     )
-    book_authors = await authors_crud.read_authors_by_book_id(
+    book_authors = await AuthorsRepository().read_authors_by_book_id(
         book_id=book_id,
-        session=session,
     )
     book_shelf = None
 
@@ -79,17 +71,15 @@ async def books_get_by_id(
 
 @router.get(
     "/with-author/{author_id}",
-    response_model=books_schemas.BookRead,
-    summary="Get book by author.",
+    response_model=list[books_schemas.BookRead],
+    summary="Get books by author.",
 )
 async def get_books_with_author_id(
     author_id: uuid.UUID,
-    session: async_session_dependency,
 ) -> Sequence[BooksModel]:
-    """Get book by it's author id if one exists."""
-    books = await books_crud.read_books_by_author_id(
+    """Get books by it's author id, if one exists."""
+    books = await BooksRepository().read_books_by_author_id(
         author_id=author_id,
-        session=session,
     )
     if not books:
         raise http_exceptions.NotFound404
@@ -103,35 +93,29 @@ async def get_books_with_author_id(
     summary="Create a book.",
 )
 async def books_add(
-    session: async_session_dependency,
     book: books_schemas.BookCreate,
-) -> BooksModel:
+):
     """Create a book with properties specified in given schema."""
     try:
-        return await crud.create_entity(
-            alchemy_model=BooksModel,
+        return await BooksRepository().create_one(
             pydantic_schema=book,
-            session=session,
         )
     except IntegrityError as e:
         raise http_exceptions.Conflict409(exception=e) from e
 
 
 @router.delete(
-    "/delete/{book_id}",
+    "/{book_id}",
     response_model=books_schemas.BookDelete,
     summary="Delete a book.",
 )
 async def books_delete_by_id(
     book_id: uuid.UUID,
-    session: async_session_dependency,
 ) -> BooksModel:
     """Delete a book by id."""
-    deleted = await crud.delete_entity_by_field(
-        alchemy_model=BooksModel,
+    deleted = await BooksRepository().delete_one_by_property(
         field_name=BooksModel.book_id.key,
         field_value=book_id,
-        session=session,
     )
     if not deleted:
         raise http_exceptions.NotFound404

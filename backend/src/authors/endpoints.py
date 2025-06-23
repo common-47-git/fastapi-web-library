@@ -4,10 +4,10 @@ from uuid import UUID
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, http_exceptions
+from backend.src import http_exceptions
 from backend.src.authors import schemas as authors_schemas
 from backend.src.authors.models import AuthorsModel
-from backend.src.database import async_session_dependency
+from backend.src.authors.repository import AuthorsRepository
 from backend.src.enums import ModulesEnum
 
 router = APIRouter(
@@ -21,14 +21,9 @@ router = APIRouter(
     response_model=list[authors_schemas.AuthorRead],
     summary="Get a list of authors.",
 )
-async def authors_all(
-    session: async_session_dependency,
-) -> Sequence[AuthorsModel] | None:
+async def authors_all() -> Sequence[AuthorsModel] | None:
     """Get a list of authors with full info: id, name etc."""
-    authors = await crud.read_entities(
-        alchemy_model=AuthorsModel,
-        session=session,
-    )
+    authors = await AuthorsRepository().read_all()
     if not authors:
         raise http_exceptions.NotFound404
     return authors
@@ -42,14 +37,11 @@ async def authors_all(
 )
 async def authors_add(
     author: authors_schemas.AuthorCreate,
-    session: async_session_dependency,
-) -> AuthorsModel:
+):
     """Create an author with properties specified in given schema."""
     try:
-        return await crud.create_entity(
-            alchemy_model=AuthorsModel,
+        return await AuthorsRepository().create_one(
             pydantic_schema=author,
-            session=session,
         )
     except IntegrityError as e:
         raise http_exceptions.Conflict409(exception=e) from e
@@ -62,14 +54,11 @@ async def authors_add(
 )
 async def authors_delete_by_id(
     author_id: UUID,
-    session: async_session_dependency,
 ) -> AuthorsModel | None:
     """Delete an author by id."""
-    deleted = await crud.delete_entity_by_field(
-        alchemy_model=AuthorsModel,
+    deleted = await AuthorsRepository().delete_one_by_property(
         field_name=AuthorsModel.author_id.key,
         field_value=author_id,
-        session=session,
     )
     if not deleted:
         raise http_exceptions.NotFound404

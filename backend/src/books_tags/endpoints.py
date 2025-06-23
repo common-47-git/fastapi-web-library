@@ -3,11 +3,10 @@ from collections.abc import Sequence
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import crud, http_exceptions
-from backend.src.books_tags import crud as books_tags_crud
+from backend.src import http_exceptions
 from backend.src.books_tags import schemas as books_tags_schemas
 from backend.src.books_tags.models import BooksTagsModel
-from backend.src.database import async_session_dependency
+from backend.src.books_tags.repository import BooksTagsRepository
 from backend.src.enums import ModulesEnum
 
 router = APIRouter(
@@ -21,14 +20,9 @@ router = APIRouter(
     response_model=list[books_tags_schemas.BooksTagsRead],
     summary="Get a list of books and tags.",
 )
-async def books_tags_all(
-    session: async_session_dependency,
-) -> Sequence[BooksTagsModel]:
+async def books_tags_all() -> Sequence[BooksTagsModel]:
     """Get a list of entries book_id-tag_id."""
-    books_tags_model = await crud.read_entities(
-        alchemy_model=BooksTagsModel,
-        session=session,
-    )
+    books_tags_model = await BooksTagsRepository().read_all()
     if not books_tags_model:
         raise http_exceptions.NotFound404
     return books_tags_model
@@ -41,15 +35,12 @@ async def books_tags_all(
     summary="Create a book-tag entry.",
 )
 async def books_tags_add(
-    session: async_session_dependency,
     books_tags: books_tags_schemas.BooksTagsCreate,
-) -> BooksTagsModel:
+):
     """Create an entry book_id-tag_id."""
     try:
-        return await crud.create_entity(
-            alchemy_model=BooksTagsModel,
+        return await BooksTagsRepository().create_one(
             pydantic_schema=books_tags,
-            session=session,
         )
     except IntegrityError as e:
         raise http_exceptions.Conflict409(exception=e) from e
@@ -62,10 +53,8 @@ async def books_tags_add(
 )
 async def books_tags_delete(
     books_tags: books_tags_schemas.BooksTagsDelete,
-    session: async_session_dependency,
 ) -> BooksTagsModel | None:
     """Delete an entry book_id-tag_id."""
-    return await books_tags_crud.delete_books_tags_by_id(
+    return await BooksTagsRepository().delete_books_tags_by_id(
         books_tags=books_tags,
-        session=session,
     )
