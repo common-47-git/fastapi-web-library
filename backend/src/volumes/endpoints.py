@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.post(
     "/add",
-    response_model=volumes_schemas.VolumeCreate,
+    response_model=volumes_schemas.VolumeRead,
     status_code=status.HTTP_201_CREATED,
     summary="Add a volume to a book.",
 )

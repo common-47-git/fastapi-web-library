@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -24,7 +24,6 @@ class VolumesModel(BaseAlchemyModel):
     volume_number: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
-        unique=True,
     )
     volume_name: Mapped[str] = mapped_column(String(50), nullable=False)
 
@@ -35,4 +34,10 @@ class VolumesModel(BaseAlchemyModel):
     volume_chapters: Mapped[list["ChaptersModel"]] = relationship(  # noqa: F821
         back_populates="chapter_volume",
         cascade="all, delete-orphan",
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "volume_number", "book_id", name="uq_volume_number_book_id",
+        ),
     )

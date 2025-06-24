@@ -1,8 +1,8 @@
 from datetime import UTC, datetime, timedelta
 
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt  # type: ignore
-from passlib.context import CryptContext  # type: ignore
+from jose import jwt
+from passlib.context import CryptContext
 
 from backend.env.config import ALGORITHM, SECRET_KEY
 

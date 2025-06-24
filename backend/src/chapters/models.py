@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import TEXT, ForeignKey, Integer, String
+from sqlalchemy import TEXT, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -27,4 +27,10 @@ class ChaptersModel(BaseAlchemyModel):
 
     chapter_volume: Mapped["VolumesModel"] = relationship(  # noqa: F821
         back_populates="volume_chapters",
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "chapter_number", "volume_id", name="uq_chapter_number_volume_id",
+        ),
     )

@@ -1,7 +1,9 @@
+import uuid
 import httpx
 from fastapi import FastAPI
 from nicegui import ui
-
+from backend.src.books.endpoints import books_get_by_id
+import json
 
 def init(fastapi_app: FastAPI) -> None:
     @ui.page("/")
@@ -27,14 +29,10 @@ def init(fastapi_app: FastAPI) -> None:
                     )
 
     @ui.page("/book/{book_id}")
-    async def book_detail(book_id: str) -> None:
+    async def book_detail(book_id: uuid.UUID) -> None:
         ui.dark_mode().enable()
 
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                f"http://localhost:8000/books/{book_id}",
-            )
-            book = response.json()
+        book = await books_get_by_id(book_id=book_id)
 
         with ui.row().classes("items-start justify-center gap-8 p-6"):
             # Left: Book Cover
@@ -50,11 +48,11 @@ def init(fastapi_app: FastAPI) -> None:
                 ui.label(f"Country: {book['book_country']}")
                 ui.label(f"Release Date: {book['book_release_date']}")
                 ui.label(
-                    f"Translation Status: {book['book_translation_status']}",
+                    f"Translation Status: {book['book_translation_status'].value}",
                 )
                 ui.label(f"Description: {book['book_description']}")
                 authors = [
-                    f"{author['author_name']} {author['author_surname']}"
+                    f"{author.author_name} {author.author_surname}"
                     for author in book["book_authors"]
                     if author is not None
                 ]
@@ -63,7 +61,7 @@ def init(fastapi_app: FastAPI) -> None:
                 ui.label(
                     "Tags: "
                     + ", ".join(
-                        [tag["tag_name"] for tag in book["book_tags"]],
+                        [tag.tag_name for tag in book["book_tags"]],
                     ),
                 )
 

@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from backend.src import http_exceptions
 from backend.src.authors.repository import AuthorsRepository
 from backend.src.books import schemas as books_schemas
+from backend.src.tags import schemas as tags_schemas
 from backend.src.books.models import BooksModel
 from backend.src.books.repository import BooksRepository
 from backend.src.enums import ModulesEnum
@@ -47,9 +48,10 @@ async def books_get_by_id(
     if not book:
         raise http_exceptions.NotFound404
 
-    book_tags = await TagsRepository().read_tags_by_book_id(
+    tags = await TagsRepository().read_tags_by_book_id(
         book_id=book_id,
     )
+    book_tags = [tags_schemas.TagRead.model_validate(tag, from_attributes=True) for tag in tags]
     book_authors = await AuthorsRepository().read_authors_by_book_id(
         book_id=book_id,
     )

@@ -4,7 +4,8 @@ import alembic_postgresql_enum  # noqa: F401
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from backend.src.database import BaseAlchemyModel, db_url
+from backend.src.database import BaseAlchemyModel
+from backend.env import db_config
 
 config = context.config
 
@@ -16,20 +17,19 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-from backend.src.library.models import (  # noqa: F401
-    authors,
-    books,
-    books_authors,
-    books_tags,
-    chapters,
-    tags,
-    volumes,
-)
-from backend.src.users.models import users, users_books  # noqa: F401
+from backend.src.authors.models import AuthorsModel # noqa: F401
+from backend.src.books.models import BooksModel # noqa: F401
+from backend.src.books_authors.models import BooksAuthorsModel # noqa: F401
+from backend.src.books_tags.models import BooksTagsModel # noqa: F401
+from backend.src.chapters.models import ChaptersModel # noqa: F401
+from backend.src.tags.models import TagsModel # noqa: F401
+from backend.src.volumes.models import VolumesModel  # noqa: F401
+from backend.src.users.models import UsersModel  # noqa: F401
+from backend.src.users_books.models import UsersBooksModel  # noqa: F401
 
 target_metadata = BaseAlchemyModel.metadata
 
-config.set_main_option("sqlalchemy.url", db_url + "?async_fallback=True")
+config.set_main_option("sqlalchemy.url", db_config.pg_dsn + "?async_fallback=True")
 
 
 def run_migrations_offline() -> None:
