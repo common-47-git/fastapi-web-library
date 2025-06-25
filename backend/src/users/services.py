@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 from jose import JWTError, jwt
 
-from backend.env.config import ALGORITHM, SECRET_KEY
+from backend.env import auth_config
 from backend.src import http_exceptions
 from backend.src.users.auth import (
     get_password_hash,
@@ -39,7 +39,9 @@ async def read_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
 ) -> UsersModel:
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token, auth_config.SECRET_KEY, algorithms=[auth_config.ALGORITHM],
+        )
         username = payload.get("sub")
         if username is None:
             raise http_exceptions.Unauthorized401

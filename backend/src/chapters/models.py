@@ -31,6 +31,8 @@ class ChaptersModel(BaseAlchemyModel):
 
     __table_args__ = (
         UniqueConstraint(
-            "chapter_number", "volume_id", name="uq_chapter_number_volume_id",
+            "chapter_number",
+            "volume_id",
+            name="uq_chapter_number_volume_id",
         ),
     )

@@ -1,18 +1,21 @@
-from os import getenv
+from pathlib import Path
 from functools import lru_cache
-from dotenv import load_dotenv
 
-load_dotenv()
-
-from pydantic_settings import BaseSettings
-
-# Auth config
-SECRET_KEY = str(getenv("SECRET_KEY"))
-ALGORITHM = str(getenv("ALGORITHM"))
-ACCESS_TOKEN_EXPIRE_MINUTES = int(getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class DatabaseConfig(BaseSettings):
+BASE_DIR = Path(__file__).resolve().parent
+
+
+class BaseConfig(BaseSettings):
+    model_config = SettingsConfigDict(
+        case_sensitive=True,
+        env_file=BASE_DIR / ".env",
+        extra="ignore",
+    )
+
+
+class DatabaseConfig(BaseConfig):
     LOGIN_USER: str
     PASSWORD: str
     SERVERNAME: str
@@ -27,6 +30,17 @@ class DatabaseConfig(BaseSettings):
         )
 
 
+class AuthConfig(BaseConfig):
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+
+
 @lru_cache
 def get_db_config() -> DatabaseConfig:
     return DatabaseConfig()
+
+
+@lru_cache
+def get_auth_config() -> AuthConfig:
+    return AuthConfig()

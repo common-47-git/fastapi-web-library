@@ -1,9 +1,11 @@
 import uuid
+
 import httpx
 from fastapi import FastAPI
 from nicegui import ui
+
 from backend.src.books.endpoints import books_get_by_id
-import json
+
 
 def init(fastapi_app: FastAPI) -> None:
     @ui.page("/")

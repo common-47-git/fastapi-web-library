@@ -1,4 +1,3 @@
-
 from backend.src.repository import SQLAlchemyRepository
 from backend.src.users.models import UsersModel
 

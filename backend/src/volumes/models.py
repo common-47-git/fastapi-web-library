@@ -38,6 +38,8 @@ class VolumesModel(BaseAlchemyModel):
 
     __table_args__ = (
         UniqueConstraint(
-            "volume_number", "book_id", name="uq_volume_number_book_id",
+            "volume_number",
+            "book_id",
+            name="uq_volume_number_book_id",
         ),
     )

@@ -33,6 +33,7 @@ class SQLAlchemyRepository(AbstractRepository):
         self,
         pydantic_schema: BaseModel,
     ):
+        """Create one entry of a specified model in db."""
         async with session_local() as session:
             new_entity = self.alchemy_model(**pydantic_schema.model_dump())
             session.add(new_entity)
@@ -40,7 +41,9 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.refresh(new_entity)
             return new_entity
 
-    async def read_one_by_property(self, property_name: str, property_value: Any):
+    async def read_one_by_property(
+        self, property_name: str, property_value: Any,
+    ):
         """Read one entry of a specified model by a specified field from db."""
         async with session_local() as session:
             query = select(self.alchemy_model).where(
@@ -56,7 +59,9 @@ class SQLAlchemyRepository(AbstractRepository):
             result = await session.execute(stmt)
             return result.scalars().all()
 
-    async def delete_one_by_property(self, property_name: str, property_value: Any):
+    async def delete_one_by_property(
+        self, property_name: str, property_value: Any,
+    ):
         """Delete one entry of a specified model by a specified field from db."""
         async with session_local() as session:
             entry = await self.read_one_by_property(

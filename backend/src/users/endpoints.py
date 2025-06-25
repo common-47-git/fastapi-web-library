@@ -5,11 +5,11 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.exc import IntegrityError
 
-from backend.env.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from backend.env import auth_config
 from backend.src import http_exceptions
 from backend.src.enums import ModulesEnum
-from backend.src.users.auth import create_access_token
 from backend.src.users import services
+from backend.src.users.auth import create_access_token
 from backend.src.users.models import UsersModel
 from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.schemas import users as users_schemas
@@ -33,7 +33,9 @@ async def login_for_access_token(
     if not user:
         raise http_exceptions.Unauthorized401
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(
+        minutes=auth_config.ACCESS_TOKEN_EXPIRE_MINUTES,
+    )
     access_token = create_access_token(
         data={"sub": user.username},
         expires_delta=access_token_expires,
