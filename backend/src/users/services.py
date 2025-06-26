@@ -40,7 +40,9 @@ async def read_current_user(
 ) -> UsersModel:
     try:
         payload = jwt.decode(
-            token, auth_config.SECRET_KEY, algorithms=[auth_config.ALGORITHM],
+            token,
+            auth_config.SECRET_KEY,
+            algorithms=[auth_config.ALGORITHM],
         )
         username = payload.get("sub")
         if username is None:

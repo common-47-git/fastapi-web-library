@@ -30,8 +30,14 @@ from backend.src.volumes.models import VolumesModel  # noqa: F401
 target_metadata = BaseAlchemyModel.metadata
 
 config.set_main_option(
-    "sqlalchemy.url", db_config.pg_dsn + "?async_fallback=True",
+    "sqlalchemy.url",
+    db_config.pg_dsn + "?async_fallback=True",
 )
+
+# db_url = f"postgresql+{db_config.DRIVER}://{db_config.LOGIN_USER}:{db_config.PASSWORD}@{db_config.SERVERNAME}/test_db"
+# config.set_main_option(
+#   "sqlalchemy.url", db_url + "?async_fallback=True",
+# )
 
 
 def run_migrations_offline() -> None:

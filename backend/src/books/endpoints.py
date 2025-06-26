@@ -20,7 +20,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/all",
+    "/",
     response_model=list[books_schemas.BookRead],
     summary="Get a list of books.",
 )

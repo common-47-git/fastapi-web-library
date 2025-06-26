@@ -3,9 +3,12 @@ import uuid
 
 from sqlalchemy import DATE, String
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.src.database import BaseAlchemyModel
+from backend.src.users_books.models import (
+    UsersBooksModel,  # noqa: F401 for back_populates
+)
 
 
 class UsersModel(BaseAlchemyModel):
@@ -28,4 +31,9 @@ class UsersModel(BaseAlchemyModel):
         DATE,
         default=datetime.datetime.now(tz=datetime.UTC).date(),
         nullable=True,
+    )
+
+    user_books: Mapped[list["BooksModel"]] = relationship(
+        back_populates="book_users",
+        secondary="users_books",
     )

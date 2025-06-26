@@ -4,7 +4,7 @@ import httpx
 from fastapi import FastAPI
 from nicegui import ui
 
-from backend.src.books.endpoints import books_get_by_id
+from backend.src.books.endpoints import books_get_by_id, books_all
 
 
 def init(fastapi_app: FastAPI) -> None:
@@ -12,21 +12,19 @@ def init(fastapi_app: FastAPI) -> None:
     async def show() -> None:
         ui.dark_mode().enable()
 
-        async with httpx.AsyncClient() as client:
-            response = await client.get("http://localhost:8000/books/all")
-            books = response.json()
+        books = await books_all()
 
         with ui.row().classes("w-full flex-wrap gap-4 justify-center"):
             for book in books:
                 with ui.card().classes("cursor-pointer") as card:
-                    ui.image(book["book_cover"]).style(
+                    ui.image(book.book_cover).style(
                         "width: 250px; height: 400px; object-fit: cover;",
                     )
-                    ui.label(book["book_name"]).style("font-size: 18px;")
+                    ui.label(book.book_name).style("font-size: 18px;")
                     card.on(
                         "click",
                         lambda book=book: ui.navigate.to(
-                            f"/book/{book['book_id']}",
+                            f"/book/{book.book_id}",
                         ),
                     )
 

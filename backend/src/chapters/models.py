@@ -25,7 +25,7 @@ class ChaptersModel(BaseAlchemyModel):
     chapter_name: Mapped[str] = mapped_column(String(50), nullable=False)
     chapter_content: Mapped[str] = mapped_column(TEXT, nullable=False)
 
-    chapter_volume: Mapped["VolumesModel"] = relationship(  # noqa: F821
+    chapter_volume: Mapped["VolumesModel"] = relationship(
         back_populates="volume_chapters",
     )
 

@@ -17,7 +17,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/all",
+    "/",
     response_model=list[authors_schemas.AuthorRead],
     summary="Get a list of authors.",
 )
@@ -31,7 +31,7 @@ async def authors_all() -> Sequence[AuthorsModel] | None:
 
 @router.post(
     "/add",
-    response_model=authors_schemas.AuthorCreate,
+    response_model=authors_schemas.AuthorRead,
     status_code=status.HTTP_201_CREATED,
     summary="Create an author.",
 )
@@ -48,7 +48,7 @@ async def authors_add(
 
 
 @router.delete(
-    "/delete/{author_id}",
+    "/{author_id}",
     response_model=authors_schemas.AuthorDelete,
     summary="Delete an author.",
 )

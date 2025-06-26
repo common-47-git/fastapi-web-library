@@ -22,7 +22,7 @@ class TagsModel(BaseAlchemyModel):
         nullable=False,
     )
 
-    tag_books: Mapped[list["BooksModel"]] = relationship(  # noqa: F821
+    tag_books: Mapped[list["BooksModel"]] = relationship(
         back_populates="book_tags",
         secondary="books_tags",
     )

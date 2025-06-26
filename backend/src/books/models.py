@@ -39,17 +39,22 @@ class BooksModel(BaseAlchemyModel):
     book_description: Mapped[str] = mapped_column(String(1500), nullable=True)
     book_cover: Mapped[str] = mapped_column(String(500), nullable=False)
 
-    book_authors: Mapped[list["AuthorsModel"]] = relationship(  # noqa: F821
+    book_authors: Mapped[list["AuthorsModel"]] = relationship(
         back_populates="author_books",
         secondary="books_authors",
     )
 
-    book_volumes: Mapped[list["VolumesModel"]] = relationship(  # noqa: F821
+    book_volumes: Mapped[list["VolumesModel"]] = relationship(
         back_populates="volume_book",
         cascade="all, delete-orphan",
     )
 
-    book_tags: Mapped[list["TagsModel"]] = relationship(  # noqa: F821
+    book_tags: Mapped[list["TagsModel"]] = relationship(
         back_populates="tag_books",
         secondary="books_tags",
+    )
+
+    book_users: Mapped[list["UsersModel"]] = relationship(
+        back_populates="user_books",
+        secondary="users_books",
     )

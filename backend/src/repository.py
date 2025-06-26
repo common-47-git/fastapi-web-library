@@ -42,7 +42,9 @@ class SQLAlchemyRepository(AbstractRepository):
             return new_entity
 
     async def read_one_by_property(
-        self, property_name: str, property_value: Any,
+        self,
+        property_name: str,
+        property_value: Any,
     ):
         """Read one entry of a specified model by a specified field from db."""
         async with session_local() as session:
@@ -60,7 +62,9 @@ class SQLAlchemyRepository(AbstractRepository):
             return result.scalars().all()
 
     async def delete_one_by_property(
-        self, property_name: str, property_value: Any,
+        self,
+        property_name: str,
+        property_value: Any,
     ):
         """Delete one entry of a specified model by a specified field from db."""
         async with session_local() as session:

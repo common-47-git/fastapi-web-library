@@ -27,11 +27,11 @@ class VolumesModel(BaseAlchemyModel):
     )
     volume_name: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    volume_book: Mapped["BooksModel"] = relationship(  # noqa: F821
+    volume_book: Mapped["BooksModel"] = relationship(
         back_populates="book_volumes",
     )
 
-    volume_chapters: Mapped[list["ChaptersModel"]] = relationship(  # noqa: F821
+    volume_chapters: Mapped[list["ChaptersModel"]] = relationship(
         back_populates="chapter_volume",
         cascade="all, delete-orphan",
     )
