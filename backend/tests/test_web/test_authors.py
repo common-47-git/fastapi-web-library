@@ -8,8 +8,8 @@ from backend.src.authors.schemas import AuthorCreate, AuthorInDB
 async def test_get_all_authors(async_client: AsyncClient):
     response = await async_client.get("/authors/")
     assert response.status_code in (
-        status.HTTP_200_OK,
         status.HTTP_404_NOT_FOUND,
+        status.HTTP_200_OK,
     )
 
 

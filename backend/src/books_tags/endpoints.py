@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+import uuid
 
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
@@ -52,9 +53,13 @@ async def books_tags_add(
     summary="Delete a book-tag entry.",
 )
 async def books_tags_delete(
-    books_tags: books_tags_schemas.BooksTagsDelete,
+    book_id: uuid.UUID,
+    tag_id: uuid.UUID,
 ) -> BooksTagsModel | None:
     """Delete an entry book_id-tag_id."""
     return await BooksTagsRepository().delete_books_tags_by_id(
-        books_tags=books_tags,
+        books_tags=books_tags_schemas.BooksTagsDelete(
+            book_id=book_id,
+            tag_id=tag_id,
+        ),
     )

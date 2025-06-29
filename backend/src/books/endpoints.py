@@ -1,12 +1,14 @@
+from typing import Annotated
 import uuid
 from collections.abc import Sequence
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.exc import IntegrityError
 
 from backend.src import http_exceptions
 from backend.src.authors.repository import AuthorsRepository
 from backend.src.books import schemas as books_schemas
+from backend.src.books.deps import book_exists_dep
 from backend.src.books.models import BooksModel
 from backend.src.books.repository import BooksRepository
 from backend.src.enums import ModulesEnum
@@ -115,13 +117,8 @@ async def books_add(
     summary="Delete a book.",
 )
 async def books_delete_by_id(
-    book_id: uuid.UUID,
+    existing_book: Annotated[BooksModel, Depends(book_exists_dep)],
 ) -> BooksModel:
     """Delete a book by id."""
-    deleted = await BooksRepository().delete_one_by_property(
-        property_name=BooksModel.book_id.key,
-        property_value=book_id,
-    )
-    if not deleted:
-        raise http_exceptions.NotFound404
-    return deleted
+    return await BooksRepository().delete_one(alchemy_model=existing_book)
+

@@ -61,6 +61,16 @@ class SQLAlchemyRepository(AbstractRepository):
             result = await session.execute(stmt)
             return result.scalars().all()
 
+    async def delete_one(
+        self,
+        alchemy_model: CustomAlchemyModel,
+    ):
+        """Delete one entry of a given specified model."""
+        async with session_local() as session:
+            await session.delete(alchemy_model)
+            await session.commit()
+            return alchemy_model
+
     async def delete_one_by_property(
         self,
         property_name: str,

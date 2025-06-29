@@ -1,6 +1,7 @@
 from collections.abc import Sequence
+import uuid
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Query
 from sqlalchemy.exc import IntegrityError
 
 from backend.src import http_exceptions
@@ -52,11 +53,16 @@ async def books_authors_add(
     summary="Delete a book-author entry.",
 )
 async def books_authors_delete(
-    books_authors: books_authors_schemas.BooksAuthorsDelete,
+    book_id: uuid.UUID,
+    author_id: uuid.UUID,
 ) -> BooksAuthorsModel:
     """Delete an entry book_id-author_id."""
+
     deleted = await BooksAuthorsRepository().delete_books_authors_entry_by_id(
-        books_authors=books_authors,
+        books_authors=books_authors_schemas.BooksAuthorsDelete(
+            book_id=book_id,
+            author_id=author_id,
+        ),
     )
     if not deleted:
         raise http_exceptions.NotFound404

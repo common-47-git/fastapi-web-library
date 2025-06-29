@@ -1,29 +1,36 @@
-import uuid
-from datetime import date
-
 import pytest
 
 from backend.src.authors.schemas import AuthorInDB
 from backend.src.books.schemas import BookInDB
+from backend.src.tags.schemas import TagInDB
+from backend.src.volumes.schemas import VolumeInDB
 from backend.src.enums import TranslationStatusEnum
 
 
 @pytest.fixture
-def test_book_in_db():
+def test_book_in_db(faker):
     return BookInDB(
-        book_id=uuid.UUID("80be17fa-afd8-4b0c-ac5d-a4a5c8eae8a5"),
-        book_name="testbook",
-        book_country="TESTCOUNTRY",
-        book_release_date=date.today(),
+        book_id=faker.uuid4(),
+        book_name=faker.user_name(),
+        book_country=faker.country(),
+        book_release_date=faker.date(),
         book_translation_status=TranslationStatusEnum.ABSENT,
-        book_description="test description.",
+        book_description=faker.text(),
     )
 
 
 @pytest.fixture
-def test_author_in_db():
+def test_author_in_db(faker):
     return AuthorInDB(
-        author_id=uuid.UUID("80be18fa-afd8-4b0c-ac5d-a4a5c8eae8a5"),
-        author_name="Testname",
-        author_surname="Testsurname",
+        author_id=faker.uuid4(),
+        author_name=faker.name().split()[0],
+        author_surname=faker.name().split()[1],
     )
+
+@pytest.fixture
+def test_tag_in_db(faker):
+    return TagInDB(
+        tag_id=faker.uuid4(),
+        tag_name=faker.name(),
+    )
+

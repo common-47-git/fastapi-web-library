@@ -352,6 +352,18 @@ wheels = [
 ]
 
 [[package]]
+name = "faker"
+version = "37.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tzdata" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/65/f9/66af4019ee952fc84b8fe5b523fceb7f9e631ed8484417b6f1e3092f8290/faker-37.4.0.tar.gz", hash = "sha256:7f69d579588c23d5ce671f3fa872654ede0e67047820255f43a4aa1925b89780", size = 1901976, upload-time = "2025-06-11T17:59:30.818Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/78/5e/c8c3c5ea0896ab747db2e2889bf5a6f618ed291606de6513df56ad8670a8/faker-37.4.0-py3-none-any.whl", hash = "sha256:cb81c09ebe06c32a10971d1bbdb264bb0e22b59af59548f011ac4809556ce533", size = 1942992, upload-time = "2025-06-11T17:59:28.698Z" },
+]
+
+[[package]]
 name = "fastapi"
 version = "0.115.12"
 source = { registry = "https://pypi.org/simple" }
@@ -447,6 +459,7 @@ dependencies = [
     { name = "pyjwt", extra = ["crypto"] },
     { name = "pytest" },
     { name = "pytest-asyncio" },
+    { name = "pytest-faker" },
     { name = "python-dotenv" },
     { name = "python-jose" },
     { name = "python-multipart" },
@@ -523,6 +536,7 @@ requires-dist = [
     { name = "pyjwt", extras = ["crypto"], specifier = "==2.10.1" },
     { name = "pytest", specifier = "==8.4.0" },
     { name = "pytest-asyncio", specifier = "==1.0.0" },
+    { name = "pytest-faker", specifier = ">=2.0.0" },
     { name = "python-dotenv", specifier = "==1.1.0" },
     { name = "python-jose", specifier = "==3.5.0" },
     { name = "python-multipart", specifier = "==0.0.20" },
@@ -1101,6 +1115,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pytest-faker"
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "faker" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c3/76/1ccba9a1d11a0dd614b31f7160709fe05530ff2823a0ce441063430ad56f/pytest-faker-2.0.0.tar.gz", hash = "sha256:6b37bb89d94f96552bfa51f8e8b89d32addded8ddb58a331488299ef0137d9b6", size = 2784, upload-time = "2016-12-19T10:22:19.188Z" }
+
+[[package]]
 name = "python-dotenv"
 version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1402,6 +1425,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f8/b1/0c11f5058406b3af7609f121aaa6b609744687f1d158b3c3a5bf4cc94238/typing_inspection-0.4.1.tar.gz", hash = "sha256:6ae134cc0203c33377d43188d4064e9b357dba58cff3185f22924610e70a9d28", size = 75726, upload-time = "2025-05-21T18:55:23.885Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/17/69/cd203477f944c353c31bade965f880aa1061fd6bf05ded0726ca845b6ff7/typing_inspection-0.4.1-py3-none-any.whl", hash = "sha256:389055682238f53b04f7badcb49b989835495a96700ced5dab2d8feae4b26f51", size = 14552, upload-time = "2025-05-21T18:55:22.152Z" },
+]
+
+[[package]]
+name = "tzdata"
+version = "2025.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/95/32/1a225d6164441be760d75c2c42e2780dc0873fe382da3e98a2e1e48361e5/tzdata-2025.2.tar.gz", hash = "sha256:b60a638fcc0daffadf82fe0f57e53d06bdec2f36c4df66280ae79bce6bd6f2b9", size = 196380, upload-time = "2025-03-23T13:54:43.652Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5c/23/c7abc0ca0a1526a0774eca151daeb8de62ec457e77262b66b359c3c7679e/tzdata-2025.2-py2.py3-none-any.whl", hash = "sha256:1a403fada01ff9221ca8044d701868fa132215d84beb92242d9acd2147f667a8", size = 347839, upload-time = "2025-03-23T13:54:41.845Z" },
 ]
 
 [[package]]

@@ -31,7 +31,7 @@ async def tags_all() -> Sequence[TagsModel]:
 
 @router.post(
     "/add",
-    response_model=tags_schemas.TagCreate,
+    response_model=tags_schemas.TagRead,
     status_code=status.HTTP_201_CREATED,
     summary="Create a tag.",
 )
@@ -40,7 +40,7 @@ async def tags_add(
 ):
     """Create a tag with properties specified in given schema."""
     try:
-        return await TagsRepository.create_one(
+        return await TagsRepository().create_one(
             pydantic_schema=tag,
         )
     except IntegrityError as e:
