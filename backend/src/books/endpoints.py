@@ -1,6 +1,6 @@
-from typing import Annotated
 import uuid
 from collections.abc import Sequence
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.exc import IntegrityError
@@ -120,5 +120,6 @@ async def books_delete_by_id(
     existing_book: Annotated[BooksModel, Depends(book_exists_dep)],
 ) -> BooksModel:
     """Delete a book by id."""
-    return await BooksRepository().delete_one(alchemy_model=existing_book)
-
+    return await BooksRepository().delete_one(
+        alchemy_model_to_delete=existing_book
+    )

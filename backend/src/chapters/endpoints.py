@@ -1,4 +1,5 @@
-from fastapi import APIRouter, status
+from typing import Annotated
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.exc import IntegrityError
 
 from backend.src import http_exceptions
@@ -6,6 +7,7 @@ from backend.src.chapters import schemas as chapters_schemas
 from backend.src.chapters.models import ChaptersModel
 from backend.src.chapters.repository import ChaptersRepository
 from backend.src.enums import ModulesEnum
+from backend.src.chapters.deps import chapter_exists_dep
 
 router = APIRouter(
     prefix=f"/{ModulesEnum.CHAPTERS.value}",
@@ -15,7 +17,7 @@ router = APIRouter(
 
 @router.post(
     "/add",
-    response_model=chapters_schemas.ChapterCreate,
+    response_model=chapters_schemas.ChapterRead,
     status_code=status.HTTP_201_CREATED,
     summary="Add a chapter to a volume.",
 )
@@ -52,3 +54,17 @@ async def books_get_read_by_name(
     if not chapter:
         raise http_exceptions.NotFound404
     return chapter
+
+
+@router.delete(
+    "/{chapter_id}",
+    response_model=chapters_schemas.ChapterRead,
+    summary="Delete a chapter.",
+)
+async def chapters_delete_by_id(
+    existing_chapter: Annotated[ChaptersModel, Depends(chapter_exists_dep)],
+) -> ChaptersModel:
+    """Delete a chapter by id."""
+    return await ChaptersRepository().delete_one(
+        alchemy_model_to_delete=existing_chapter,
+    )

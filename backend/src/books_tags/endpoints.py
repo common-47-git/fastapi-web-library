@@ -1,5 +1,5 @@
-from collections.abc import Sequence
 import uuid
+from collections.abc import Sequence
 
 from fastapi import APIRouter, status
 from sqlalchemy.exc import IntegrityError
@@ -47,6 +47,7 @@ async def books_tags_add(
         raise http_exceptions.Conflict409(exception=e) from e
 
 
+
 @router.delete(
     "/delete",
     response_model=books_tags_schemas.BooksTagsRead,
@@ -55,11 +56,14 @@ async def books_tags_add(
 async def books_tags_delete(
     book_id: uuid.UUID,
     tag_id: uuid.UUID,
-) -> BooksTagsModel | None:
-    """Delete an entry book_id-tag_id."""
-    return await BooksTagsRepository().delete_books_tags_by_id(
+) -> BooksTagsModel:
+    deleted = await BooksTagsRepository().delete_books_tags_by_id(
         books_tags=books_tags_schemas.BooksTagsDelete(
             book_id=book_id,
             tag_id=tag_id,
         ),
     )
+    if not deleted:
+        raise http_exceptions.NotFound404
+    return deleted
+

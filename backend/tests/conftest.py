@@ -1,8 +1,10 @@
 from collections.abc import AsyncGenerator
+
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from pytest_asyncio import is_async_test
+
 from backend.main import app
 
 
@@ -21,4 +23,3 @@ async def async_client() -> AsyncGenerator[AsyncClient]:
         base_url="https://test",
     ) as ac:
         yield ac
-

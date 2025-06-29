@@ -2,7 +2,7 @@ from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
 
-from backend.src.tags.schemas import TagCreate, TagRead, TagDelete
+from backend.src.tags.schemas import TagCreate
 
 
 async def test_get_all_tags(async_client: AsyncClient):
@@ -73,13 +73,12 @@ async def test_delete_tag(
         assert get_all_response.status_code == status.HTTP_404_NOT_FOUND
 
 
-
 async def test_delete_tag_not_found(
     async_client: AsyncClient,
     test_tag_in_db: TagCreate,
 ):
-    # UUID який точно не існує
     import uuid
+
     fake_tag_id = uuid.uuid4()
     response = await async_client.delete(f"/tags/delete/{fake_tag_id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND

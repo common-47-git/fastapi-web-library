@@ -1,7 +1,8 @@
 import uuid
-from backend.src.books.repository import BooksRepository
-from backend.src.books.models import BooksModel
+
 from backend.src import http_exceptions
+from backend.src.books.models import BooksModel
+from backend.src.books.repository import BooksRepository
 
 
 async def book_exists_dep(book_id: uuid.UUID) -> BooksModel:

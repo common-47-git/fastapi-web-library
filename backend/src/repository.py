@@ -63,13 +63,13 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def delete_one(
         self,
-        alchemy_model: CustomAlchemyModel,
+        alchemy_model_to_delete: CustomAlchemyModel,
     ):
         """Delete one entry of a given specified model."""
         async with session_local() as session:
-            await session.delete(alchemy_model)
+            await session.delete(alchemy_model_to_delete)
             await session.commit()
-            return alchemy_model
+            return alchemy_model_to_delete
 
     async def delete_one_by_property(
         self,

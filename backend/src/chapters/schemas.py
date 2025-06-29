@@ -13,6 +13,7 @@ class ChapterCreate(ChapterBase):
 
 class ChapterRead(ChapterBase):
     volume_id: UUID4
+    chapter_id: UUID4
 
 
 class ChapterUpdate(ChapterBase):

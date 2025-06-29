@@ -2,12 +2,12 @@ from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
 
+from backend.src.authors.schemas import AuthorCreate, AuthorInDB
+from backend.src.books.schemas import BookCreate, BookInDB
 from backend.src.books_authors.schemas import (
     BooksAuthorsCreate,
     BooksAuthorsDelete,
 )
-from backend.src.books.schemas import BookCreate, BookInDB
-from backend.src.authors.schemas import AuthorCreate, AuthorInDB
 
 
 async def test_get_all_books_authors(async_client: AsyncClient):
