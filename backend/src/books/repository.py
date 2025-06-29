@@ -16,7 +16,7 @@ class BooksRepository(SQLAlchemyRepository):
     async def read_books_by_author_id(
         self,
         author_id: uuid.UUID,
-    ) -> Sequence[BooksModel] | None:
+    ) -> Sequence[BooksModel]:
         async with session_local() as session:
             stmt = (
                 select(self.alchemy_model)

@@ -47,7 +47,6 @@ async def books_tags_add(
         raise http_exceptions.Conflict409(exception=e) from e
 
 
-
 @router.delete(
     "/delete",
     response_model=books_tags_schemas.BooksTagsRead,
@@ -66,4 +65,3 @@ async def books_tags_delete(
     if not deleted:
         raise http_exceptions.NotFound404
     return deleted
-

@@ -13,4 +13,3 @@ async def chapter_exists_dep(chapter_id: uuid.UUID) -> ChaptersModel:
     if chapter is None:
         raise http_exceptions.NotFound404
     return chapter
-

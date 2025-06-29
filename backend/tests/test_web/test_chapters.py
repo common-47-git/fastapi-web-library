@@ -1,11 +1,10 @@
-import uuid
 from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
 
 from backend.src.books.schemas import BookCreate, BookInDB
-from backend.src.volumes.schemas import VolumeCreate
 from backend.src.chapters.schemas import ChapterCreate
+from backend.src.volumes.schemas import VolumeCreate
 
 
 async def test_post_chapter(
@@ -48,7 +47,9 @@ async def test_post_chapter(
     chapter_id = chapter_response.json()["chapter_id"]
 
     # Видалення глави
-    delete_chapter_response = await async_client.delete(f"/chapters/{chapter_id}")
+    delete_chapter_response = await async_client.delete(
+        f"/chapters/{chapter_id}",
+    )
     assert delete_chapter_response.status_code == status.HTTP_200_OK
 
     # Видалення тому
@@ -107,7 +108,9 @@ async def test_post_chapter_conflict(
     assert conflict_response.status_code == status.HTTP_409_CONFLICT
 
     # Очистка: видалення глави
-    delete_chapter_response = await async_client.delete(f"/chapters/{chapter_id}")
+    delete_chapter_response = await async_client.delete(
+        f"/chapters/{chapter_id}",
+    )
     assert delete_chapter_response.status_code == status.HTTP_200_OK
 
     # Видалення тому
@@ -160,12 +163,14 @@ async def test_read_chapter_by_book_name(
 
     # Зчитування глави по book_name
     read_response = await async_client.get(
-        f"/chapters/read/{test_book_in_db.book_name}"
+        f"/chapters/read/{test_book_in_db.book_name}",
     )
     assert read_response.status_code == status.HTTP_200_OK
 
     # Очистка: видалення глави
-    delete_chapter_response = await async_client.delete(f"/chapters/{chapter_id}")
+    delete_chapter_response = await async_client.delete(
+        f"/chapters/{chapter_id}",
+    )
     assert delete_chapter_response.status_code == status.HTTP_200_OK
 
     # Видалення тому

@@ -3,14 +3,12 @@ from collections.abc import Sequence
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.exc import IntegrityError
 
-from backend.src import http_exceptions
 from backend.src.authors.repository import AuthorsRepository
 from backend.src.books import schemas as books_schemas
-from backend.src.books.deps import book_exists_dep
+from backend.src.books.deps import BookDeps
 from backend.src.books.models import BooksModel
-from backend.src.books.repository import BooksRepository
+from backend.src.books.services import BooksServices
 from backend.src.enums import ModulesEnum
 from backend.src.tags import schemas as tags_schemas
 from backend.src.tags.repository import TagsRepository
@@ -27,11 +25,8 @@ router = APIRouter(
     summary="Get a list of books.",
 )
 async def books_all() -> Sequence[BooksModel]:
-    """Get a list of books with full info: id, name etc."""
-    books = await BooksRepository().read_all()
-    if not books:
-        raise http_exceptions.NotFound404
-    return books
+    """Get a list of books with full info: id, name etc or raise 404."""
+    return await BooksServices().read_all()
 
 
 @router.get(
@@ -43,12 +38,10 @@ async def books_get_by_id(
     book_id: uuid.UUID,
 ):
     """Get full book info by id, including authors, tags and the shelf."""
-    book = await BooksRepository().read_one_by_property(
+    book = await BooksServices().read_one_by_property(
         property_name=BooksModel.book_id.key,
         property_value=book_id,
     )
-    if not book:
-        raise http_exceptions.NotFound404
 
     tags = await TagsRepository().read_tags_by_book_id(
         book_id=book_id,
@@ -84,13 +77,10 @@ async def books_get_by_id(
 async def get_books_with_author_id(
     author_id: uuid.UUID,
 ) -> Sequence[BooksModel]:
-    """Get books by it's author id, if one exists."""
-    books = await BooksRepository().read_books_by_author_id(
+    """Get books by it's author id, or raise 404."""
+    return await BooksServices().read_books_by_author_id(
         author_id=author_id,
     )
-    if not books:
-        raise http_exceptions.NotFound404
-    return books
 
 
 @router.post(
@@ -102,13 +92,10 @@ async def get_books_with_author_id(
 async def books_add(
     book: books_schemas.BookCreate,
 ):
-    """Create a book with properties specified in given schema."""
-    try:
-        return await BooksRepository().create_one(
-            pydantic_schema=book,
-        )
-    except IntegrityError as e:
-        raise http_exceptions.Conflict409(exception=e) from e
+    """Create a book with properties specified in given schema or raise 409 if one exists."""
+    return await BooksServices().create_one(
+        pydantic_schema=book,
+    )
 
 
 @router.delete(
@@ -117,9 +104,9 @@ async def books_add(
     summary="Delete a book.",
 )
 async def books_delete_by_id(
-    existing_book: Annotated[BooksModel, Depends(book_exists_dep)],
+    existing_book: Annotated[BooksModel, Depends(BookDeps.one_exists)],
 ) -> BooksModel:
     """Delete a book by id."""
-    return await BooksRepository().delete_one(
-        alchemy_model_to_delete=existing_book
+    return await BooksServices().delete_one(
+        book=existing_book,
     )

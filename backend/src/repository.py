@@ -4,30 +4,33 @@ from typing import Any
 from pydantic import BaseModel
 from sqlalchemy import select
 
-from backend.src.database import session_local
-from backend.src.typing import CustomAlchemyModel
+from backend.src.database import BaseAlchemyModel, session_local
 
 
 class AbstractRepository(ABC):
     @abstractmethod
-    async def create_one():
+    async def create_one(self):
         raise NotImplementedError
 
     @abstractmethod
-    async def read_one_by_property():
+    async def read_one_by_property(self):
         raise NotImplementedError
 
     @abstractmethod
-    async def read_all():
+    async def read_all(self):
         raise NotImplementedError
 
     @abstractmethod
-    async def delete_one_by_property():
+    async def delete_one(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def delete_one_by_property(self):
         raise NotImplementedError
 
 
 class SQLAlchemyRepository(AbstractRepository):
-    alchemy_model: type[CustomAlchemyModel]
+    alchemy_model: type[BaseAlchemyModel]
 
     async def create_one(
         self,
@@ -63,7 +66,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def delete_one(
         self,
-        alchemy_model_to_delete: CustomAlchemyModel,
+        alchemy_model_to_delete: BaseAlchemyModel,
     ):
         """Delete one entry of a given specified model."""
         async with session_local() as session:
@@ -82,7 +85,7 @@ class SQLAlchemyRepository(AbstractRepository):
                 property_name=property_name,
                 property_value=property_value,
             )
-            if not entry:
+            if entry is None:
                 return None
             await session.delete(entry)
             await session.commit()

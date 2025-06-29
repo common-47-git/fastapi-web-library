@@ -1,13 +1,14 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.exc import IntegrityError
 
 from backend.src import http_exceptions
 from backend.src.chapters import schemas as chapters_schemas
+from backend.src.chapters.deps import chapter_exists_dep
 from backend.src.chapters.models import ChaptersModel
 from backend.src.chapters.repository import ChaptersRepository
 from backend.src.enums import ModulesEnum
-from backend.src.chapters.deps import chapter_exists_dep
 
 router = APIRouter(
     prefix=f"/{ModulesEnum.CHAPTERS.value}",
