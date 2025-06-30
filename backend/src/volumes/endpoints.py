@@ -1,8 +1,6 @@
-from typing import Annotated
 import uuid
 
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, status
 
 from backend.src.enums import ModulesEnum
 from backend.src.volumes import schemas as volumes_schemas

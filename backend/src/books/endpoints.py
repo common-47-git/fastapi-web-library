@@ -4,14 +4,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
-from backend.src.authors.services import AuthorsServices
 from backend.src.books import schemas as books_schemas
 from backend.src.books.deps import BooksDeps
 from backend.src.books.models import BooksModel
 from backend.src.books.services import BooksServices
 from backend.src.enums import ModulesEnum
-from backend.src.tags import schemas as tags_schemas
-from backend.src.tags.repository import TagsRepository
 
 router = APIRouter(
     prefix=f"/{ModulesEnum.BOOKS.value}",
@@ -38,35 +35,7 @@ async def books_get_by_id(
     book_id: uuid.UUID,
 ):
     """Get full book info by id, including authors, tags and the shelf."""
-    book = await BooksServices().read_one_by_property(
-        property_name=BooksModel.book_id.key,
-        property_value=book_id,
-    )
-
-    tags = await TagsRepository().read_tags_by_book_id(
-        book_id=book_id,
-    )
-    book_tags = [
-        tags_schemas.TagRead.model_validate(tag, from_attributes=True)
-        for tag in tags
-    ]
-    book_authors = await AuthorsServices().read_authors_by_book_id(
-        book_id=book_id,
-    )
-    book_shelf = None
-
-    return {
-        "book_name": book.book_name,
-        "book_country": book.book_country,
-        "book_release_date": book.book_release_date,
-        "book_translation_status": book.book_translation_status,
-        "book_description": book.book_description,
-        "book_cover": book.book_cover,
-        "book_id": book.book_id,
-        "book_tags": book_tags,
-        "book_authors": book_authors,
-        "book_shelf": book_shelf,
-    }
+    return await BooksServices().read_full_book_info_by_id(book_id=book_id)
 
 
 @router.get(

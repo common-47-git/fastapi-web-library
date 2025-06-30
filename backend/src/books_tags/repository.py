@@ -1,6 +1,7 @@
+import uuid
+
 from sqlalchemy import and_, select
 
-from backend.src.books_tags import schemas as books_tags_schemas
 from backend.src.books_tags.models import BooksTagsModel
 from backend.src.database import session_local
 from backend.src.repository import SQLAlchemyRepository
@@ -11,13 +12,14 @@ class BooksTagsRepository(SQLAlchemyRepository):
 
     async def read_books_tags_by_id(
         self,
-        books_tags: books_tags_schemas.BooksTagsBase,
+        book_id: uuid.UUID,
+        tag_id: uuid.UUID,
     ) -> BooksTagsModel | None:
         async with session_local() as session:
             stmt = select(self.alchemy_model).where(
                 and_(
-                    self.alchemy_model.book_id == books_tags.book_id,
-                    self.alchemy_model.tag_id == books_tags.tag_id,
+                    self.alchemy_model.book_id == book_id,
+                    self.alchemy_model.tag_id == tag_id,
                 ),
             )
             result = await session.execute(stmt)
@@ -25,11 +27,13 @@ class BooksTagsRepository(SQLAlchemyRepository):
 
     async def delete_books_tags_by_id(
         self,
-        books_tags: books_tags_schemas.BooksTagsDelete,
+        book_id: uuid.UUID,
+        tag_id: uuid.UUID,
     ) -> BooksTagsModel | None:
         async with session_local() as session:
             entry_to_delete = await self.read_books_tags_by_id(
-                books_tags=books_tags,
+                book_id=book_id,
+                tag_id=tag_id,
             )
             if not entry_to_delete:
                 return None

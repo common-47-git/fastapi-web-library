@@ -13,16 +13,21 @@ class BooksAuthorsServices(BaseServices):
         self,
         books_authors: books_authors_schemas.BooksAuthorsBase,
     ) -> BooksAuthorsModel | None:
-        return await self.repository().read_books_authors_entry_by_id(
-            books_authors=books_authors,
+        entries = await self.repository().read_books_authors_entry_by_id(
+            book_id=books_authors.book_id,
+            author_id=books_authors.author_id,
         )
+        if entries is None:
+            raise http_exceptions.NotFound404
+        return entries
 
     async def delete_books_authors_entry_by_id(
         self,
         books_authors: books_authors_schemas.BooksAuthorsDelete,
     ) -> BooksAuthorsModel | None:
         deleted = await self.repository().delete_books_authors_entry_by_id(
-            books_authors=books_authors,
+            book_id=books_authors.book_id,
+            author_id=books_authors.author_id,
         )
         if deleted is None:
             raise http_exceptions.NotFound404

@@ -18,9 +18,14 @@ from backend.src.users.schemas import users as users_schemas
 
 async def create_user(
     user: users_schemas.UserCreate,
-) -> UsersModel:
+):
     user.password = get_password_hash(user.password)
-    return await UsersRepository().create_one(pydantic_schema=user)
+    new_alchemy_object = UsersModel(
+        **user.model_dump(),
+    )
+    return await UsersRepository().create_one(
+        alchemy_object=new_alchemy_object
+    )
 
 
 async def authenticate_user(

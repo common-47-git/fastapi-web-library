@@ -13,16 +13,21 @@ class BooksTagsServices(BaseServices):
         self,
         books_tags: books_tags_schemas.BooksTagsBase,
     ):
-        return await BooksTagsRepository().read_books_tags_by_id(
-            books_tags=books_tags,
+        entries = await BooksTagsRepository().read_books_tags_by_id(
+            book_id=books_tags.book_id,
+            tag_id=books_tags.tag_id,
         )
+        if not entries:
+            raise http_exceptions.NotFound404
+        return entries
 
     async def delete_books_tags_by_id(
         self,
         books_tags: books_tags_schemas.BooksTagsDelete,
     ):
         deleted = await BooksTagsRepository().delete_books_tags_by_id(
-            books_tags=books_tags,
+            book_id=books_tags.book_id,
+            tag_id=books_tags.tag_id,
         )
         if not deleted:
             raise http_exceptions.NotFound404

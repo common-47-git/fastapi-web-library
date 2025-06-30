@@ -1,7 +1,8 @@
+from backend.src import http_exceptions
 from backend.src.chapters.models import ChaptersModel
 from backend.src.chapters.repository import ChaptersRepository
 from backend.src.services import BaseServices
-from backend.src import http_exceptions
+
 
 class ChaptersServices(BaseServices):
     alchemy_model: type[ChaptersModel] = ChaptersModel
