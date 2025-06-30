@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from pydantic import BaseModel
 from sqlalchemy import select
 
 from backend.src.database import BaseAlchemyModel, session_local
@@ -34,15 +33,14 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def create_one(
         self,
-        pydantic_schema: BaseModel,
+        alchemy_object: BaseAlchemyModel,
     ):
         """Create one entry of a specified model in db."""
         async with session_local() as session:
-            new_entity = self.alchemy_model(**pydantic_schema.model_dump())
-            session.add(new_entity)
+            session.add(alchemy_object)
             await session.commit()
-            await session.refresh(new_entity)
-            return new_entity
+            await session.refresh(alchemy_object)
+            return alchemy_object
 
     async def read_one_by_property(
         self,
@@ -66,13 +64,13 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def delete_one(
         self,
-        alchemy_model_to_delete: BaseAlchemyModel,
+        alchemy_object_to_delete: BaseAlchemyModel,
     ):
         """Delete one entry of a given specified model."""
         async with session_local() as session:
-            await session.delete(alchemy_model_to_delete)
+            await session.delete(alchemy_object_to_delete)
             await session.commit()
-            return alchemy_model_to_delete
+            return alchemy_object_to_delete
 
     async def delete_one_by_property(
         self,

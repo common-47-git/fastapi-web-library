@@ -1,13 +1,12 @@
 from collections.abc import Sequence
-from uuid import UUID
+from typing import Annotated
 
-from fastapi import APIRouter, status
-from sqlalchemy.exc import IntegrityError
+from fastapi import APIRouter, Depends, status
 
-from backend.src import http_exceptions
 from backend.src.authors import schemas as authors_schemas
+from backend.src.authors.deps import AuthorsDeps
 from backend.src.authors.models import AuthorsModel
-from backend.src.authors.repository import AuthorsRepository
+from backend.src.authors.services import AuthorsServices
 from backend.src.enums import ModulesEnum
 
 router = APIRouter(
@@ -22,11 +21,8 @@ router = APIRouter(
     summary="Get a list of authors.",
 )
 async def authors_all() -> Sequence[AuthorsModel] | None:
-    """Get a list of authors with full info: id, name etc."""
-    authors = await AuthorsRepository().read_all()
-    if not authors:
-        raise http_exceptions.NotFound404
-    return authors
+    """Get a list of authors with full info: id, name etc or raise 404."""
+    return await AuthorsServices().read_all()
 
 
 @router.post(
@@ -38,28 +34,19 @@ async def authors_all() -> Sequence[AuthorsModel] | None:
 async def authors_add(
     author: authors_schemas.AuthorCreate,
 ):
-    """Create an author with properties specified in given schema."""
-    try:
-        return await AuthorsRepository().create_one(
-            pydantic_schema=author,
-        )
-    except IntegrityError as e:
-        raise http_exceptions.Conflict409(exception=e) from e
+    """Create an author with properties specified in given schema or raise 409."""
+    return await AuthorsServices().create_one(
+        pydantic_schema=author,
+    )
 
 
 @router.delete(
     "/{author_id}",
-    response_model=authors_schemas.AuthorDelete,
+    response_model=authors_schemas.AuthorRead,
     summary="Delete an author.",
 )
 async def authors_delete_by_id(
-    author_id: UUID,
-) -> AuthorsModel | None:
-    """Delete an author by id."""
-    deleted = await AuthorsRepository().delete_one_by_property(
-        property_name=AuthorsModel.author_id.key,
-        property_value=author_id,
-    )
-    if not deleted:
-        raise http_exceptions.NotFound404
-    return deleted
+    existing_author: Annotated[AuthorsModel, Depends(AuthorsDeps.one_exists)],
+):
+    """Delete an author by id or raise 404."""
+    return await AuthorsServices().delete_one(alchemy_object=existing_author)

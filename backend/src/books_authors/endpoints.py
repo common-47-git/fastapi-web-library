@@ -2,12 +2,10 @@ import uuid
 from collections.abc import Sequence
 
 from fastapi import APIRouter, status
-from sqlalchemy.exc import IntegrityError
 
-from backend.src import http_exceptions
 from backend.src.books_authors import schemas as books_authors_schemas
 from backend.src.books_authors.models import BooksAuthorsModel
-from backend.src.books_authors.repository import BooksAuthorsRepository
+from backend.src.books_authors.services import BooksAuthorsServices
 from backend.src.enums import ModulesEnum
 
 router = APIRouter(
@@ -23,10 +21,7 @@ router = APIRouter(
 )
 async def books_authors_all() -> Sequence[BooksAuthorsModel]:
     """Get a list of entries book_id-author_id."""
-    books_authors_model = await BooksAuthorsRepository().read_all()
-    if not books_authors_model:
-        raise http_exceptions.NotFound404
-    return books_authors_model
+    return await BooksAuthorsServices().read_all()
 
 
 @router.post(
@@ -39,12 +34,9 @@ async def books_authors_add(
     books_authors: books_authors_schemas.BooksAuthorsCreate,
 ) -> BooksAuthorsModel:
     """Create an entry book_id-author_id."""
-    try:
-        return await BooksAuthorsRepository().create_one(
-            pydantic_schema=books_authors,
-        )
-    except IntegrityError as e:
-        raise http_exceptions.Conflict409(exception=e) from e
+    return await BooksAuthorsServices().create_one(
+        pydantic_schema=books_authors,
+    )
 
 
 @router.delete(
@@ -55,14 +47,12 @@ async def books_authors_add(
 async def books_authors_delete(
     book_id: uuid.UUID,
     author_id: uuid.UUID,
-) -> BooksAuthorsModel:
+) -> BooksAuthorsModel | None:
     """Delete an entry book_id-author_id."""
-    deleted = await BooksAuthorsRepository().delete_books_authors_entry_by_id(
-        books_authors=books_authors_schemas.BooksAuthorsDelete(
-            book_id=book_id,
-            author_id=author_id,
-        ),
+    books_authors = books_authors_schemas.BooksAuthorsDelete(
+        book_id=book_id,
+        author_id=author_id,
     )
-    if not deleted:
-        raise http_exceptions.NotFound404
-    return deleted
+    return await BooksAuthorsServices().delete_books_authors_entry_by_id(
+        books_authors=books_authors,
+    )

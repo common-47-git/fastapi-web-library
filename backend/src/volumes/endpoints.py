@@ -1,14 +1,13 @@
 from typing import Annotated
+import uuid
 
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.exc import IntegrityError
 
-from backend.src import http_exceptions
 from backend.src.enums import ModulesEnum
 from backend.src.volumes import schemas as volumes_schemas
-from backend.src.volumes.deps import volume_exists_dep
 from backend.src.volumes.models import VolumesModel
-from backend.src.volumes.repository import VolumesRepository
+from backend.src.volumes.services import VolumesServices
 
 router = APIRouter(
     prefix=f"/{ModulesEnum.VOLUMES.value}",
@@ -26,14 +25,9 @@ async def volumes_add(
     volume: volumes_schemas.VolumeCreate,
 ):
     """Add a volume to a book linked by book_id."""
-    try:
-        entity = await VolumesRepository().create_one(
-            pydantic_schema=volume,
-        )
-    except IntegrityError as e:
-        raise http_exceptions.Conflict409(exception=e) from e
-    else:
-        return entity
+    return await VolumesServices().create_one(
+        pydantic_schema=volume,
+    )
 
 
 @router.delete(
@@ -42,9 +36,10 @@ async def volumes_add(
     summary="Delete a volume.",
 )
 async def volumes_delete_by_id(
-    existing_volume: Annotated[VolumesModel, Depends(volume_exists_dep)],
-) -> VolumesModel:
+    volume_id: uuid.UUID,
+):
     """Delete a volume by id."""
-    return await VolumesRepository().delete_one(
-        alchemy_model_to_delete=existing_volume,
+    return await VolumesServices().delete_one_by_property(
+        property_name=VolumesModel.volume_id.key,
+        property_value=volume_id,
     )
