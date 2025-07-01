@@ -11,10 +11,7 @@ from backend.src.tags.schemas import TagCreate
 
 async def test_get_all_books_tags(async_client: AsyncClient):
     response = await async_client.get("/books_tags/all")
-    assert response.status_code in (
-        status.HTTP_200_OK,
-        status.HTTP_404_NOT_FOUND,
-    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 async def test_post_books_tags(
@@ -45,16 +42,6 @@ async def test_post_books_tags(
         json=jsonable_encoder(relation),
     )
     assert create_resp.status_code == status.HTTP_201_CREATED
-
-    # Delete book-tag relation
-    delete_resp = await async_client.delete(
-        f"/books_tags/delete?book_id={book_id}&tag_id={tag_id}",
-    )
-    assert delete_resp.status_code == status.HTTP_200_OK
-
-    # Cleanup
-    await async_client.delete(f"/books/{book_id}")
-    await async_client.delete(f"/tags/delete/{tag_id}")
 
 
 async def test_post_books_tags_conflict(
@@ -92,13 +79,6 @@ async def test_post_books_tags_conflict(
         json=jsonable_encoder(relation),
     )
     assert resp2.status_code == status.HTTP_409_CONFLICT
-
-    # Cleanup
-    await async_client.delete(
-        f"/books_tags/delete?book_id={book_id}&tag_id={tag_id}",
-    )
-    await async_client.delete(f"/books/{book_id}")
-    await async_client.delete(f"/tags/delete/{tag_id}")
 
 
 async def test_delete_books_tags_not_found(

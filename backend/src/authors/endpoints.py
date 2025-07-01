@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
@@ -20,7 +19,7 @@ router = APIRouter(
     response_model=list[authors_schemas.AuthorRead],
     summary="Get a list of authors.",
 )
-async def authors_all() -> Sequence[AuthorsModel] | None:
+async def authors_all():
     """Get a list of authors with full info: id, name etc or raise 404."""
     return await AuthorsServices().read_all()
 

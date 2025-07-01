@@ -12,10 +12,7 @@ from backend.src.books_authors.schemas import (
 
 async def test_get_all_books_authors(async_client: AsyncClient):
     response = await async_client.get("/books_authors/all")
-    assert response.status_code in (
-        status.HTTP_200_OK,
-        status.HTTP_404_NOT_FOUND,
-    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 async def test_post_books_authors(
@@ -46,18 +43,6 @@ async def test_post_books_authors(
         json=jsonable_encoder(relation),
     )
     assert relation_response.status_code == status.HTTP_201_CREATED
-
-    # cleanup
-    delete_relation_response = await async_client.delete(
-        f"/books_authors/delete?book_id={relation.book_id}&author_id={relation.author_id}",
-    )
-    assert delete_relation_response.status_code == status.HTTP_200_OK
-
-    delete_book_response = await async_client.delete(f"/books/{book_id}")
-    assert delete_book_response.status_code == status.HTTP_200_OK
-
-    delete_author_response = await async_client.delete(f"/authors/{author_id}")
-    assert delete_author_response.status_code == status.HTTP_200_OK
 
 
 async def test_post_books_authors_conflict(
@@ -95,18 +80,6 @@ async def test_post_books_authors_conflict(
         json=jsonable_encoder(relation),
     )
     assert relation_conflict.status_code == status.HTTP_409_CONFLICT
-
-    # cleanup
-    delete_relation_response = await async_client.delete(
-        f"/books_authors/delete?book_id={relation.book_id}&author_id={relation.author_id}",
-    )
-    assert delete_relation_response.status_code == status.HTTP_200_OK
-
-    delete_book_response = await async_client.delete(f"/books/{book_id}")
-    assert delete_book_response.status_code == status.HTTP_200_OK
-
-    delete_author_response = await async_client.delete(f"/authors/{author_id}")
-    assert delete_author_response.status_code == status.HTTP_200_OK
 
 
 async def test_delete_books_authors(

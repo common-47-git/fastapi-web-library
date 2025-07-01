@@ -29,7 +29,7 @@ class BooksServices(BaseServices):
         self,
         book_id: uuid.UUID,
     ):
-        book = await BooksRepository().read_one_by_property(
+        book = await self.repository().read_one_by_property(
             property_name=BooksModel.book_id.key,
             property_value=book_id,
         )

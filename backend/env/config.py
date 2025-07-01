@@ -37,10 +37,5 @@ class AuthConfig(BaseConfig):
 
 
 @lru_cache
-def get_db_config() -> DatabaseConfig:
-    return DatabaseConfig()
-
-
-@lru_cache
 def get_auth_config() -> AuthConfig:
     return AuthConfig()

@@ -1,7 +1,6 @@
-import uuid
-from collections.abc import Sequence
+from typing import Annotated
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Query, status
 
 from backend.src.books_authors import schemas as books_authors_schemas
 from backend.src.books_authors.models import BooksAuthorsModel
@@ -19,7 +18,7 @@ router = APIRouter(
     response_model=list[books_authors_schemas.BooksAuthorsRead],
     summary="Get a list of books and authors.",
 )
-async def books_authors_all() -> Sequence[BooksAuthorsModel]:
+async def books_authors_all():
     """Get a list of entries book_id-author_id."""
     return await BooksAuthorsServices().read_all()
 
@@ -31,11 +30,11 @@ async def books_authors_all() -> Sequence[BooksAuthorsModel]:
     summary="Create a book-author entry.",
 )
 async def books_authors_add(
-    books_authors: books_authors_schemas.BooksAuthorsCreate,
-) -> BooksAuthorsModel:
+    book_author: books_authors_schemas.BooksAuthorsCreate,
+):
     """Create an entry book_id-author_id."""
     return await BooksAuthorsServices().create_one(
-        pydantic_schema=books_authors,
+        pydantic_schema=book_author,
     )
 
 
@@ -45,14 +44,9 @@ async def books_authors_add(
     summary="Delete a book-author entry.",
 )
 async def books_authors_delete(
-    book_id: uuid.UUID,
-    author_id: uuid.UUID,
+    book_author: Annotated[books_authors_schemas.BooksAuthorsDelete, Query()],
 ) -> BooksAuthorsModel | None:
-    """Delete an entry book_id-author_id."""
-    books_authors = books_authors_schemas.BooksAuthorsDelete(
-        book_id=book_id,
-        author_id=author_id,
-    )
+    """Delete an entry book_id-author_id or raise 404."""
     return await BooksAuthorsServices().delete_books_authors_entry_by_id(
-        books_authors=books_authors,
+        book_author=book_author,
     )

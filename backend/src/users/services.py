@@ -24,7 +24,7 @@ async def create_user(
         **user.model_dump(),
     )
     return await UsersRepository().create_one(
-        alchemy_object=new_alchemy_object
+        alchemy_object=new_alchemy_object,
     )
 
 

@@ -7,10 +7,7 @@ from backend.src.tags.schemas import TagCreate
 
 async def test_get_all_tags(async_client: AsyncClient):
     response = await async_client.get("/tags/all")
-    assert response.status_code in (
-        status.HTTP_200_OK,
-        status.HTTP_404_NOT_FOUND,
-    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 async def test_post_tag(
@@ -23,11 +20,6 @@ async def test_post_tag(
     )
     assert response.status_code == status.HTTP_201_CREATED
 
-    tag_id = response.json()["tag_id"]
-
-    delete_response = await async_client.delete(f"/tags/delete/{tag_id}")
-    assert delete_response.status_code == status.HTTP_200_OK
-
 
 async def test_post_tag_conflict(
     async_client: AsyncClient,
@@ -39,7 +31,6 @@ async def test_post_tag_conflict(
     )
     assert response.status_code == status.HTTP_201_CREATED
 
-    tag_id = response.json()["tag_id"]
 
     conflict_response = await async_client.post(
         "/tags/add",
@@ -47,8 +38,6 @@ async def test_post_tag_conflict(
     )
     assert conflict_response.status_code == status.HTTP_409_CONFLICT
 
-    delete_response = await async_client.delete(f"/tags/delete/{tag_id}")
-    assert delete_response.status_code == status.HTTP_200_OK
 
 
 async def test_delete_tag(
@@ -75,10 +64,8 @@ async def test_delete_tag(
 
 async def test_delete_tag_not_found(
     async_client: AsyncClient,
-    test_tag_in_db: TagCreate,
 ):
     import uuid
-
     fake_tag_id = uuid.uuid4()
     response = await async_client.delete(f"/tags/delete/{fake_tag_id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND

@@ -7,10 +7,7 @@ from backend.src.books.schemas import BookCreate, BookInDB
 
 async def test_get_all_books(async_client: AsyncClient):
     response = await async_client.get("/books/")
-    assert response.status_code in (
-        status.HTTP_200_OK,
-        status.HTTP_404_NOT_FOUND,
-    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 async def test_post_book(
@@ -23,11 +20,6 @@ async def test_post_book(
     )
 
     assert response.status_code == status.HTTP_201_CREATED
-
-    book_id = response.json()["book_id"]
-
-    delete_response = await async_client.delete(f"/books/{book_id}")
-    assert delete_response.status_code == status.HTTP_200_OK
 
 
 async def test_post_book_conflict(
@@ -49,9 +41,6 @@ async def test_post_book_conflict(
     )
 
     assert response.status_code == status.HTTP_409_CONFLICT
-
-    delete_response = await async_client.delete(f"/books/{book_id}")
-    assert delete_response.status_code == status.HTTP_200_OK
 
 
 async def test_delete_book(

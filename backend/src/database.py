@@ -4,9 +4,10 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
-from backend.env import db_config
+from backend.env.config import DatabaseConfig
 
-engine = create_async_engine(url=db_config.pg_dsn, echo=True)
+engine = create_async_engine(url=DatabaseConfig().pg_dsn, echo=True)
+
 
 session_local = async_sessionmaker(
     autocommit=False,

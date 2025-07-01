@@ -23,11 +23,11 @@ class BooksAuthorsServices(BaseServices):
 
     async def delete_books_authors_entry_by_id(
         self,
-        books_authors: books_authors_schemas.BooksAuthorsDelete,
+        book_author: books_authors_schemas.BooksAuthorsDelete,
     ) -> BooksAuthorsModel | None:
         deleted = await self.repository().delete_books_authors_entry_by_id(
-            book_id=books_authors.book_id,
-            author_id=books_authors.author_id,
+            book_id=book_author.book_id,
+            author_id=book_author.author_id,
         )
         if deleted is None:
             raise http_exceptions.NotFound404

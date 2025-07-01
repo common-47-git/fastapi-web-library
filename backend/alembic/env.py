@@ -4,7 +4,7 @@ import alembic_postgresql_enum  # noqa: F401
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from backend.env import db_config
+from backend.env import get_db_config
 from backend.src.database import BaseAlchemyModel
 
 config = context.config
@@ -31,13 +31,13 @@ target_metadata = BaseAlchemyModel.metadata
 
 config.set_main_option(
     "sqlalchemy.url",
-    db_config.pg_dsn + "?async_fallback=True",
+    get_db_config().pg_dsn + "?async_fallback=True",
 )
 
-# db_url = f"postgresql+{db_config.DRIVER}://{db_config.LOGIN_USER}:{db_config.PASSWORD}@{db_config.SERVERNAME}/test_db"
-# config.set_main_option(
-#   "sqlalchemy.url", db_url + "?async_fallback=True",
-# )
+#db_url = f"postgresql+{get_db_config().DRIVER}://{get_db_config().LOGIN_USER}:{get_db_config().PASSWORD}@{get_db_config().SERVERNAME}/test_db"
+#config.set_main_option(
+#  "sqlalchemy.url", db_url + "?async_fallback=True",
+#)
 
 
 def run_migrations_offline() -> None:

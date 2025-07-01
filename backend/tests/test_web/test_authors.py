@@ -7,10 +7,7 @@ from backend.src.authors.schemas import AuthorCreate, AuthorInDB
 
 async def test_get_all_authors(async_client: AsyncClient):
     response = await async_client.get("/authors/")
-    assert response.status_code in (
-        status.HTTP_404_NOT_FOUND,
-        status.HTTP_200_OK,
-    )
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 async def test_post_author(
@@ -23,11 +20,8 @@ async def test_post_author(
     )
 
     assert response.status_code == status.HTTP_201_CREATED
+    assert response.json()["author_name"] == test_author_in_db.author_name
 
-    author_id = response.json()["author_id"]
-
-    delete_response = await async_client.delete(f"/authors/{author_id}")
-    assert delete_response.status_code == status.HTTP_200_OK
 
 
 async def test_post_author_conflict(
@@ -41,17 +35,12 @@ async def test_post_author_conflict(
 
     assert response.status_code == status.HTTP_201_CREATED
 
-    author_id = response.json()["author_id"]
-
     response = await async_client.post(
         "/authors/add",
         json=jsonable_encoder(AuthorCreate(**test_author_in_db.model_dump())),
     )
 
     assert response.status_code == status.HTTP_409_CONFLICT
-
-    delete_response = await async_client.delete(f"/authors/{author_id}")
-    assert delete_response.status_code == status.HTTP_200_OK
 
 
 async def test_delete_author(
