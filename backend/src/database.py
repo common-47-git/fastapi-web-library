@@ -16,14 +16,6 @@ session_local = async_sessionmaker(
 )
 
 
-async def get_session():
-    session = session_local()
-    try:
-        yield session
-    finally:
-        await session.close()
-
-
 class BaseAlchemyModel(DeclarativeBase):
     _columns_values = ""
     _columns_to_show = 2

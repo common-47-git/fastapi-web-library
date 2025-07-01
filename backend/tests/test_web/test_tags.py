@@ -51,7 +51,7 @@ async def test_delete_tag(
     assert create_response.status_code == status.HTTP_201_CREATED
     tag_id = create_response.json()["tag_id"]
 
-    delete_response = await async_client.delete(f"/tags/delete/{tag_id}")
+    delete_response = await async_client.delete(f"/tags/{tag_id}")
     assert delete_response.status_code == status.HTTP_200_OK
 
     get_all_response = await async_client.get("/tags/all")
@@ -67,5 +67,5 @@ async def test_delete_tag_not_found(
 ):
     import uuid
     fake_tag_id = uuid.uuid4()
-    response = await async_client.delete(f"/tags/delete/{fake_tag_id}")
+    response = await async_client.delete(f"/tags/{fake_tag_id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND

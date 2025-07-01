@@ -1,9 +1,10 @@
-from uuid import UUID
+from typing import Annotated
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
 
 from backend.src.enums import ModulesEnum
 from backend.src.tags import schemas as tags_schemas
+from backend.src.tags.deps import TagsDeps
 from backend.src.tags.models import TagsModel
 from backend.src.tags.services import TagsServices
 
@@ -39,15 +40,15 @@ async def tags_add(
 
 
 @router.delete(
-    "/delete/{tag_id}",
+    "/{tag_id}",
     response_model=tags_schemas.TagDelete,
     summary="Delete a tag.",
 )
 async def tags_delete_by_id(
-    tag_id: UUID,
+    existing_tag: Annotated[
+        TagsModel,
+        Depends(TagsDeps.one_exists),
+    ],
 ):
-    """Delete a tag by id."""
-    return await TagsServices().delete_one_by_property(
-        property_name=TagsModel.tag_id.key,
-        property_value=tag_id,
-    )
+    """Delete a tag by id or raise 404."""
+    return await TagsServices().delete_one(alchemy_object=existing_tag)

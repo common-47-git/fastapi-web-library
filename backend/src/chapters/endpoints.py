@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 
 from backend.src.chapters import schemas as chapters_schemas
-from backend.src.chapters.deps import chapter_exists_dep
+from backend.src.chapters.deps import ChaptersDeps
 from backend.src.chapters.models import ChaptersModel
 from backend.src.chapters.services import ChaptersServices
 from backend.src.enums import ModulesEnum
@@ -51,7 +51,9 @@ async def books_get_read_by_name(
     summary="Delete a chapter.",
 )
 async def chapters_delete_by_id(
-    existing_chapter: Annotated[ChaptersModel, Depends(chapter_exists_dep)],
+    existing_chapter: Annotated[
+        ChaptersModel, Depends(ChaptersDeps.one_exists),
+    ],
 ):
     """Delete a chapter by id."""
     return await ChaptersServices().delete_one(

@@ -1,9 +1,10 @@
-import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Depends, status
 
 from backend.src.enums import ModulesEnum
 from backend.src.volumes import schemas as volumes_schemas
+from backend.src.volumes.deps import VolumesDeps
 from backend.src.volumes.models import VolumesModel
 from backend.src.volumes.services import VolumesServices
 
@@ -34,10 +35,10 @@ async def volumes_add(
     summary="Delete a volume.",
 )
 async def volumes_delete_by_id(
-    volume_id: uuid.UUID,
+    existing_volume: Annotated[
+        VolumesModel,
+        Depends(VolumesDeps.one_exists),
+    ],
 ):
-    """Delete a volume by id."""
-    return await VolumesServices().delete_one_by_property(
-        property_name=VolumesModel.volume_id.key,
-        property_value=volume_id,
-    )
+    """Delete a volume by id or raise 404."""
+    return await VolumesServices().delete_one(alchemy_object=existing_volume)
