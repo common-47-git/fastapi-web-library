@@ -1,6 +1,6 @@
-import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Query, status
 
 from backend.src.books_tags import schemas as books_tags_schemas
 from backend.src.books_tags.services import BooksTagsServices
@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/all",
+    "/",
     response_model=list[books_tags_schemas.BooksTagsRead],
     summary="Get a list of books and tags.",
 )
@@ -43,12 +43,8 @@ async def books_tags_add(
     summary="Delete a book-tag entry.",
 )
 async def books_tags_delete(
-    book_id: uuid.UUID,
-    tag_id: uuid.UUID,
+    book_tag: Annotated[books_tags_schemas.BooksTagsDelete, Query()],
 ):
     return await BooksTagsServices().delete_books_tags_by_id(
-        books_tags=books_tags_schemas.BooksTagsDelete(
-            book_id=book_id,
-            tag_id=tag_id,
-        ),
+        books_tags=book_tag,
     )

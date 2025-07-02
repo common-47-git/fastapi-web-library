@@ -9,6 +9,7 @@ from backend.src.books_tags.endpoints import router as books_tags_router
 from backend.src.chapters.endpoints import router as chapters_router
 from backend.src.tags.endpoints import router as tags_router
 from backend.src.users.endpoints import router as users_router
+from backend.src.users_books.endpoints import router as users_books_router
 from backend.src.volumes.endpoints import router as volumes_router
 
 origins = [
@@ -35,3 +36,4 @@ main_router.include_router(books_tags_router)
 main_router.include_router(volumes_router)
 main_router.include_router(chapters_router)
 main_router.include_router(users_router)
+main_router.include_router(users_books_router)

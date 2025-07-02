@@ -34,10 +34,10 @@ config.set_main_option(
     get_db_config().pg_dsn + "?async_fallback=True",
 )
 
-#db_url = f"postgresql+{get_db_config().DRIVER}://{get_db_config().LOGIN_USER}:{get_db_config().PASSWORD}@{get_db_config().SERVERNAME}/test_db"
-#config.set_main_option(
+# db_url = f"postgresql+{get_db_config().DRIVER}://{get_db_config().LOGIN_USER}:{get_db_config().PASSWORD}@{get_db_config().SERVERNAME}/test_db"
+# config.set_main_option(
 #  "sqlalchemy.url", db_url + "?async_fallback=True",
-#)
+# )
 
 
 def run_migrations_offline() -> None:

@@ -11,7 +11,7 @@ from backend.src.books_authors.schemas import (
 
 
 async def test_get_all_books_authors(async_client: AsyncClient):
-    response = await async_client.get("/books_authors/all")
+    response = await async_client.get("/books_authors/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 

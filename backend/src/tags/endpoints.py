@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/all",
+    "/",
     response_model=list[tags_schemas.TagRead],
     summary="Get a list of tags.",
 )

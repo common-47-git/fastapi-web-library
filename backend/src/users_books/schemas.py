@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class UsersBooksBase(BaseModel):
     user_id: uuid.UUID
     book_id: uuid.UUID
-    book_shelf: str
+    book_shelf: str | None = None
 
 
 class UsersBooksCreate(UsersBooksBase):
@@ -18,6 +18,10 @@ class UsersBooksRead(UsersBooksBase):
 
 
 class UsersBooksUpdate(UsersBooksBase):
+    pass
+
+
+class UsersBooksDelete(UsersBooksBase):
     pass
 
 

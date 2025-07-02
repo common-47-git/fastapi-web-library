@@ -23,7 +23,6 @@ async def test_post_author(
     assert response.json()["author_name"] == test_author_in_db.author_name
 
 
-
 async def test_post_author_conflict(
     async_client: AsyncClient,
     test_author_in_db: AuthorInDB,

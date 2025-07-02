@@ -34,7 +34,7 @@ class Unauthorized401(APIException):
     def __init__(
         self,
         message: str = "Unauthorized",
-        headers: dict | None =None,
+        headers: dict | None = None,
     ) -> None:
         if headers is None:
             headers = {"WWW-Authenticate": "Bearer"}

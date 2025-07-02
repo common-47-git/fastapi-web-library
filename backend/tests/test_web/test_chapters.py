@@ -97,7 +97,6 @@ async def test_post_chapter_conflict(
     assert conflict_response.status_code == status.HTTP_409_CONFLICT
 
 
-
 async def test_read_chapter_by_book_name(
     async_client: AsyncClient,
     test_book_in_db: BookInDB,
@@ -137,4 +136,3 @@ async def test_read_chapter_by_book_name(
         f"/chapters/read/{test_book_in_db.book_name}",
     )
     assert read_response.status_code == status.HTTP_200_OK
-

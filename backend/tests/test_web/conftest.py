@@ -4,6 +4,18 @@ from backend.src.authors.schemas import AuthorInDB
 from backend.src.books.schemas import BookInDB
 from backend.src.enums import TranslationStatusEnum
 from backend.src.tags.schemas import TagInDB
+from backend.src.users.schemas.users import UserInDB
+
+
+@pytest.fixture
+def test_user_in_db(faker):
+    return UserInDB(
+        user_id=faker.uuid4(),
+        username=faker.user_name(),
+        email=faker.email(),
+        registration_date=faker.date(),
+        password=faker.password(),
+    )
 
 
 @pytest.fixture

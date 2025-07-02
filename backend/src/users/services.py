@@ -5,8 +5,9 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from sqlalchemy.exc import IntegrityError
 
-from backend.env import auth_config
+from backend.env.config import AuthConfig
 from backend.src import http_exceptions
 from backend.src.services import BaseServices
 from backend.src.users.models import UsersModel
@@ -17,35 +18,39 @@ from backend.src.users.schemas import users as users_schemas
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
+
 class UsersServices(BaseServices):
     alchemy_model: type[UsersModel] = UsersModel
     repository: type[UsersRepository] = UsersRepository
-
 
     async def create_user(
         self,
         user: users_schemas.UserCreate,
     ):
-        user.password = self.get_password_hash(user.password)
-        new_alchemy_object = UsersModel(
-            **user.model_dump(),
-        )
-        return await UsersRepository().create_one(
-            alchemy_object=new_alchemy_object,
-        )
+        try:
+            user.password = self._get_password_hash(user.password)
+            new_alchemy_object = UsersModel(
+                **user.model_dump(),
+            )
+            return await UsersRepository().create_one(
+                alchemy_object=new_alchemy_object,
+            )
+        except IntegrityError as e:
+            raise http_exceptions.Conflict409(exception=e) from e
 
     async def authenticate_user(
         self,
         user_to_auth: users_schemas.UserAuth,
-    ) -> UsersModel | None:
+    ) -> UsersModel:
         authed_user = await UsersRepository().read_one_by_property(
             property_name=UsersModel.username.key,
             property_value=user_to_auth.username,
         )
-        if not self.verify_password(
-            user_to_auth.password, authed_user.password,
+        if not self._verify_password(
+            user_to_auth.password,
+            authed_user.password,
         ):
-            return None
+            raise http_exceptions.Unauthorized401
         return authed_user
 
     async def read_current_user(
@@ -55,8 +60,8 @@ class UsersServices(BaseServices):
         try:
             payload = jwt.decode(
                 token,
-                auth_config.SECRET_KEY,
-                algorithms=[auth_config.ALGORITHM],
+                AuthConfig().SECRET_KEY,
+                algorithms=[AuthConfig().ALGORITHM],
             )
             username = payload.get("sub")
             if username is None:
@@ -73,12 +78,14 @@ class UsersServices(BaseServices):
             raise http_exceptions.Unauthorized401 from jwt_e
         return user
 
-    def verify_password(
-        self, plain_password: str, hashed_password: str,
+    def _verify_password(
+        self,
+        plain_password: str,
+        hashed_password: str,
     ) -> bool:
         return pwd_context.verify(plain_password, hashed_password)
 
-    def get_password_hash(self, password: str) -> str:
+    def _get_password_hash(self, password: str) -> str:
         return pwd_context.hash(password)
 
     def create_access_token(
@@ -94,6 +101,6 @@ class UsersServices(BaseServices):
         to_encode.update({"exp": expire})
         return jwt.encode(
             to_encode,
-            auth_config.SECRET_KEY,
-            algorithm=auth_config.ALGORITHM,
+            AuthConfig().SECRET_KEY,
+            algorithm=AuthConfig().ALGORITHM,
         )

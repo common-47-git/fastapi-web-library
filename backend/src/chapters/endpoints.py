@@ -52,7 +52,8 @@ async def books_get_read_by_name(
 )
 async def chapters_delete_by_id(
     existing_chapter: Annotated[
-        ChaptersModel, Depends(ChaptersDeps.one_exists),
+        ChaptersModel,
+        Depends(ChaptersDeps.one_exists),
     ],
 ):
     """Delete a chapter by id."""

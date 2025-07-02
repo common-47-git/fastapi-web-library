@@ -29,7 +29,6 @@ async def test_post_volume(
     assert volume_response.status_code == status.HTTP_201_CREATED
 
 
-
 async def test_post_volume_conflict(
     async_client: AsyncClient,
     test_book_in_db: BookInDB,
@@ -61,6 +60,7 @@ async def test_post_volume_conflict(
 
 async def test_delete_volume_not_found(async_client: AsyncClient):
     import uuid
+
     fake_volume_id = uuid.uuid4()
     response = await async_client.delete(f"/volumes/{fake_volume_id}")
     assert response.status_code == status.HTTP_404_NOT_FOUND

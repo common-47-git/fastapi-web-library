@@ -10,7 +10,7 @@ from backend.src.tags.schemas import TagCreate
 
 
 async def test_get_all_books_tags(async_client: AsyncClient):
-    response = await async_client.get("/books_tags/all")
+    response = await async_client.get("/books_tags/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
