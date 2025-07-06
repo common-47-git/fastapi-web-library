@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query, status
 
+from backend.src import http_exceptions
 from backend.src.books_tags import schemas as books_tags_schemas
 from backend.src.books_tags.services import BooksTagsServices
 from backend.src.enums import ModulesEnum
@@ -16,6 +17,10 @@ router = APIRouter(
     "/",
     response_model=list[books_tags_schemas.BooksTagsRead],
     summary="Get a list of books and tags.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
 )
 async def books_tags_all():
     """Get a list of entries book_id-tag_id."""
@@ -27,6 +32,10 @@ async def books_tags_all():
     response_model=books_tags_schemas.BooksTagsRead,
     status_code=status.HTTP_201_CREATED,
     summary="Create a book-tag entry.",
+    responses={
+        201: http_exceptions.Created201().get_response_body(),
+        409: http_exceptions.Conflict409().get_response_body(),
+    },
 )
 async def books_tags_add(
     books_tags: books_tags_schemas.BooksTagsCreate,
@@ -41,10 +50,15 @@ async def books_tags_add(
     "/delete",
     response_model=books_tags_schemas.BooksTagsRead,
     summary="Delete a book-tag entry.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
 )
 async def books_tags_delete(
     book_tag: Annotated[books_tags_schemas.BooksTagsDelete, Query()],
 ):
+    """Delete an entry book_id-author_id or raise 404."""
     return await BooksTagsServices().delete_books_tags_by_id(
         books_tags=book_tag,
     )

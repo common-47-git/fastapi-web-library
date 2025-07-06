@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
+from backend.src import http_exceptions
 from backend.src.chapters import schemas as chapters_schemas
 from backend.src.chapters.deps import ChaptersDeps
 from backend.src.chapters.models import ChaptersModel
@@ -19,6 +20,10 @@ router = APIRouter(
     response_model=chapters_schemas.ChapterRead,
     status_code=status.HTTP_201_CREATED,
     summary="Add a chapter to a volume.",
+    responses={
+        201: http_exceptions.Created201().get_response_body(),
+        409: http_exceptions.Conflict409().get_response_body(),
+    },
 )
 async def chapters_add(
     chapter: chapters_schemas.ChapterCreate,
@@ -31,6 +36,10 @@ async def chapters_add(
     "/read/{book_name}",
     response_model=chapters_schemas.ChapterRead,
     summary="Read a chapter.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
 )
 async def books_get_read_by_name(
     book_name: str,
@@ -49,6 +58,10 @@ async def books_get_read_by_name(
     "/{chapter_id}",
     response_model=chapters_schemas.ChapterRead,
     summary="Delete a chapter.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
 )
 async def chapters_delete_by_id(
     existing_chapter: Annotated[
@@ -56,7 +69,7 @@ async def chapters_delete_by_id(
         Depends(ChaptersDeps.one_exists),
     ],
 ):
-    """Delete a chapter by id."""
+    """Delete a chapter by id or raise 404."""
     return await ChaptersServices().delete_one(
         alchemy_object=existing_chapter,
     )

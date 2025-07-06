@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.env.config import AuthConfig
+from backend.src import http_exceptions
 from backend.src.enums import ModulesEnum
 from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.schemas import users as users_schemas
@@ -16,10 +17,19 @@ router = APIRouter(
 )
 
 
-@router.post("/login")
+@router.post("/login",
+    response_model=tokens_schemas.Token,
+    summary="Log in to get a token.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        401: http_exceptions.Unauthorized401().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
+)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> tokens_schemas.Token:
+    """Log in by OAuth2PasswordRequestForm credentials and get a token."""
     user = await UsersServices().authenticate_user(
         user_to_auth=users_schemas.UserAuth(
             username=form_data.username,
@@ -41,6 +51,10 @@ async def login_for_access_token(
     response_model=users_schemas.UserRead,
     status_code=status.HTTP_201_CREATED,
     summary="Create a user.",
+    responses={
+        201: http_exceptions.Created201().get_response_body(),
+        409: http_exceptions.Conflict409().get_response_body(),
+    },
 )
 async def users_add(
     user: users_schemas.UserCreate,
@@ -53,6 +67,10 @@ async def users_add(
     "/me",
     response_model=users_schemas.UserRead,
     summary="Get current user.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
 )
 async def users_me(
     current_user: Annotated[

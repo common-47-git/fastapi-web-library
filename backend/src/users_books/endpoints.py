@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query, status
 
+from backend.src import http_exceptions
 from backend.src.enums import ModulesEnum
 from backend.src.users_books import schemas as users_books_schemas
 from backend.src.users_books.services import UsersBooksServices
@@ -15,7 +16,11 @@ router = APIRouter(
 @router.get(
     "/",
     response_model=list[users_books_schemas.UsersBooksRead],
-    summary="Get a list of books and books.",
+    summary="Get a list of books and users.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
 )
 async def books_books_all():
     """Get a list of entries book_id-book_id."""
@@ -26,12 +31,16 @@ async def books_books_all():
     "/add",
     response_model=users_books_schemas.UsersBooksRead,
     status_code=status.HTTP_201_CREATED,
-    summary="Create a book-book entry.",
+    summary="Create a book-user entry.",
+    responses={
+        201: http_exceptions.OK200().get_response_body(),
+        409: http_exceptions.Conflict409().get_response_body(),
+    },
 )
 async def books_books_add(
     books_books: users_books_schemas.UsersBooksRead,
 ):
-    """Create an entry book_id-book_id."""
+    """Create an entry book_id-user_id."""
     return await UsersBooksServices().create_one(
         pydantic_schema=books_books,
     )
@@ -40,11 +49,16 @@ async def books_books_add(
 @router.delete(
     "/delete",
     response_model=users_books_schemas.UsersBooksRead,
-    summary="Delete a book-book entry.",
+    summary="Delete a book-user entry.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
 )
 async def books_books_delete(
     user_book: Annotated[users_books_schemas.UsersBooksDelete, Query()],
 ):
+    """Delete an entry user_id-book_id or raise 404."""
     return await UsersBooksServices().delete_users_books_by_id(
         users_books=user_book,
     )

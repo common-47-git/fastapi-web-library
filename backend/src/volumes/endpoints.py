@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
+from backend.src import http_exceptions
 from backend.src.enums import ModulesEnum
 from backend.src.volumes import schemas as volumes_schemas
 from backend.src.volumes.deps import VolumesDeps
@@ -19,6 +20,10 @@ router = APIRouter(
     response_model=volumes_schemas.VolumeRead,
     status_code=status.HTTP_201_CREATED,
     summary="Add a volume to a book.",
+    responses={
+        201: http_exceptions.Created201().get_response_body(),
+        409: http_exceptions.Conflict409().get_response_body(),
+    },
 )
 async def volumes_add(
     volume: volumes_schemas.VolumeCreate,
@@ -33,6 +38,10 @@ async def volumes_add(
     "/{volume_id}",
     response_model=volumes_schemas.VolumeRead,
     summary="Delete a volume.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
 )
 async def volumes_delete_by_id(
     existing_volume: Annotated[

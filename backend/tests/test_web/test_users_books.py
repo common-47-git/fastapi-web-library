@@ -10,7 +10,7 @@ from backend.src.users_books.schemas import (
 )
 
 
-async def test_get_all_users_books(async_client: AsyncClient):
+async def test_get_all_not_found(async_client: AsyncClient):
     response = await async_client.get("/users_books/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 

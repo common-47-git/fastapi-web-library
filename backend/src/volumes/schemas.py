@@ -3,7 +3,7 @@ from pydantic import UUID4, BaseModel, Field
 
 class VolumeBase(BaseModel):
     book_id: UUID4
-    volume_number: int
+    volume_number: int = Field(ge=0)
     volume_name: str = Field(max_length=50)
 
 

@@ -42,16 +42,20 @@ class UsersServices(BaseServices):
         self,
         user_to_auth: users_schemas.UserAuth,
     ) -> UsersModel:
-        authed_user = await UsersRepository().read_one_by_property(
+        user = await UsersRepository().read_one_by_property(
             property_name=UsersModel.username.key,
             property_value=user_to_auth.username,
         )
+
+        if not user:
+            raise http_exceptions.NotFound404
+
         if not self._verify_password(
             user_to_auth.password,
-            authed_user.password,
+            user.password,
         ):
             raise http_exceptions.Unauthorized401
-        return authed_user
+        return user
 
     async def read_current_user(
         self,

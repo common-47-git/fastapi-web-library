@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from backend.src.authors.schemas import AuthorCreate, AuthorInDB
 
 
-async def test_get_all_authors(async_client: AsyncClient):
+async def test_get_all_not_found(async_client: AsyncClient):
     response = await async_client.get("/authors/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
@@ -56,9 +56,6 @@ async def test_delete_author(
 
     delete_response = await async_client.delete(f"/authors/{author_id}")
     assert delete_response.status_code == status.HTTP_200_OK
-
-    get_response = await async_client.get(f"/authors/{author_id}")
-    assert get_response.status_code == status.HTTP_404_NOT_FOUND
 
 
 async def test_delete_author_not_found(

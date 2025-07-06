@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from backend.src.books.schemas import BookCreate, BookInDB
 
 
-async def test_get_all_books(async_client: AsyncClient):
+async def test_get_all_not_found(async_client: AsyncClient):
     response = await async_client.get("/books/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 

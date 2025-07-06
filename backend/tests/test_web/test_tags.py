@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from backend.src.tags.schemas import TagCreate
 
 
-async def test_get_all_tags(async_client: AsyncClient):
+async def test_get_all_not_found(async_client: AsyncClient):
     response = await async_client.get("/tags/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
