@@ -18,7 +18,7 @@ router = APIRouter(
     "/",
     response_model=list[books_authors_schemas.BooksAuthorsRead],
     summary="Get a list of books and authors.",
-        responses={
+    responses={
         200: http_exceptions.OK200().get_response_body(),
         404: http_exceptions.NotFound404().get_response_body(),
     },
@@ -33,7 +33,7 @@ async def books_authors_all():
     response_model=books_authors_schemas.BooksAuthorsCreate,
     status_code=status.HTTP_201_CREATED,
     summary="Create a book-author entry.",
-        responses={
+    responses={
         201: http_exceptions.Created201().get_response_body(),
         409: http_exceptions.Conflict409().get_response_body(),
     },
@@ -51,7 +51,7 @@ async def books_authors_add(
     "/delete",
     response_model=books_authors_schemas.BooksAuthorsDelete,
     summary="Delete a book-author entry.",
-        responses={
+    responses={
         200: http_exceptions.OK200().get_response_body(),
         404: http_exceptions.NotFound404().get_response_body(),
     },

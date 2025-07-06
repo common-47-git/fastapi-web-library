@@ -4,12 +4,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
 
+from backend.src import http_exceptions
 from backend.src.books import schemas as books_schemas
 from backend.src.books.deps import BooksDeps
 from backend.src.books.models import BooksModel
 from backend.src.books.services import BooksServices
 from backend.src.enums import ModulesEnum
-from backend.src import http_exceptions
 
 router = APIRouter(
     prefix=f"/{ModulesEnum.BOOKS.value}",
@@ -21,7 +21,7 @@ router = APIRouter(
     "/",
     response_model=list[books_schemas.BookRead],
     summary="Get a list of books.",
-        responses={
+    responses={
         200: http_exceptions.OK200().get_response_body(),
         404: http_exceptions.NotFound404().get_response_body(),
     },
@@ -35,7 +35,7 @@ async def books_all() -> list[BooksModel]:
     "/{book_id}",
     response_model=books_schemas.BookFullInfo,
     summary="Get the book by id.",
-        responses={
+    responses={
         200: http_exceptions.OK200().get_response_body(),
         404: http_exceptions.NotFound404().get_response_body(),
     },
@@ -51,7 +51,7 @@ async def books_get_by_id(
     "/with-author/{author_id}",
     response_model=list[books_schemas.BookRead],
     summary="Get books by author.",
-        responses={
+    responses={
         200: http_exceptions.OK200().get_response_body(),
         404: http_exceptions.NotFound404().get_response_body(),
     },
@@ -70,7 +70,7 @@ async def get_books_with_author_id(
     response_model=books_schemas.BookRead,
     status_code=status.HTTP_201_CREATED,
     summary="Create a book.",
-        responses={
+    responses={
         201: http_exceptions.Created201().get_response_body(),
         409: http_exceptions.Conflict409().get_response_body(),
     },
@@ -88,7 +88,7 @@ async def books_add(
     "/{book_id}",
     response_model=books_schemas.BookDelete,
     summary="Delete a book.",
-        responses={
+    responses={
         200: http_exceptions.OK200().get_response_body(),
         404: http_exceptions.NotFound404().get_response_body(),
     },

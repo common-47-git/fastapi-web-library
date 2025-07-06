@@ -17,7 +17,8 @@ router = APIRouter(
 )
 
 
-@router.post("/login",
+@router.post(
+    "/login",
     response_model=tokens_schemas.Token,
     summary="Log in to get a token.",
     responses={

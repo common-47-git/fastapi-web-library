@@ -34,7 +34,7 @@ async def authors_all():
     response_model=authors_schemas.AuthorRead,
     status_code=status.HTTP_201_CREATED,
     summary="Create an author.",
-        responses={
+    responses={
         201: http_exceptions.Created201().get_response_body(),
         409: http_exceptions.Conflict409().get_response_body(),
     },
@@ -52,7 +52,7 @@ async def authors_add(
     "/{author_id}",
     response_model=authors_schemas.AuthorRead,
     summary="Delete an author.",
-        responses={
+    responses={
         200: http_exceptions.OK200().get_response_body(),
         404: http_exceptions.NotFound404().get_response_body(),
     },

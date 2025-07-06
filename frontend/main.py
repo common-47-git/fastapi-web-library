@@ -11,7 +11,7 @@ def init(fastapi_app: FastAPI) -> None:
     static_dir = Path(__file__).parent / "static"
     app.add_static_files("frontend/static", static_dir)
     ui.add_head_html(
-        "<link rel='stylesheet' type='text/css' href='/static/styles.css'>"
+        "<link rel='stylesheet' type='text/css' href='/static/styles.css'>",
     )
 
     @ui.page("/")
@@ -60,21 +60,21 @@ def init(fastapi_app: FastAPI) -> None:
                 with ui.row():
                     ui.label("Release Date: ").style("font-size: 20px;")
                     ui.label(f"{book.book_release_date}").style(
-                        "font-size: 18px;"
+                        "font-size: 18px;",
                     )
 
                 # Translation Status
                 with ui.row():
                     ui.label("Translation Status: ").style("font-size: 20px;")
                     ui.label(f"{book.book_translation_status.value}").style(
-                        "font-size: 18px;"
+                        "font-size: 18px;",
                     )
 
                 # Description
                 with ui.row():
                     ui.label("Description: ").style("font-size: 20px;")
                     ui.label(f"{book.book_description}").style(
-                        "font-size: 18px;"
+                        "font-size: 18px;",
                     )
 
                 # Authors
@@ -91,7 +91,7 @@ def init(fastapi_app: FastAPI) -> None:
                 with ui.row():
                     ui.label("Tags: ").style("font-size: 20px;")
                     ui.label(
-                        ", ".join([tag.tag_name for tag in book.book_tags])
+                        ", ".join([tag.tag_name for tag in book.book_tags]),
                     ).style("font-size: 18px;")
 
     ui.run_with(
