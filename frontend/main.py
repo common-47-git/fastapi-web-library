@@ -1,18 +1,12 @@
 import uuid
-from pathlib import Path
 
 from fastapi import FastAPI
-from nicegui import app, ui
+from nicegui import ui
 
 from backend.src.books.endpoints import books_all, books_get_by_id
 
 
 def init(fastapi_app: FastAPI) -> None:
-    static_dir = Path(__file__).parent / "static"
-    app.add_static_files("frontend/static", static_dir)
-    ui.add_head_html(
-        "<link rel='stylesheet' type='text/css' href='/static/styles.css'>",
-    )
 
     @ui.page("/")
     async def books() -> None:
