@@ -1,13 +1,18 @@
 import uuid
 
-from fastapi import FastAPI
-from nicegui import ui
+import httpx
+from fastapi import FastAPI, status
+from fastapi.security import OAuth2PasswordRequestForm
+from nicegui import ui, app
 
 from backend.src.books.endpoints import (
     get_all_books,
     get_book_by_id,
     get_books_with_author_id,
     get_books_with_tag_id,
+)
+from backend.src.users.endpoints import (
+    login_for_access_token,
 )
 from frontend.components.books_grid import render_books_grid
 
@@ -86,6 +91,31 @@ def init(fastapi_app: FastAPI) -> None:
     async def book_with_tag_id(tag_id: uuid.UUID) -> None:
         books = await get_books_with_tag_id(tag_id=tag_id)
         render_books_grid(books=books)
+
+    @ui.page("/login")
+    async def login_page():
+        username = ui.input("Username").props("outlined")
+        password = (
+            ui.input("Password", password=True)
+            .props("outlined")
+            .props("toggle-password")
+        )
+
+        async def do_login():
+            token_data = await login_for_access_token(
+                OAuth2PasswordRequestForm(
+                    username=username.value,
+                    password=password.value,
+                ),
+            )
+            if token_data:
+                app.storage.user["access_token"] = token_data.access_token
+                ui.notify("Login successful")
+                ui.navigate.to("/books")
+            else:
+                ui.notify("Login failed", color="negative")
+
+        login_btn = ui.button("Login", on_click=do_login)
 
     ui.run_with(
         fastapi_app,
