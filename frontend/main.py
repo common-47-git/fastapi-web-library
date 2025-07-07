@@ -3,92 +3,85 @@ import uuid
 from fastapi import FastAPI
 from nicegui import ui
 
-from backend.src.books.endpoints import books_all, books_get_by_id
+from backend.src.books.endpoints import (
+    books_all,
+    books_get_by_id,
+    get_books_with_author_id,
+)
+from frontend.components.books_grid import render_books_grid
 
 
 def init(fastapi_app: FastAPI) -> None:
-
-    @ui.page("/")
+    @ui.page("/books")
     async def books() -> None:
-        ui.dark_mode().enable()
-
         books = await books_all()
+        render_books_grid(books=books)
 
-        with ui.row().classes("w-full flex-wrap gap-4 justify-center"):
-            for book in books:
-                with ui.card().classes("cursor-pointer") as card:
-                    ui.image(book.book_cover).style(
-                        "width: 250px; height: 400px; object-fit: cover;",
-                    )
-                    ui.label(book.book_name).style("font-size: 18px;")
-                    card.on(
-                        "click",
-                        lambda book=book: ui.navigate.to(
-                            f"/book/{book.book_id}",
-                        ),
-                    )
-
-    @ui.page("/book/{book_id}")
+    @ui.page("/books/{book_id}")
     async def book_detail(book_id: uuid.UUID) -> None:
-        ui.dark_mode().enable()
-
         book = await books_get_by_id(book_id=book_id)
 
+        authors = [
+            author for author in book.book_authors if author is not None
+        ]
+
         with ui.row().classes("items-start justify-center gap-8 p-6"):
-            # Left: Book Cover
+            # Book cover
             ui.image(book.book_cover).style(
-                "width: 300px; height: 450px; object-fit: cover;",
+                "width: 300px; height: 450px; object-fit: cover;"
             )
 
-            # Right: Book Info
+            # Book info
             with ui.column().classes("gap-2 max-w-2xl"):
-                ui.label(book.book_name).style(
-                    "font-size: 24px; font-weight: bold;",
-                )
-                # Country
-                with ui.row():
-                    ui.label("Country: ").style("font-size: 20px;")
-                    ui.label(f"{book.book_country}").style("font-size: 18px;")
+                ui.label(book.book_name).classes("text-3xl")
 
-                # Release Date
                 with ui.row():
-                    ui.label("Release Date: ").style("font-size: 20px;")
-                    ui.label(f"{book.book_release_date}").style(
-                        "font-size: 18px;",
-                    )
+                    with ui.column():
+                        ui.label("Country: ").classes("text-base")
+                        ui.label("Release Date: ").classes("text-base")
+                        ui.label("Translation Status: ").classes("text-base")
+                        ui.label("Authors:").classes("text-base")
+                        ui.label("Tags:").classes("text-base")
 
-                # Translation Status
-                with ui.row():
-                    ui.label("Translation Status: ").style("font-size: 20px;")
-                    ui.label(f"{book.book_translation_status.value}").style(
-                        "font-size: 18px;",
-                    )
+                    with ui.column():
+                        ui.label(book.book_country).classes("text-base")
+                        ui.label(str(book.book_release_date)).classes(
+                            "text-base"
+                        )
+                        ui.label(book.book_translation_status.value).classes(
+                            "text-base",
+                        )
+
+                        # Authors with links
+                        for author in authors:
+                            full_name = (
+                                f"{author.author_name} {author.author_surname}"
+                            )
+                            ui.link(
+                                text=full_name,
+                                target=f"/books/with-author/{author.author_id}",
+                            ).classes(
+                                "bg-sky-900 rounded px-2 py-1 text-base text-white no-underline"
+                            )
+
+                        for tag in book.book_tags:
+                            ui.label(tag.tag_name).classes(
+                                "bg-blue-900 rounded px-2 py-1 text-base"
+                            )
 
                 # Description
-                with ui.row():
-                    ui.label("Description: ").style("font-size: 20px;")
-                    ui.label(f"{book.book_description}").style(
-                        "font-size: 18px;",
-                    )
+                ui.label(book.book_description).classes("text-base").style(
+                    "white-space: pre-wrap;",
+                )
 
-                # Authors
-                authors = [
-                    f"{author.author_name} {author.author_surname}"
-                    for author in book.book_authors
-                    if author is not None
-                ]
-                with ui.row():
-                    ui.label("Authors: ").style("font-size: 20px;")
-                    ui.label(", ".join(authors)).style("font-size: 18px;")
-
-                # Tags
-                with ui.row():
-                    ui.label("Tags: ").style("font-size: 20px;")
-                    ui.label(
-                        ", ".join([tag.tag_name for tag in book.book_tags]),
-                    ).style("font-size: 18px;")
+    @ui.page("/books/with-author/{author_id}")
+    async def book_with_author_id(author_id: uuid.UUID) -> None:
+        books = await get_books_with_author_id(author_id=author_id)
+        render_books_grid(books=books)
 
     ui.run_with(
         fastapi_app,
+        mount_path="/gui",
         storage_secret="st_sec",
+        dark=True,
     )

@@ -1,5 +1,4 @@
 import uuid
-from collections.abc import Sequence
 
 from sqlalchemy import select
 
@@ -16,7 +15,7 @@ class AuthorsRepository(SQLAlchemyRepository):
     async def read_authors_by_book_id(
         self,
         book_id: uuid.UUID,
-    ) -> Sequence[AuthorsModel] | None:
+    ) -> list[AuthorsModel] | None:
         async with session_local() as session:
             stmt = (
                 select(self.alchemy_model)

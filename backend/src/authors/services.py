@@ -14,7 +14,7 @@ class AuthorsServices(BaseServices):
     async def read_authors_by_book_id(
         self,
         book_id: uuid.UUID,
-    ) -> Sequence[AuthorsModel] | None:
+    ) -> list[AuthorsModel] | None:
         authors = await self.repository().read_authors_by_book_id(
             book_id=book_id,
         )

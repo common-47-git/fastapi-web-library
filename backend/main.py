@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend import headers, main_router, methods, origins
 
+from frontend import main as frontend_main
+
 app = FastAPI(title="Books site")
 
 
@@ -18,4 +20,4 @@ app.include_router(
     main_router,
 )
 
-# frontend_main.init(app)
+frontend_main.init(app)

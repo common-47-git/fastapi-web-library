@@ -16,7 +16,7 @@ class TagsRepository(SQLAlchemyRepository):
     async def read_tags_by_book_id(
         self,
         book_id: uuid.UUID,
-    ) -> Sequence[TagsModel]:
+    ) -> list[TagsModel]:
         async with session_local() as session:
             stmt = (
                 select(TagsModel)

@@ -1,5 +1,4 @@
 import uuid
-from collections.abc import Sequence
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
@@ -26,7 +25,7 @@ router = APIRouter(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def books_all() -> list[BooksModel]:
+async def books_all() -> list[books_schemas.BookRead]:
     """Get a list of books with full info: id, name etc or raise 404."""
     return await BooksServices().read_all()
 
@@ -58,7 +57,7 @@ async def books_get_by_id(
 )
 async def get_books_with_author_id(
     author_id: uuid.UUID,
-) -> Sequence[BooksModel]:
+) -> list[books_schemas.BookRead]:
     """Get books by it's author id, or raise 404."""
     return await BooksServices().read_books_by_author_id(
         author_id=author_id,

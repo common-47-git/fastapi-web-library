@@ -16,7 +16,7 @@ class UsersBooksRepository(SQLAlchemyRepository):
     async def read_user_books(
         self,
         username: str,
-    ) -> Sequence[BooksModel] | None:
+    ) -> list[BooksModel] | None:
         async with session_local() as session:
             query = (
                 select(BooksModel)

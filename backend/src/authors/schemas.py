@@ -2,8 +2,8 @@ from pydantic import UUID4, BaseModel, Field
 
 
 class AuthorBase(BaseModel):
-    author_name: str = Field(max_length=50)
-    author_surname: str = Field(max_length=50)
+    author_name: str = Field(min_length=2, max_length=50)
+    author_surname: str = Field(min_length=2, max_length=50)
 
 
 class AuthorCreate(AuthorBase):
