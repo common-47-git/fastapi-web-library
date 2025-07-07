@@ -7,6 +7,7 @@ from backend.src.books.endpoints import (
     get_all_books,
     get_book_by_id,
     get_books_with_author_id,
+    get_books_with_tag_id,
 )
 from frontend.components.books_grid import render_books_grid
 
@@ -27,14 +28,14 @@ def init(fastapi_app: FastAPI) -> None:
 
         with ui.row().classes("items-start justify-center gap-8 p-6"):
             # Book cover
-            ui.image(book.book_cover).style(
-                "width: 300px; height: 450px; object-fit: cover;"
-            )
+            with ui.column():
+                ui.image(book.book_cover).style(
+                    "width: 300px; height: 450px; object-fit: cover;",
+                )
+                ui.label(book.book_name).classes("text-3xl self-center")
 
             # Book info
             with ui.column().classes("gap-2 max-w-2xl"):
-                ui.label(book.book_name).classes("text-3xl")
-
                 with ui.row():
                     with ui.column():
                         ui.label("Country: ").classes("text-base")
@@ -46,28 +47,30 @@ def init(fastapi_app: FastAPI) -> None:
                     with ui.column():
                         ui.label(book.book_country).classes("text-base")
                         ui.label(str(book.book_release_date)).classes(
-                            "text-base"
+                            "text-base",
                         )
                         ui.label(book.book_translation_status.value).classes(
                             "text-base",
                         )
 
-                        # Authors with links
-                        for author in authors:
-                            full_name = (
-                                f"{author.author_name} {author.author_surname}"
-                            )
-                            ui.link(
-                                text=full_name,
-                                target=f"/books/with-author/{author.author_id}",
-                            ).classes(
-                                "bg-sky-900 rounded px-2 py-1 text-base text-white no-underline"
-                            )
+                        with ui.row():
+                            for author in authors:
+                                full_name = f"{author.author_name} {author.author_surname}"
+                                ui.link(
+                                    text=full_name,
+                                    target=f"/books/with-author/{author.author_id}",
+                                ).classes(
+                                    "bg-sky-900 rounded px-2 text-base text-white no-underline",
+                                )
 
-                        for tag in book.book_tags:
-                            ui.label(tag.tag_name).classes(
-                                "bg-blue-900 rounded px-2 py-1 text-base"
-                            )
+                        with ui.row():
+                            for tag in book.book_tags:
+                                ui.link(
+                                    text=tag.tag_name,
+                                    target=f"/books/with-tag/{tag.tag_id}",
+                                ).classes(
+                                    "bg-sky-900 rounded px-2 text-base text-white no-underline",
+                                )
 
                 # Description
                 ui.label(book.book_description).classes("text-base").style(
@@ -77,6 +80,11 @@ def init(fastapi_app: FastAPI) -> None:
     @ui.page("/books/with-author/{author_id}")
     async def book_with_author_id(author_id: uuid.UUID) -> None:
         books = await get_books_with_author_id(author_id=author_id)
+        render_books_grid(books=books)
+
+    @ui.page("/books/with-tag/{tag_id}")
+    async def book_with_tag_id(tag_id: uuid.UUID) -> None:
+        books = await get_books_with_tag_id(tag_id=tag_id)
         render_books_grid(books=books)
 
     ui.run_with(

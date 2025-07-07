@@ -1,5 +1,4 @@
 import uuid
-from collections.abc import Sequence
 
 from backend.src import http_exceptions
 from backend.src.authors.models import AuthorsModel

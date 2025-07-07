@@ -64,6 +64,24 @@ async def get_books_with_author_id(
     )
 
 
+@router.get(
+    "/with-tag/{tag_id}",
+    response_model=list[books_schemas.BookRead],
+    summary="Get books by tag.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
+)
+async def get_books_with_tag_id(
+    tag_id: uuid.UUID,
+) -> list[books_schemas.BookRead]:
+    """Get books by it's tag id, or raise 404."""
+    return await BooksServices().read_books_by_tag_id(
+        tag_id=tag_id,
+    )
+
+
 @router.post(
     "/add",
     response_model=books_schemas.BookRead,

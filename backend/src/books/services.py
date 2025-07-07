@@ -1,16 +1,13 @@
 import uuid
-from collections.abc import Sequence
-
-from sqlalchemy import true
 
 from backend.src import http_exceptions
+from backend.src.authors import schemas as authors_schemas
 from backend.src.authors.repository import AuthorsRepository
 from backend.src.books import schemas as book_schemas
-from backend.src.tags import schemas as tags_schemas
-from backend.src.authors import schemas as authors_schemas
 from backend.src.books.models import BooksModel
 from backend.src.books.repository import BooksRepository
 from backend.src.services import BaseServices
+from backend.src.tags import schemas as tags_schemas
 from backend.src.tags.repository import TagsRepository
 
 
@@ -24,6 +21,17 @@ class BooksServices(BaseServices):
     ) -> list[BooksModel]:
         books = await self.repository().read_books_by_author_id(
             author_id=author_id,
+        )
+        if not books:
+            raise http_exceptions.NotFound404
+        return books
+
+    async def read_books_by_tag_id(
+        self,
+        tag_id: uuid.UUID,
+    ) -> list[BooksModel]:
+        books = await self.repository().read_books_by_tag_id(
+            tag_id=tag_id,
         )
         if not books:
             raise http_exceptions.NotFound404
@@ -47,15 +55,25 @@ class BooksServices(BaseServices):
             book_id=book_id,
         )
 
-        tags = [
-            tags_schemas.TagRead.model_validate(tag, from_attributes=True)
-            for tag in tag_models
-        ] if tag_models else []
+        tags = (
+            [
+                tags_schemas.TagRead.model_validate(tag, from_attributes=True)
+                for tag in tag_models
+            ]
+            if tag_models
+            else []
+        )
 
-        authors = [
-            authors_schemas.AuthorRead.model_validate(author, from_attributes=True)
-            for author in author_models
-        ] if author_models else []
+        authors = (
+            [
+                authors_schemas.AuthorRead.model_validate(
+                    author, from_attributes=True,
+                )
+                for author in author_models
+            ]
+            if author_models
+            else []
+        )
 
         book_shelf = None
 
