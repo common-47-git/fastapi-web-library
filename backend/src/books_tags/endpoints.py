@@ -22,7 +22,7 @@ router = APIRouter(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def books_tags_all():
+async def get_all_books_tags():
     """Get a list of entries book_id-tag_id."""
     return await BooksTagsServices().read_all()
 
@@ -37,7 +37,7 @@ async def books_tags_all():
         409: http_exceptions.Conflict409().get_response_body(),
     },
 )
-async def books_tags_add(
+async def post_book_tag(
     books_tags: books_tags_schemas.BooksTagsCreate,
 ):
     """Create an entry book_id-tag_id."""
@@ -55,7 +55,7 @@ async def books_tags_add(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def books_tags_delete(
+async def delete_book_tag(
     book_tag: Annotated[books_tags_schemas.BooksTagsDelete, Query()],
 ):
     """Delete an entry book_id-author_id or raise 404."""

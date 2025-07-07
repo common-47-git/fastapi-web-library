@@ -25,7 +25,7 @@ router = APIRouter(
         409: http_exceptions.Conflict409().get_response_body(),
     },
 )
-async def volumes_add(
+async def post_volume(
     volume: volumes_schemas.VolumeCreate,
 ):
     """Add a volume to a book linked by book_id."""
@@ -43,7 +43,7 @@ async def volumes_add(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def volumes_delete_by_id(
+async def delete_volume_by_id(
     existing_volume: Annotated[
         VolumesModel,
         Depends(VolumesDeps.one_exists),

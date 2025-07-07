@@ -57,7 +57,7 @@ async def login_for_access_token(
         409: http_exceptions.Conflict409().get_response_body(),
     },
 )
-async def users_add(
+async def post_user(
     user: users_schemas.UserCreate,
 ):
     """Create a user with properties specified in given schema."""
@@ -73,7 +73,7 @@ async def users_add(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def users_me(
+async def get_me(
     current_user: Annotated[
         users_schemas.UserRead,
         Depends(UsersServices().read_current_user),

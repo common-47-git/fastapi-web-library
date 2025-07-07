@@ -25,7 +25,7 @@ router = APIRouter(
         409: http_exceptions.Conflict409().get_response_body(),
     },
 )
-async def chapters_add(
+async def post_chapter(
     chapter: chapters_schemas.ChapterCreate,
 ):
     """Add a chapter to an existing volume linked by volume_id."""
@@ -41,7 +41,7 @@ async def chapters_add(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def books_get_read_by_name(
+async def get_chapter_by_book_name(
     book_name: str,
     volume_number: int = 1,
     chapter_number: int = 1,
@@ -63,7 +63,7 @@ async def books_get_read_by_name(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def chapters_delete_by_id(
+async def delete_chapter_by_id(
     existing_chapter: Annotated[
         ChaptersModel,
         Depends(ChaptersDeps.one_exists),

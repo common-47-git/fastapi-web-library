@@ -22,7 +22,7 @@ router = APIRouter(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def books_books_all():
+async def get_users_books_all():
     """Get a list of entries book_id-book_id."""
     return await UsersBooksServices().read_all()
 
@@ -37,7 +37,7 @@ async def books_books_all():
         409: http_exceptions.Conflict409().get_response_body(),
     },
 )
-async def books_books_add(
+async def post_user_book(
     books_books: users_books_schemas.UsersBooksRead,
 ):
     """Create an entry book_id-user_id."""
@@ -55,7 +55,7 @@ async def books_books_add(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def books_books_delete(
+async def delete_user_book(
     user_book: Annotated[users_books_schemas.UsersBooksDelete, Query()],
 ):
     """Delete an entry user_id-book_id or raise 404."""

@@ -23,7 +23,7 @@ router = APIRouter(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def books_authors_all():
+async def get_all_books_authors():
     """Get a list of entries book_id-author_id."""
     return await BooksAuthorsServices().read_all()
 
@@ -38,7 +38,7 @@ async def books_authors_all():
         409: http_exceptions.Conflict409().get_response_body(),
     },
 )
-async def books_authors_add(
+async def post_book_author(
     book_author: books_authors_schemas.BooksAuthorsCreate,
 ):
     """Create an entry book_id-author_id."""
@@ -56,7 +56,7 @@ async def books_authors_add(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def books_authors_delete(
+async def delete_book_author(
     book_author: Annotated[books_authors_schemas.BooksAuthorsDelete, Query()],
 ) -> BooksAuthorsModel | None:
     """Delete an entry book_id-author_id or raise 404."""

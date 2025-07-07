@@ -4,8 +4,8 @@ from fastapi import FastAPI
 from nicegui import ui
 
 from backend.src.books.endpoints import (
-    books_all,
-    books_get_by_id,
+    get_all_books,
+    get_book_by_id,
     get_books_with_author_id,
 )
 from frontend.components.books_grid import render_books_grid
@@ -14,12 +14,12 @@ from frontend.components.books_grid import render_books_grid
 def init(fastapi_app: FastAPI) -> None:
     @ui.page("/books")
     async def books() -> None:
-        books = await books_all()
+        books = await get_all_books()
         render_books_grid(books=books)
 
     @ui.page("/books/{book_id}")
-    async def book_detail(book_id: uuid.UUID) -> None:
-        book = await books_get_by_id(book_id=book_id)
+    async def books_id(book_id: uuid.UUID) -> None:
+        book = await get_book_by_id(book_id=book_id)
 
         authors = [
             author for author in book.book_authors if author is not None
