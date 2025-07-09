@@ -67,7 +67,8 @@ class BooksServices(BaseServices):
         authors = (
             [
                 authors_schemas.AuthorRead.model_validate(
-                    author, from_attributes=True,
+                    author,
+                    from_attributes=True,
                 )
                 for author in author_models
             ]

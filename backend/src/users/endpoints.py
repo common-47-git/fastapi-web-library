@@ -9,6 +9,7 @@ from backend.src import http_exceptions
 from backend.src.enums import ModulesEnum
 from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.schemas import users as users_schemas
+from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.services import UsersServices
 
 router = APIRouter(
@@ -74,10 +75,7 @@ async def post_user(
     },
 )
 async def get_me(
-    current_user: Annotated[
-        users_schemas.UserRead,
-        Depends(UsersServices().read_current_user),
-    ],
+    jwt_token: str,
 ) -> users_schemas.UserRead:
     """Get current user as a user schema."""
-    return current_user
+    return await UsersServices().read_current_user(token=jwt_token)
