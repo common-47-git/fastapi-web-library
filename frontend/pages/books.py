@@ -26,13 +26,10 @@ def add_books_pages():
     async def books_id(book_id: uuid.UUID):
         await render_header()
         book = await get_book_by_id(book_id=book_id)
-        authors = [
-            author for author in book.book_authors if author is not None
-        ]
         with ui.row().classes(
             "items-start justify-center gap-8 p-6 self-center",
         ):
-            render_book_info(book, authors)
+            await render_book_info(book)
 
     @ui.page("/books/with-author/{author_id}")
     async def book_with_author_id(author_id: uuid.UUID):

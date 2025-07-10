@@ -1,15 +1,28 @@
 import uuid
 
-from nicegui import ui
+from nicegui import ui, app
 
 from backend.src.books import schemas as books_schemas
+from backend.src.users.endpoints import get_me
+from backend.src.enums import BookShelfEnum  # заміни шлях на свій
 
 
-def render_book_info(book, authors):
+async def render_book_info(book: books_schemas.BookRead):
+    authors = [
+        author for author in book.book_authors if author is not None
+    ]
     with ui.column():
         ui.image(book.book_cover).style(
             "width: 250px; height: 400px; object-fit: cover;",
         )
+        #menu to choose shelf 
+        with ui.row().classes("w-full items-center gap-3"):
+            current_shelf = ui.select(
+                [shelf.value for shelf in BookShelfEnum],
+                value=BookShelfEnum.TO_READ,
+                on_change=lambda e: ui.notify(f"Moved to: {e.value}", color="primary"),
+            ).classes("w-full self-center").style("display: block")
+
     with ui.column().classes("gap-4 max-w-2xl"):
         ui.label(book.book_name).classes(
             "text-3xl self-center border-b border-gray-600 pb-1",
