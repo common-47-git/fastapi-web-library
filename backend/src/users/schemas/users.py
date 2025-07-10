@@ -1,16 +1,16 @@
 import uuid
 from datetime import date
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserAuth(BaseModel):
-    username: str
+    username: str = Field(min_length=2, max_length=50)
     password: str
 
 
 class UserBase(BaseModel):
-    username: str
+    username: str = Field(min_length=2, max_length=50)
     email: EmailStr
 
 

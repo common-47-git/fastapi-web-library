@@ -9,7 +9,6 @@ from backend.src.books.endpoints import (
     get_books_with_tag_id,
 )
 from frontend.components.books import (
-    render_book_cover,
     render_book_info,
     render_books_grid,
 )
@@ -33,7 +32,6 @@ def add_books_pages():
         with ui.row().classes(
             "items-start justify-center gap-8 p-6 self-center",
         ):
-            render_book_cover(book)
             render_book_info(book, authors)
 
     @ui.page("/books/with-author/{author_id}")

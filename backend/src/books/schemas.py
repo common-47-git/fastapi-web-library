@@ -8,13 +8,13 @@ from backend.src.tags import schemas as tags_schemas
 
 
 class BookBase(BaseModel):
-    book_name: str = Field(max_length=50)
-    book_country: str | None = Field(default=None, max_length=50)
+    book_name: str = Field(min_length=2, max_length=50)
+    book_country: str | None = Field(default=None, min_length=2, max_length=50)
     book_release_date: date | None = None
     book_translation_status: TranslationStatusEnum = (
         TranslationStatusEnum.ABSENT
     )
-    book_description: str | None = Field(default=None, max_length=1500)
+    book_description: str | None = Field(default=None, min_length=2, max_length=1500)
     book_cover: str = Field(
         default="https://ranobehub.org/img/ranobe/posters/default.jpg",
         max_length=500,

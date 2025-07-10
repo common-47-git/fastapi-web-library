@@ -3,7 +3,7 @@ from pydantic import UUID4, BaseModel, Field
 
 class ChapterBase(BaseModel):
     chapter_number: int
-    chapter_name: str = Field(max_length=50)
+    chapter_name: str = Field(min_length=2, max_length=50)
     chapter_content: str
 
 

@@ -2,7 +2,7 @@ from pydantic import UUID4, BaseModel, Field
 
 
 class TagBase(BaseModel):
-    tag_name: str = Field(max_length=50)
+    tag_name: str = Field(min_length=2, max_length=50)
 
 
 class TagCreate(TagBase):
