@@ -1,6 +1,8 @@
 from nicegui import app, ui
-from backend.src.users.endpoints import get_me
+
 from backend.src import http_exceptions
+from backend.src.users.endpoints import get_me
+
 
 async def render_header():
     with ui.header().classes(
@@ -17,11 +19,13 @@ async def render_header():
 
                 ui.link("📚 Books", "/books").classes(link_style)
 
-                if not "access_token" in app.storage.user:
+                if "access_token" not in app.storage.user:
                     ui.link("Login", "/users/login").classes(link_style)
                 else:
                     try:
-                        await get_me(jwt_token=app.storage.user["access_token"])
+                        await get_me(
+                            jwt_token=app.storage.user["access_token"]
+                        )
                         ui.link("🦲 Me", "/users/me").classes(link_style)
                     except http_exceptions.Unauthorized401 as e:
                         logout()

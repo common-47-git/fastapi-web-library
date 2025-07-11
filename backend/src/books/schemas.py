@@ -14,7 +14,9 @@ class BookBase(BaseModel):
     book_translation_status: TranslationStatusEnum = (
         TranslationStatusEnum.ABSENT
     )
-    book_description: str | None = Field(default=None, min_length=2, max_length=1500)
+    book_description: str | None = Field(
+        default=None, min_length=2, max_length=1500
+    )
     book_cover: str = Field(
         default="https://ranobehub.org/img/ranobe/posters/default.jpg",
         max_length=500,

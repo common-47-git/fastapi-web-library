@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt, ExpiredSignatureError
+from jose import ExpiredSignatureError, JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.exc import IntegrityError
 
@@ -79,7 +79,9 @@ class UsersServices(BaseServices):
             if user is None:
                 raise http_exceptions.Unauthorized401
         except ExpiredSignatureError as jwt_expired_e:
-            raise http_exceptions.Unauthorized401(jwt_expired_e) from jwt_expired_e
+            raise http_exceptions.Unauthorized401(
+                jwt_expired_e
+            ) from jwt_expired_e
         except JWTError as jwt_e:
             raise http_exceptions.Unauthorized401(jwt_e) from jwt_e
         return user

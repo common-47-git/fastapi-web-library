@@ -35,7 +35,7 @@ async def get_all_tags():
     status_code=status.HTTP_201_CREATED,
     summary="Create a tag.",
     responses={
-        201: http_exceptions.OK200().get_response_body(),
+        201: http_exceptions.Created201().get_response_body(),
         409: http_exceptions.Conflict409().get_response_body(),
     },
 )

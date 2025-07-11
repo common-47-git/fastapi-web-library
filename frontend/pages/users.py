@@ -29,7 +29,9 @@ def add_user_pages():
                         ),
                     )
                     if token_data:
-                        app.storage.user["access_token"] = token_data.access_token
+                        app.storage.user["access_token"] = (
+                            token_data.access_token
+                        )
                         ui.notify("Login successful")
                         ui.navigate.to("/users/me")
                     else:

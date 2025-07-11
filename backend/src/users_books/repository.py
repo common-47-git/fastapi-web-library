@@ -4,6 +4,7 @@ from sqlalchemy import and_, select
 
 from backend.src.books.models import BooksModel
 from backend.src.database import session_local
+from backend.src.enums import BookShelfEnum
 from backend.src.repository import SQLAlchemyRepository
 from backend.src.users.models import UsersModel
 from backend.src.users_books.models import UsersBooksModel
@@ -26,7 +27,7 @@ class UsersBooksRepository(SQLAlchemyRepository):
             result = await session.execute(query)
             return result.scalars().all()
 
-    async def read_users_books_by_id(
+    async def read_user_book_by_id(
         self,
         user_id: uuid.UUID,
         book_id: uuid.UUID,
@@ -41,13 +42,36 @@ class UsersBooksRepository(SQLAlchemyRepository):
             result = await session.execute(stmt)
             return result.scalars().first()
 
+    async def update_shelf_by_id(
+        self,
+        user_id: uuid.UUID,
+        book_id: uuid.UUID,
+        book_shelf: str,
+    ) -> UsersBooksModel | None:
+        async with session_local() as session:
+            stmt = select(self.alchemy_model).where(
+                and_(
+                    self.alchemy_model.book_id == book_id,
+                    self.alchemy_model.user_id == user_id,
+                ),
+            )
+            result = await session.execute(stmt)
+            user_book = result.scalars().first()
+
+            if not user_book:
+                return None
+            user_book.book_shelf = BookShelfEnum(book_shelf)
+            await session.commit()
+            await session.refresh(user_book)
+            return user_book
+
     async def delete_users_books_by_id(
         self,
         user_id: uuid.UUID,
         book_id: uuid.UUID,
     ) -> UsersBooksModel | None:
         async with session_local() as session:
-            entry_to_delete = await self.read_users_books_by_id(
+            entry_to_delete = await self.read_user_book_by_id(
                 user_id=user_id,
                 book_id=book_id,
             )

@@ -1,27 +1,63 @@
 import uuid
 
-from nicegui import ui, app
+from nicegui import app, ui
 
+from backend.src import http_exceptions
 from backend.src.books import schemas as books_schemas
+from backend.src.enums import BookShelfEnum
 from backend.src.users.endpoints import get_me
-from backend.src.enums import BookShelfEnum  # заміни шлях на свій
+from backend.src.users_books import schemas as users_books_schemas
+from backend.src.users_books.endpoints import get_user_book_by_id, update_user_book_shelf
 
 
-async def render_book_info(book: books_schemas.BookRead):
-    authors = [
-        author for author in book.book_authors if author is not None
-    ]
+async def render_book_info(book: books_schemas.BookFullInfo):
+    authors = [author for author in book.book_authors if author is not None]
     with ui.column():
         ui.image(book.book_cover).style(
             "width: 250px; height: 400px; object-fit: cover;",
         )
-        #menu to choose shelf 
-        with ui.row().classes("w-full items-center gap-3"):
-            current_shelf = ui.select(
-                [shelf.value for shelf in BookShelfEnum],
-                value=BookShelfEnum.TO_READ,
-                on_change=lambda e: ui.notify(f"Moved to: {e.value}", color="primary"),
-            ).classes("w-full self-center").style("display: block")
+
+        try:
+            if "access_token" not in app.storage.user:
+                raise http_exceptions.Unauthorized401
+            me = await get_me(jwt_token=app.storage.user["access_token"])
+            try:
+                user_book = await get_user_book_by_id(
+                    user_book=users_books_schemas.UsersBooksBase(
+                        user_id=me.user_id,
+                        book_id=book.book_id,
+                    ),
+                )
+                if user_book.book_shelf:
+                    async def on_shelf_change(shelf):
+                        await update_user_book_shelf(
+                            users_books_schemas.UsersBooksUpdate(
+                                user_id=me.user_id,
+                                book_id=book.book_id,
+                                book_shelf=shelf.value,
+                            )
+                        )
+                        ui.notify(f"Moved to: {shelf.value}", color="primary")
+
+                    chosen_shelf = (
+                        ui.select(
+                            [shelf.value for shelf in BookShelfEnum],
+                            value=BookShelfEnum[user_book.book_shelf.name].value,
+                            on_change=on_shelf_change,
+                        ).classes("w-full self-center")
+                    )
+            except http_exceptions.NotFound404 as nf_404:
+                raise http_exceptions.Unauthorized401 from nf_404
+        except http_exceptions.Unauthorized401:
+            with ui.row().classes("w-full items-center gap-3"):
+                chosen_shelf = ui.select(
+                    [shelf.value for shelf in BookShelfEnum],
+                    value=BookShelfEnum.TO_READ,
+                    on_change=lambda e: ui.notify(
+                        f"Moved to: {e.value}",
+                        color="primary",
+                    ),
+                ).classes("w-full self-center")
 
     with ui.column().classes("gap-4 max-w-2xl"):
         ui.label(book.book_name).classes(
@@ -31,14 +67,18 @@ async def render_book_info(book: books_schemas.BookRead):
             "w-full justify-between border-b border-gray-600 pb-1",
         ):
             ui.label("🌍 Country").classes("text-lg")
-            ui.label(book.book_country if book.book_country else "Unknown").classes("text-lg")
+            ui.label(
+                book.book_country if book.book_country else "Unknown",
+            ).classes("text-lg")
 
         with ui.row().classes(
             "w-full justify-between border-b border-gray-600 pb-1",
         ):
             ui.label("📅 Released").classes("text-lg")
             ui.label(
-                book.book_release_date.strftime("%d %b %Y").lstrip("0") if book.book_release_date else "Unknown",
+                book.book_release_date.strftime("%d %b %Y").lstrip("0")
+                if book.book_release_date
+                else "Unknown",
             ).classes("text-lg")
 
         with ui.row().classes(
@@ -56,7 +96,9 @@ async def render_book_info(book: books_schemas.BookRead):
             else:
                 with ui.row().classes("flex-wrap gap-2"):
                     for author in authors:
-                        full_name = f"{author.author_name} {author.author_surname}"
+                        full_name = (
+                            f"{author.author_name} {author.author_surname}"
+                        )
                         ui.link(
                             text=full_name,
                             target=f"/books/with-author/{author.author_id}",

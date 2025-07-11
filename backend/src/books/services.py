@@ -76,7 +76,9 @@ class BooksServices(BaseServices):
             else []
         )
 
-        book_shelf = None
+        book_shelf = (
+            None  # UsersBooksServices().read_user_book_by_id(user_book=)
+        )
 
         return book_schemas.BookFullInfo(
             **book.__dict__,

@@ -38,11 +38,45 @@ async def get_users_books_all():
     },
 )
 async def post_user_book(
-    books_books: users_books_schemas.UsersBooksRead,
+    books_books: users_books_schemas.UsersBooksCreate,
 ):
     """Create an entry book_id-user_id."""
     return await UsersBooksServices().create_one(
         pydantic_schema=books_books,
+    )
+
+
+@router.get(
+    "/with-ids/",
+    response_model=users_books_schemas.UsersBooksRead,
+    summary="Get the book-user entry by id.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
+)
+async def get_user_book_by_id(
+    user_book: Annotated[users_books_schemas.UsersBooksBase, Query()],
+):
+    """Get the book-user entry and book shelf by id."""
+    return await UsersBooksServices().read_user_book_by_id(user_book=user_book)
+
+
+@router.patch(
+    "/update",
+    response_model=users_books_schemas.UsersBooksRead,
+    summary="Update a book-user entry.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
+)
+async def update_user_book_shelf(
+    user_book: users_books_schemas.UsersBooksUpdate,
+):
+    """Update book shelf by book_id-user_id."""
+    return await UsersBooksServices().update_shelf_by_id(
+        user_book=user_book,
     )
 
 
