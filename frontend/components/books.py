@@ -7,7 +7,11 @@ from backend.src.books import schemas as books_schemas
 from backend.src.enums import BookShelfEnum
 from backend.src.users.endpoints import get_me
 from backend.src.users_books import schemas as users_books_schemas
-from backend.src.users_books.endpoints import get_user_book_by_id, update_user_book_shelf
+from backend.src.users_books.endpoints import (
+    get_user_book_by_id,
+    patch_user_book_shelf,
+    post_user_book,
+)
 
 
 async def render_book_info(book: books_schemas.BookFullInfo):
@@ -20,7 +24,9 @@ async def render_book_info(book: books_schemas.BookFullInfo):
         try:
             if "access_token" not in app.storage.user:
                 raise http_exceptions.Unauthorized401
+
             me = await get_me(jwt_token=app.storage.user["access_token"])
+
             try:
                 user_book = await get_user_book_by_id(
                     user_book=users_books_schemas.UsersBooksBase(
@@ -28,9 +34,11 @@ async def render_book_info(book: books_schemas.BookFullInfo):
                         book_id=book.book_id,
                     ),
                 )
+
                 if user_book.book_shelf:
+
                     async def on_shelf_change(shelf):
-                        await update_user_book_shelf(
+                        await patch_user_book_shelf(
                             users_books_schemas.UsersBooksUpdate(
                                 user_id=me.user_id,
                                 book_id=book.book_id,
@@ -39,22 +47,35 @@ async def render_book_info(book: books_schemas.BookFullInfo):
                         )
                         ui.notify(f"Moved to: {shelf.value}", color="primary")
 
-                    chosen_shelf = (
-                        ui.select(
-                            [shelf.value for shelf in BookShelfEnum],
-                            value=BookShelfEnum[user_book.book_shelf.name].value,
-                            on_change=on_shelf_change,
-                        ).classes("w-full self-center")
+                    ui.select(
+                        [shelf.value for shelf in BookShelfEnum],
+                        value=BookShelfEnum[user_book.book_shelf.name].value,
+                        on_change=on_shelf_change,
+                    ).classes("w-full self-center")
+            except http_exceptions.NotFound404:
+                async def on_shelf_create(shelf):
+                    await post_user_book(
+                        users_books_schemas.UsersBooksCreate(
+                            user_id=me.user_id,
+                            book_id=book.book_id,
+                            book_shelf=shelf.value,
+                        )
                     )
-            except http_exceptions.NotFound404 as nf_404:
-                raise http_exceptions.Unauthorized401 from nf_404
+                    ui.notify(f"Added to: {shelf.value}", color="primary")
+
+                ui.select(
+                    [shelf.value for shelf in BookShelfEnum],
+                    value=None,
+                    on_change=on_shelf_create,
+        ).classes("w-full self-center")
+
         except http_exceptions.Unauthorized401:
             with ui.row().classes("w-full items-center gap-3"):
-                chosen_shelf = ui.select(
+                ui.select(
                     [shelf.value for shelf in BookShelfEnum],
                     value=BookShelfEnum.TO_READ,
                     on_change=lambda e: ui.notify(
-                        f"Moved to: {e.value}",
+                        f"401: {e.value}",
                         color="primary",
                     ),
                 ).classes("w-full self-center")

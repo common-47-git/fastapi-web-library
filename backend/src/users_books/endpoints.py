@@ -71,7 +71,7 @@ async def get_user_book_by_id(
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
-async def update_user_book_shelf(
+async def patch_user_book_shelf(
     user_book: users_books_schemas.UsersBooksUpdate,
 ):
     """Update book shelf by book_id-user_id."""
