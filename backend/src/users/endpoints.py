@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from backend.env.config import AuthConfig
 from backend.src import http_exceptions
 from backend.src.enums import ModulesEnum
+from backend.src.users.models import UsersModel
 from backend.src.users.schemas import tokens as tokens_schemas
 from backend.src.users.schemas import users as users_schemas
 from backend.src.users.services import UsersServices
@@ -75,6 +76,6 @@ async def post_user(
 )
 async def get_me(
     jwt_token: str,
-) -> users_schemas.UserRead:
+) -> UsersModel:
     """Get current user as a user schema."""
     return await UsersServices().read_current_user(token=jwt_token)
