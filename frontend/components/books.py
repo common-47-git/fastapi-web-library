@@ -59,50 +59,53 @@ async def _render_shelf_select(
 ) -> None:
     shelf_options = [shelf.value for shelf in BookShelfEnum]
 
-    if authed_user is None:
-        ui.select(
-            shelf_options,
-            value=BookShelfEnum.TO_READ.value,
-            on_change=lambda _: ui.notify("Log in first", color="primary"),
-        ).classes("w-full self-center")
-        return
+    # Default values (for unauthenticated users)
+    selected_value = BookShelfEnum.TO_READ.value
+    async def handle_unauthenticated(_: Enum) -> None:
+        ui.notify("Log in first", color="primary")
 
-    async def on_shelf_change(e: Enum) -> None:
-        selected = BookShelfEnum(e.value)
-        await patch_user_book_shelf(
-            users_books_schemas.UsersBooksUpdate(
-                user_id=authed_user.user_id,
-                book_id=book.book_id,
-                book_shelf=selected.value,
-            ),
-        )
-        ui.notify(f"Moved to: {selected.value}", color="primary")
+    on_change_handler = handle_unauthenticated
 
-    async def on_shelf_create(e: Enum) -> None:
-        selected = BookShelfEnum(e.value)
-        await post_user_book(
-            users_books_schemas.UsersBooksCreate(
-                user_id=authed_user.user_id,
-                book_id=book.book_id,
-                book_shelf=selected.value,
-            ),
-        )
-        ui.notify(f"Added to: {selected.value}", color="primary")
+    if authed_user:
+        selected_value = current_book_shelf.value if current_book_shelf else None
+
+        async def handle_update(e: Enum) -> None:
+            selected = BookShelfEnum(e.value)
+            await patch_user_book_shelf(
+                users_books_schemas.UsersBooksUpdate(
+                    user_id=authed_user.user_id,
+                    book_id=book.book_id,
+                    book_shelf=selected.value,
+                ),
+            )
+            ui.notify(f"Moved to: {selected.value}", color="primary")
+
+        async def handle_create(e: Enum) -> None:
+            selected = BookShelfEnum(e.value)
+            await post_user_book(
+                users_books_schemas.UsersBooksCreate(
+                    user_id=authed_user.user_id,
+                    book_id=book.book_id,
+                    book_shelf=selected.value,
+                ),
+            )
+            ui.notify(f"Added to: {selected.value}", color="primary")
+
+        on_change_handler = handle_update if current_book_shelf else handle_create
 
     ui.select(
-        shelf_options,
-        value=current_book_shelf.value if current_book_shelf else None,
-        on_change=on_shelf_change if current_book_shelf else on_shelf_create,
+        options=shelf_options,
+        value=selected_value,
+        on_change=on_change_handler,
     ).classes("w-full self-center")
 
 
-async def render_book_info(
+async def _render_book_info_left(
     book: books_schemas.BookFullInfo,
     authed_user: UsersModel | None,
     current_book_shelf: Enum | None,
 ):
-    with ui.row().classes("items-start justify-center gap-8 p-6 self-center"):
-        with ui.column():
+    with ui.column():
             ui.image(book.book_cover).style(
                 "width: 250px; height: 400px; object-fit: cover;",
             )
@@ -113,37 +116,56 @@ async def render_book_info(
                 current_book_shelf,
             )
 
-        with ui.column().classes("gap-4 max-w-2xl"):
-            ui.label(book.book_name).classes(
-                "text-3xl self-center border-b border-gray-600 pb-1"
-            )
 
-            await _render_book_info_line(
-                "🌍 Country",
-                book.book_country,
-            )
-            await _render_book_info_line(
-                "📅 Released",
-                book.book_release_date.strftime("%d %b %Y").lstrip("0")
-                if book.book_release_date
-                else None,
-            )
-            await _render_book_info_line(
-                "🈳 Translation",
-                book.book_translation_status.value,
-            )
-            await _render_book_authors(
-                "✍️ Authors",
-                book.book_authors,
-            )
-            await _render_book_tags(
-                "🏷️",
-                book.book_tags,
-            )
+async def _render_book_info_right(
+    book: books_schemas.BookFullInfo,
+):
+    with ui.column().classes("gap-4 max-w-2xl"):
+        ui.label(book.book_name).classes(
+            "text-3xl self-center border-b border-gray-600 pb-1"
+        )
+        await _render_book_info_line(
+            "🌍 Country",
+            book.book_country,
+        )
+        await _render_book_info_line(
+            "📅 Released",
+            book.book_release_date.strftime("%d %b %Y").lstrip("0")
+            if book.book_release_date
+            else None,
+        )
+        await _render_book_info_line(
+            "🈳 Translation",
+            book.book_translation_status.value,
+        )
+        await _render_book_authors(
+            "✍️ Authors",
+            book.book_authors,
+        )
+        await _render_book_tags(
+            "🏷️",
+            book.book_tags,
+        )
+        ui.label(book.book_description or "No description").classes(
+            "text-lg",
+        ).style("white-space: pre-wrap;")
 
-            ui.label(book.book_description or "No description").classes(
-                "text-lg",
-            ).style("white-space: pre-wrap;")
+
+async def render_book_info(
+    book: books_schemas.BookFullInfo,
+    authed_user: UsersModel | None,
+    current_book_shelf: Enum | None,
+):
+    with ui.row().classes("items-start justify-center gap-8 p-6 self-center"):
+        await _render_book_info_left(
+            book=book,
+            authed_user=authed_user,
+            current_book_shelf=current_book_shelf,
+        )
+        await _render_book_info_right(
+            book=book,
+        )
+
 
 
 def render_books_grid(books: list[books_schemas.BookRead]):
