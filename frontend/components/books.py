@@ -111,9 +111,13 @@ async def _render_book_info_left(
             )
 
             await _render_shelf_select(
-                book,
-                authed_user,
-                current_book_shelf,
+                book=book,
+                authed_user=authed_user,
+                current_book_shelf=current_book_shelf,
+            )
+
+            await _render_read_button(
+                book=book,
             )
 
 
@@ -150,6 +154,19 @@ async def _render_book_info_right(
             "text-lg",
         ).style("white-space: pre-wrap;")
 
+async def _render_read_button(
+    book: books_schemas.BookFullInfo,
+    chapter_number: int = 1,
+    volume_number: int = 1,
+) -> None:
+    ui.button(
+        "📖 Read",
+        on_click=lambda: ui.navigate.to(
+            f"/chapters/read/{book.book_name}/{volume_number}/{chapter_number}"
+        ),
+    ).classes(
+        "w-full self-center mt-4 bg-sky-700 hover:bg-sky-800 text-white font-lg px-4 py-2 rounded"
+    )
 
 async def render_book_info(
     book: books_schemas.BookFullInfo,
