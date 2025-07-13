@@ -1,3 +1,4 @@
+import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
@@ -47,8 +48,30 @@ async def get_chapter_by_book_name(
     chapter_number: int = 1,
 ):
     """Read a chapter linked with book by volume_id and book_id."""
-    return await ChaptersServices().read_book_chapter(
+    return await ChaptersServices().read_book_chapter_by_book_name(
         book_name=book_name,
+        volume_number=volume_number,
+        chapter_number=chapter_number,
+    )
+
+
+@router.get(
+    "/read-id/{book_id}",
+    response_model=chapters_schemas.ChapterRead,
+    summary="Read a chapter.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
+)
+async def get_chapter_by_book_id(
+    book_id: uuid.UUID,
+    volume_number: int = 1,
+    chapter_number: int = 1,
+):
+    """Read a chapter linked with book by volume_id and book_id."""
+    return await ChaptersServices().read_book_chapter_by_book_id(
+        book_id=book_id,
         volume_number=volume_number,
         chapter_number=chapter_number,
     )

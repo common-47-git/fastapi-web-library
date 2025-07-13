@@ -1,6 +1,7 @@
 from enum import Enum
+
 from nicegui import ui
-from nicegui.events import EventArguments
+
 from backend.src.books import schemas as books_schemas
 from backend.src.enums import BookShelfEnum
 from backend.src.users.models import UsersModel
@@ -13,7 +14,7 @@ from backend.src.users_books.endpoints import (
 
 async def _render_book_info_line(title: str, value: str | None) -> None:
     with ui.row().classes(
-        "w-full justify-between border-b border-gray-600 pb-1"
+        "w-full justify-between border-b border-gray-600 pb-1",
     ):
         ui.label(title).classes("text-lg")
         ui.label(value or "Unknown").classes("text-lg")
@@ -34,7 +35,7 @@ async def _render_book_authors(title: str, authors: list | None) -> None:
                         text=full_name,
                         target=f"/books/with-author/{author.author_id}",
                     ).classes(
-                        "bg-sky-900 rounded px-2 text-base text-white no-underline"
+                        "bg-sky-900 rounded px-2 text-base text-white no-underline",
                     )
 
 
@@ -48,7 +49,7 @@ async def _render_book_tags(title: str, tags: list | None) -> None:
                 text=tag.tag_name,
                 target=f"/books/with-tag/{tag.tag_id}",
             ).classes(
-                "bg-sky-900 rounded px-2 text-base text-white no-underline"
+                "bg-sky-900 rounded px-2 text-base text-white no-underline",
             )
 
 
@@ -61,13 +62,16 @@ async def _render_shelf_select(
 
     # Default values (for unauthenticated users)
     selected_value = BookShelfEnum.TO_READ.value
+
     async def handle_unauthenticated(_: Enum) -> None:
         ui.notify("Log in first", color="primary")
 
     on_change_handler = handle_unauthenticated
 
     if authed_user:
-        selected_value = current_book_shelf.value if current_book_shelf else None
+        selected_value = (
+            current_book_shelf.value if current_book_shelf else None
+        )
 
         async def handle_update(e: Enum) -> None:
             selected = BookShelfEnum(e.value)
@@ -91,7 +95,9 @@ async def _render_shelf_select(
             )
             ui.notify(f"Added to: {selected.value}", color="primary")
 
-        on_change_handler = handle_update if current_book_shelf else handle_create
+        on_change_handler = (
+            handle_update if current_book_shelf else handle_create
+        )
 
     ui.select(
         options=shelf_options,
@@ -106,19 +112,19 @@ async def _render_book_info_left(
     current_book_shelf: Enum | None,
 ):
     with ui.column():
-            ui.image(book.book_cover).style(
-                "width: 250px; height: 400px; object-fit: cover;",
-            )
+        ui.image(book.book_cover).style(
+            "width: 250px; height: 400px; object-fit: cover;",
+        )
 
-            await _render_shelf_select(
-                book=book,
-                authed_user=authed_user,
-                current_book_shelf=current_book_shelf,
-            )
+        await _render_shelf_select(
+            book=book,
+            authed_user=authed_user,
+            current_book_shelf=current_book_shelf,
+        )
 
-            await _render_read_button(
-                book=book,
-            )
+        await _render_read_button(
+            book=book,
+        )
 
 
 async def _render_book_info_right(
@@ -126,7 +132,7 @@ async def _render_book_info_right(
 ):
     with ui.column().classes("gap-4 max-w-2xl"):
         ui.label(book.book_name).classes(
-            "text-3xl self-center border-b border-gray-600 pb-1"
+            "text-3xl self-center border-b border-gray-600 pb-1",
         )
         await _render_book_info_line(
             "🌍 Country",
@@ -154,6 +160,7 @@ async def _render_book_info_right(
             "text-lg",
         ).style("white-space: pre-wrap;")
 
+
 async def _render_read_button(
     book: books_schemas.BookFullInfo,
     chapter_number: int = 1,
@@ -162,11 +169,12 @@ async def _render_read_button(
     ui.button(
         "📖 Read",
         on_click=lambda: ui.navigate.to(
-            f"/chapters/read/{book.book_name}/{volume_number}/{chapter_number}"
+            f"/chapters/read-id/{book.book_id}/{volume_number}/{chapter_number}",
         ),
     ).classes(
-        "w-full self-center mt-4 bg-sky-700 hover:bg-sky-800 text-white font-lg px-4 py-2 rounded"
+        "w-full self-center mt-4 bg-sky-700 text-white font-lg px-4 py-2 rounded",
     )
+
 
 async def render_book_info(
     book: books_schemas.BookFullInfo,
@@ -184,29 +192,28 @@ async def render_book_info(
         )
 
 
-
 def render_books_grid(books: list[books_schemas.BookRead]):
     with ui.row().classes("flex flex-wrap gap-6 justify-center self-center"):
         for book in books:
             with ui.element("div").classes(
-                "relative w-64 h-96 cursor-pointer group overflow-hidden rounded shadow-lg"
+                "relative w-64 h-96 cursor-pointer group overflow-hidden rounded shadow-lg",
             ) as card:
                 ui.image(book.book_cover).classes("w-full h-full object-cover")
 
                 with (
                     ui.element("div")
                     .classes(
-                        "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex justify-center items-center"
+                        "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex justify-center items-center",
                     )
                     .style("background-color: rgba(0, 0, 0, 0.7);")
                 ):
                     ui.label(book.book_name).classes(
-                        "text-white text-xl font-semibold text-center px-2"
+                        "text-white text-xl font-semibold text-center px-2",
                     )
 
                 card.on(
                     "click",
                     lambda e, book_id=book.book_id: ui.navigate.to(
-                        f"/books/{book_id}"
+                        f"/books/{book_id}",
                     ),
                 )

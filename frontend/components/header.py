@@ -24,7 +24,7 @@ async def render_header():
                 else:
                     try:
                         await get_me(
-                            jwt_token=app.storage.user["access_token"]
+                            jwt_token=app.storage.user["access_token"],
                         )
                         ui.link("🦲 Me", "/users/me").classes(link_style)
                     except http_exceptions.Unauthorized401 as e:

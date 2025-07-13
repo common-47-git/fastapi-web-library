@@ -1,7 +1,6 @@
 import uuid
 
 from nicegui import app, ui
-from sqlalchemy import exc
 
 from backend.src import http_exceptions
 from backend.src.books.endpoints import (
@@ -10,7 +9,6 @@ from backend.src.books.endpoints import (
     get_books_with_author_id,
     get_books_with_tag_id,
 )
-from backend.src.chapters.endpoints import get_chapter_by_book_name
 from backend.src.users.endpoints import get_me
 from backend.src.users_books import schemas as users_books_schemas
 from backend.src.users_books.endpoints import get_user_book_by_id
@@ -56,7 +54,6 @@ def add_books_pages():
             current_book_shelf=shelf,
         )
 
-
     @ui.page("/books/with-author/{author_id}")
     async def book_with_author_id(author_id: uuid.UUID):
         await render_header()
@@ -68,17 +65,3 @@ def add_books_pages():
         await render_header()
         books = await get_books_with_tag_id(tag_id=tag_id)
         render_books_grid(books=books)
-
-
-    @ui.page("/chapters/read/{book_name}/{volume_number}/{chapter_number}")
-    async def chapter_read_book_name(book_name: str, volume_number: int, chapter_number: int):
-        await render_header()
-        chapter = await get_chapter_by_book_name(
-            book_name=book_name,
-            volume_number=volume_number,
-            chapter_number=chapter_number,
-        )
-
-        # Render the chapter info here
-        ui.label(f"📖 {chapter.chapter_name}").classes("text-2xl font-bold mb-4")
-        ui.label(chapter.chapter_content).classes("text-lg").style("white-space: pre-wrap;")
