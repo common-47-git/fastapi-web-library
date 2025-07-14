@@ -131,9 +131,7 @@ async def _render_book_info_right(
     book: books_schemas.BookFullInfo,
 ):
     with ui.column().classes("gap-4 max-w-2xl"):
-        ui.label(book.book_name).classes(
-            "text-3xl self-center border-b border-gray-600 pb-1",
-        )
+        await _render_book_title(title=book.book_name)
         await _render_book_info_line(
             "🌍 Country",
             book.book_country,
@@ -156,9 +154,19 @@ async def _render_book_info_right(
             "🏷️",
             book.book_tags,
         )
-        ui.label(book.book_description or "No description").classes(
-            "text-lg",
-        ).style("white-space: pre-wrap;")
+        await _render_book_description(description=book.book_description)
+
+
+async def _render_book_title(title: str):
+    ui.label(title).classes(
+        "text-3xl self-center border-b border-gray-600 pb-1",
+    )
+
+
+async def _render_book_description(description: str | None) -> None:
+    ui.label(description or "No description").classes(
+        "text-lg",
+    ).style("white-space: pre-wrap;")
 
 
 async def _render_read_button(
@@ -172,7 +180,7 @@ async def _render_read_button(
             f"/chapters/read-id/{book.book_id}/{volume_number}/{chapter_number}",
         ),
     ).classes(
-        "w-full self-center mt-4 bg-sky-700 text-white font-lg px-4 py-2 rounded",
+        "w-full self-center bg-sky-900 text-lg rounded",
     )
 
 
@@ -181,7 +189,7 @@ async def render_book_info(
     authed_user: UsersModel | None,
     current_book_shelf: Enum | None,
 ):
-    with ui.row().classes("items-start justify-center gap-8 p-6 self-center"):
+    with ui.row().classes("items-start justify-center gap-8 pt-6 self-center"):
         await _render_book_info_left(
             book=book,
             authed_user=authed_user,
