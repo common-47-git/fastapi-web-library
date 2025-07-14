@@ -20,7 +20,7 @@ class UserCreate(UserBase):
 
 class UserRead(UserBase):
     user_id: uuid.UUID
-    registration_date: date | None = None
+    registration_date: date
     disabled: bool | None = None
 
 

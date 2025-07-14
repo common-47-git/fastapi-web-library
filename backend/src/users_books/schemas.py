@@ -17,6 +17,8 @@ class UsersBooksCreate(UsersBooksBase):
 
 
 class UsersBooksRead(UsersBooksBase):
+    book_name: str
+    book_cover: str | None = None
     book_shelf: str | None = None
 
 

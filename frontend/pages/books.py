@@ -13,8 +13,8 @@ from backend.src.users.endpoints import get_me
 from backend.src.users_books import schemas as users_books_schemas
 from backend.src.users_books.endpoints import get_user_book_by_id
 from frontend.components.books import (
-    render_book_info,
-    render_books_grid,
+    book_info,
+    books_grid,
 )
 from frontend.components.header import render_header
 
@@ -24,7 +24,7 @@ def add_books_pages():
     async def books():
         await render_header()
         books = await get_all_books()
-        render_books_grid(books=books)
+        books_grid.render_books_grid(books=books)
 
     @ui.page("/books/{book_id}")
     async def books_id(book_id: uuid.UUID):
@@ -48,7 +48,7 @@ def add_books_pages():
             except http_exceptions.NotFound404:
                 pass
 
-        await render_book_info(
+        await book_info.render_book_info(
             book=book,
             authed_user=authed_user,
             current_book_shelf=shelf,
@@ -58,10 +58,10 @@ def add_books_pages():
     async def book_with_author_id(author_id: uuid.UUID):
         await render_header()
         books = await get_books_with_author_id(author_id=author_id)
-        render_books_grid(books=books)
+        books_grid.render_books_grid(books=books)
 
     @ui.page("/books/with-tag/{tag_id}")
     async def book_with_tag_id(tag_id: uuid.UUID):
         await render_header()
         books = await get_books_with_tag_id(tag_id=tag_id)
-        render_books_grid(books=books)
+        books_grid.render_books_grid(books=books)

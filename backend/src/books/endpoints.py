@@ -9,6 +9,7 @@ from backend.src.books.deps import BooksDeps
 from backend.src.books.models import BooksModel
 from backend.src.books.services import BooksServices
 from backend.src.enums import ModulesEnum
+from backend.src.users_books import schemas as users_books_schemas
 
 router = APIRouter(
     prefix=f"/{ModulesEnum.BOOKS.value}",
@@ -79,6 +80,24 @@ async def get_books_with_tag_id(
     """Get books by it's tag id, or raise 404."""
     return await BooksServices().read_books_by_tag_id(
         tag_id=tag_id,
+    )
+
+
+@router.get(
+    "/with-user/{user_id}",
+    response_model=list[users_books_schemas.UsersBooksRead],
+    summary="Get books by user.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
+)
+async def get_books_with_user_id(
+    user_id: uuid.UUID,
+) -> list[users_books_schemas.UsersBooksRead]:
+    """Get books by it's user id, or raise 404."""
+    return await BooksServices().read_books_by_user_id(
+        user_id=user_id,
     )
 
 

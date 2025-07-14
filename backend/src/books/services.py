@@ -9,11 +9,28 @@ from backend.src.books.repository import BooksRepository
 from backend.src.services import BaseServices
 from backend.src.tags import schemas as tags_schemas
 from backend.src.tags.repository import TagsRepository
+from backend.src.users_books.schemas import UsersBooksRead
 
 
 class BooksServices(BaseServices):
     alchemy_model: type[BooksModel] = BooksModel
     repository: type[BooksRepository] = BooksRepository
+
+    async def read_books_by_user_id(
+        self,
+        user_id: uuid.UUID,
+    ):
+        books: list[dict] = await self.repository().read_books_by_user_id(
+            user_id=user_id,
+        )
+        if not books:
+            raise http_exceptions.NotFound404
+        return [
+            UsersBooksRead(
+                **book,
+            )
+            for book in books
+        ]
 
     async def read_books_by_author_id(
         self,

@@ -1,74 +1,79 @@
-from fastapi.security import OAuth2PasswordRequestForm
 from nicegui import app, ui
 
-from backend.src import http_exceptions
-from backend.src.users.endpoints import get_me, login_for_access_token
+from backend.src.books.endpoints import get_books_with_user_id
+from backend.src.users.endpoints import get_me
+from backend.src.users_books import schemas as users_books_schemas
 from frontend.components.header import render_header
+from frontend.components.users.my_info import render_my_info
+from frontend.components.users.user_login import render_user_login
 
 
 def add_user_pages():
     @ui.page("/users/login")
     async def login_page():
         await render_header()
-        with ui.column().classes(
-            "h-[87vh] items-center justify-center self-center",
-        ):
-            username = ui.input("Username").props("outlined")
-            password = (
-                ui.input("Password", password=True)
-                .props("outlined")
-                .props("toggle-password")
-            )
-
-            async def do_login():
-                try:
-                    token_data = await login_for_access_token(
-                        OAuth2PasswordRequestForm(
-                            username=username.value,
-                            password=password.value,
-                        ),
-                    )
-                    if token_data:
-                        app.storage.user["access_token"] = (
-                            token_data.access_token
-                        )
-                        ui.notify("Login successful")
-                        ui.navigate.to("/users/me")
-                    else:
-                        ui.notify("Login failed", color="negative")
-                except http_exceptions.NotFound404:
-                    ui.notify("Wrong username or password(", color="negative")
-
-            ui.button("Login", on_click=do_login).classes("w-full")
+        await render_user_login()
 
     @ui.page("/users/me")
     async def get_me_page():
         await render_header()
+
+        if "access_token" not in app.storage.user:
+            ui.navigate.to("/users/login")
+            return
+
         jwt_token = app.storage.user["access_token"]
+        current_user = await get_me(jwt_token=jwt_token)
+        books = await get_books_with_user_id(user_id=current_user.user_id)
 
-        current_user_schema = await get_me(jwt_token=jwt_token)
-
-        with ui.card().classes("p-4 max-w-xl mx-auto mt-8"):
-            ui.label(current_user_schema.username).classes(
-                "text-2xl mb-4 font-bold self-center",
-            )
-
-            with ui.row().classes("w-full"):
-                with ui.column().classes("items-end gap-2 text-right"):
-                    ui.label("📧 Email:").classes("text-lg")
-                    ui.label("📅 Registered:").classes("text-lg")
-
-                with ui.column().classes("items-start gap-2"):
-                    ui.label(current_user_schema.email).classes("text-lg")
-                    ui.label(
-                        str(current_user_schema.registration_date),
-                    ).classes("text-lg")
-        ui.button("Logout", on_click=logout).classes(
-            "bg-red-600 text-white text-lg px-4 py-2 rounded-md hover:bg-red-700 transition",
+        shelves = sorted(
+            set(book.book_shelf for book in books if book.book_shelf)
         )
+        default_shelf = shelves[0] if shelves else None
+
+        await render_my_info(current_user=current_user)
+
+        grid = render_books_grid_by_shelf(books=books, shelf=default_shelf)
+
+        with ui.column().classes("self-center py-10"):
+            ui.select(
+                options=shelves,
+                value=default_shelf,
+                label="Choose shelf",
+                on_change=lambda e: grid.refresh(books=books, shelf=e.value),
+            ).classes("w-64 self-center")
 
 
-def logout():
-    app.storage.user.clear()
-    ui.notify("Logged out", color="warning")
-    ui.navigate.to("/users/login")
+@ui.refreshable
+def render_books_grid_by_shelf(
+    books: list[users_books_schemas.UsersBooksRead],
+    shelf: str | None,
+):
+    with ui.row().classes("flex flex-wrap gap-6 justify-center self-center"):
+        for book in books:
+            if book.book_shelf == shelf:
+                with ui.element("div").classes(
+                    "relative w-64 h-96 cursor-pointer group overflow-hidden rounded shadow-lg",
+                ) as card:
+                    ui.image(book.book_cover).classes(
+                        "w-full h-full object-cover"
+                    )
+
+                    with (
+                        ui.element("div")
+                        .classes(
+                            "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex justify-center items-center",
+                        )
+                        .style("background-color: rgba(0, 0, 0, 0.7);")
+                    ):
+                        ui.label(book.book_name).classes(
+                            "text-white text-xl font-semibold text-center px-2",
+                        )
+
+                    card.on(
+                        "click",
+                        lambda e, book_id=book.book_id: ui.navigate.to(
+                            f"/books/{book_id}",
+                        ),
+                    )
+    return render_books_grid_by_shelf
