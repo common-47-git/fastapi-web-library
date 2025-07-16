@@ -24,7 +24,7 @@ def add_books_pages():
     async def books():
         await render_header()
         books = await get_all_books()
-        books_grid.render_books_grid(books=books)
+        books_grid.BooksGridComponent(books=books).render()
 
     @ui.page("/books/{book_id}")
     async def books_id(book_id: uuid.UUID):
@@ -48,20 +48,20 @@ def add_books_pages():
             except http_exceptions.NotFound404:
                 pass
 
-        await book_info.render_book_info(
+        await book_info.BookInfoComponent(
             book=book,
             authed_user=authed_user,
-            current_book_shelf=shelf,
-        )
+            current_book_shelf=shelf.value,
+        ).render()
 
     @ui.page("/books/with-author/{author_id}")
     async def book_with_author_id(author_id: uuid.UUID):
         await render_header()
         books = await get_books_with_author_id(author_id=author_id)
-        books_grid.render_books_grid(books=books)
+        books_grid.BooksGridComponent(books=books).render()
 
     @ui.page("/books/with-tag/{tag_id}")
     async def book_with_tag_id(tag_id: uuid.UUID):
         await render_header()
         books = await get_books_with_tag_id(tag_id=tag_id)
-        books_grid.render_books_grid(books=books)
+        books_grid.BooksGridComponent(books=books).render()

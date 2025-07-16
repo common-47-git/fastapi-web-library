@@ -6,7 +6,7 @@ from sqlalchemy.orm import DeclarativeBase
 
 from backend.env.config import DatabaseConfig
 
-engine = create_async_engine(url=DatabaseConfig().pg_dsn, echo=True)
+engine = create_async_engine(url=DatabaseConfig().pg_dsn, echo=False)
 
 
 session_local = async_sessionmaker(

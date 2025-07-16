@@ -2,32 +2,16 @@ import uuid
 
 from sqlalchemy import and_, select
 
-from backend.src.books.models import BooksModel
 from backend.src.database import session_local
 from backend.src.enums import BookShelfEnum
 from backend.src.repository import SQLAlchemyRepository
-from backend.src.users.models import UsersModel
 from backend.src.users_books.models import UsersBooksModel
 
 
 class UsersBooksRepository(SQLAlchemyRepository):
     alchemy_model: type[UsersBooksModel] = UsersBooksModel
 
-    async def read_user_books(
-        self,
-        username: str,
-    ) -> list[BooksModel] | None:
-        async with session_local() as session:
-            query = (
-                select(BooksModel)
-                .join(UsersBooksModel)
-                .join(UsersModel)
-                .filter(UsersModel.username == username)
-            )
-            result = await session.execute(query)
-            return result.scalars().all()
-
-    async def read_user_book_by_id(
+    async def read_user_book_by_ids(
         self,
         user_id: uuid.UUID,
         book_id: uuid.UUID,
@@ -42,7 +26,7 @@ class UsersBooksRepository(SQLAlchemyRepository):
             result = await session.execute(stmt)
             return result.scalars().first()
 
-    async def update_shelf_by_id(
+    async def update_shelf_by_ids(
         self,
         user_id: uuid.UUID,
         book_id: uuid.UUID,
@@ -65,13 +49,13 @@ class UsersBooksRepository(SQLAlchemyRepository):
             await session.refresh(user_book)
             return user_book
 
-    async def delete_users_books_by_id(
+    async def delete_users_books_by_ids(
         self,
         user_id: uuid.UUID,
         book_id: uuid.UUID,
     ) -> UsersBooksModel | None:
         async with session_local() as session:
-            entry_to_delete = await self.read_user_book_by_id(
+            entry_to_delete = await self.read_user_book_by_ids(
                 user_id=user_id,
                 book_id=book_id,
             )

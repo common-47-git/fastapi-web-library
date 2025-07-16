@@ -13,7 +13,7 @@ class UsersBooksServices(BaseServices):
         self,
         user_book: users_books_schemas.UsersBooksBase,
     ):
-        entry = await UsersBooksRepository().read_user_book_by_id(
+        entry = await UsersBooksRepository().read_user_book_by_ids(
             user_id=user_book.user_id,
             book_id=user_book.book_id,
         )
@@ -25,7 +25,7 @@ class UsersBooksServices(BaseServices):
         self,
         user_book: users_books_schemas.UsersBooksUpdate,
     ):
-        entry = await UsersBooksRepository().update_shelf_by_id(
+        entry = await UsersBooksRepository().update_shelf_by_ids(
             user_id=user_book.user_id,
             book_id=user_book.book_id,
             book_shelf=user_book.book_shelf,
@@ -38,7 +38,7 @@ class UsersBooksServices(BaseServices):
         self,
         users_books: users_books_schemas.UsersBooksDelete,
     ):
-        deleted = await UsersBooksRepository().delete_users_books_by_id(
+        deleted = await UsersBooksRepository().delete_users_books_by_ids(
             user_id=users_books.user_id,
             book_id=users_books.book_id,
         )
