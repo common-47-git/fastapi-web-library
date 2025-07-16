@@ -1,11 +1,15 @@
 import uuid
+
 from nicegui import ui
+
 from backend.src import http_exceptions
 from backend.src.chapters.endpoints import get_chapter_by_book_id
 
 
 class ChapterContentComponent:
-    def __init__(self, book_id: uuid.UUID, volume_number: int, chapter_number: int):
+    def __init__(
+        self, book_id: uuid.UUID, volume_number: int, chapter_number: int
+    ):
         self.book_id = book_id
         self.volume_number = volume_number
         self.chapter_number = chapter_number
@@ -38,14 +42,22 @@ class ChapterContentComponent:
 
     async def _check_nav_buttons(self):
         if self.chapter_number > 1:
-            self.prev_exists = await self._check_chapter_exists(self.chapter_number - 1)
-        self.next_exists = await self._check_chapter_exists(self.chapter_number + 1)
+            self.prev_exists = await self._check_chapter_exists(
+                self.chapter_number - 1
+            )
+        self.next_exists = await self._check_chapter_exists(
+            self.chapter_number + 1
+        )
 
     def _render_header(self):
-        ui.label(f"📖 {self.chapter.chapter_name}").classes("text-2xl font-bold")
+        ui.label(f"📖 {self.chapter.chapter_name}").classes(
+            "text-2xl font-bold"
+        )
 
     def _render_body(self):
-        ui.label(self.chapter.chapter_content).classes("text-xl").style("white-space: pre-wrap;")
+        ui.label(self.chapter.chapter_content).classes("text-xl").style(
+            "white-space: pre-wrap;"
+        )
 
     def _render_nav_buttons(self):
         with ui.row().classes("self-center justify-center gap-4 mt-6"):
@@ -54,12 +66,12 @@ class ChapterContentComponent:
                 ui.button(
                     "Prev",
                     on_click=lambda: ui.navigate.to(
-                        f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number - 1}"
+                        f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number - 1}",
                     ),
                 ).classes("text-lg bg-sky-800 text-white")
             else:
                 ui.button("Prev").classes("text-lg text-white").style(
-                    "background-color: gray; cursor: not-allowed"
+                    "background-color: gray; cursor: not-allowed",
                 ).props("disabled")
 
             ui.button(
@@ -71,12 +83,12 @@ class ChapterContentComponent:
                 ui.button(
                     "Next",
                     on_click=lambda: ui.navigate.to(
-                        f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number + 1}"
+                        f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number + 1}",
                     ),
                 ).classes("text-lg bg-sky-800 text-white")
             else:
                 ui.button("Next").classes("text-lg text-white").style(
-                    "background-color: gray; cursor: not-allowed"
+                    "background-color: gray; cursor: not-allowed",
                 ).props("disabled")
 
     async def render(self):
@@ -85,7 +97,11 @@ class ChapterContentComponent:
 
         await self._check_nav_buttons()
 
-        with ui.column().classes("self-center items-center gap-6").style("width: 1024px"):
+        with (
+            ui.column()
+            .classes("self-center items-center gap-6")
+            .style("width: 1024px")
+        ):
             self._render_header()
             self._render_body()
             self._render_nav_buttons()

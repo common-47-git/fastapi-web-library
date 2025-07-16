@@ -18,10 +18,12 @@ class MyInfoComponent:
                 ).render()
                 await info_line.InfoLineComponent(
                     title="Registered",
-                    value=self.current_user.registration_date.strftime("%d %b %Y").lstrip("0"),
+                    value=self.current_user.registration_date.strftime(
+                        "%d %b %Y"
+                    ).lstrip("0"),
                 ).render()
             ui.button("Logout", on_click=self.logout).classes(
-                "self-center bg-red-600 text-white text-lg px-4 py-2 rounded-md hover:bg-red-700 transition"
+                "self-center bg-red-600 text-white text-lg px-4 py-2 rounded-md hover:bg-red-700 transition",
             )
 
     class UsernameTitle:
