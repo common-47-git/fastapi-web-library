@@ -2,10 +2,10 @@ from enum import Enum
 
 from nicegui import ui
 
+from backend.src.books import schemas as books_schemas
 from backend.src.enums import BookShelfEnum
 from backend.src.users.models import UsersModel
 from backend.src.users_books import schemas as users_books_schemas
-from backend.src.books import schemas as books_schemas
 from backend.src.users_books.endpoints import (
     patch_user_book_shelf,
     post_user_book,
@@ -34,7 +34,7 @@ class BookInfoComponent:
     class Left:
         def __init__(self, parent: "BookInfoComponent"):
             self.parent = parent
-            
+
         async def render(self):
             with ui.column():
                 await self.Image(self.parent).render()
@@ -74,20 +74,20 @@ class BookInfoComponent:
             book = self.parent.book
             with ui.column().classes("gap-4 max-w-2xl"):
                 BookInfoComponent.Right.Title(book.book_name).render()
-                await info_line.render_info_line(
+                await info_line.InfoLineComponent(
                     "🌍 Country",
                     book.book_country,
-                )
-                await info_line.render_info_line(
+                ).render()
+                await info_line.InfoLineComponent(
                     "📅 Released",
                     book.book_release_date.strftime("%d %b %Y").lstrip("0")
                     if book.book_release_date
                     else None,
-                )
-                await info_line.render_info_line(
+                ).render()
+                await info_line.InfoLineComponent(
                     "🈳 Translation",
                     book.book_translation_status.value,
-                )
+                ).render()
                 await BookInfoComponent.Right.Authors(
                     book.book_authors,
                 ).render()
@@ -186,7 +186,7 @@ class BookInfoComponent:
 
         async def render(self):
             shelf_options = [shelf.value for shelf in BookShelfEnum]
-            selected_value = BookShelfEnum.TO_READ.value
+            selected_value = None
 
             on_change_handler = self._handle_unauthenticated
             if self.authed_user:

@@ -2,15 +2,15 @@ from fastapi import FastAPI
 from nicegui import ui
 
 from backend.env.config import AuthConfig
-from frontend.pages.books import add_books_pages
-from frontend.pages.chapters import add_chapters_pages
-from frontend.pages.users import add_user_pages
+from frontend.pages.books import BookPages
+from frontend.pages.chapters import ChapterPages
+from frontend.pages.users import UserPages
 
 
 def init(fastapi_app: FastAPI) -> None:
-    add_books_pages()
-    add_user_pages()
-    add_chapters_pages()
+    BookPages()
+    UserPages()
+    ChapterPages()
 
     ui.run_with(
         fastapi_app,

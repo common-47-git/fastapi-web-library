@@ -16,52 +16,57 @@ from frontend.components.books import (
     book_info,
     books_grid,
 )
-from frontend.components.header import render_header
+from frontend.pages.base import BasePages
 
 
-def add_books_pages():
-    @ui.page("/books")
-    async def books():
-        await render_header()
-        books = await get_all_books()
-        books_grid.BooksGridComponent(books=books).render()
+class BookPages(BasePages):
+    def __init__(self):
+        @ui.page("/books")
+        async def books():
+            await self.Header().render()
+            books = await get_all_books()
+            self.BooksGrid(books=books).render()
 
-    @ui.page("/books/{book_id}")
-    async def books_id(book_id: uuid.UUID):
-        await render_header()
+        @ui.page("/books/{book_id}")
+        async def books_id(book_id: uuid.UUID):
+            await self.Header().render()
 
-        book = await get_book_by_id(book_id=book_id)
+            book = await get_book_by_id(book_id=book_id)
+            token = app.storage.user.get("access_token")
+            authed_user = await get_me(jwt_token=token) if token else None
+            shelf = None
+            if authed_user:
+                try:
+                    user_book = await get_user_book_by_id(
+                        users_books_schemas.UsersBooksBase(
+                            user_id=authed_user.user_id,
+                            book_id=book.book_id,
+                        ),
+                    )
+                    shelf = user_book.book_shelf
+                except http_exceptions.NotFound404:
+                    pass
 
-        token = app.storage.user.get("access_token")
-        authed_user = await get_me(jwt_token=token) if token else None
+            await self.BookInfo(
+                book=book,
+                authed_user=authed_user,
+                current_book_shelf=shelf,
+            ).render()
 
-        shelf = None
-        if authed_user:
-            try:
-                user_book = await get_user_book_by_id(
-                    users_books_schemas.UsersBooksBase(
-                        user_id=authed_user.user_id,
-                        book_id=book.book_id,
-                    ),
-                )
-                shelf = user_book.book_shelf
-            except http_exceptions.NotFound404:
-                pass
+        @ui.page("/books/with-author/{author_id}")
+        async def book_with_author_id(author_id: uuid.UUID):
+            await self.Header().render()
+            books = await get_books_with_author_id(author_id=author_id)
+            self.BooksGrid(books=books).render()
 
-        await book_info.BookInfoComponent(
-            book=book,
-            authed_user=authed_user,
-            current_book_shelf=shelf.value,
-        ).render()
+        @ui.page("/books/with-tag/{tag_id}")
+        async def book_with_tag_id(tag_id: uuid.UUID):
+            await self.Header().render()
+            books = await get_books_with_tag_id(tag_id=tag_id)
+            self.BooksGrid(books=books).render()
 
-    @ui.page("/books/with-author/{author_id}")
-    async def book_with_author_id(author_id: uuid.UUID):
-        await render_header()
-        books = await get_books_with_author_id(author_id=author_id)
-        books_grid.BooksGridComponent(books=books).render()
+    class BooksGrid(books_grid.BooksGridComponent):
+        pass
 
-    @ui.page("/books/with-tag/{tag_id}")
-    async def book_with_tag_id(tag_id: uuid.UUID):
-        await render_header()
-        books = await get_books_with_tag_id(tag_id=tag_id)
-        books_grid.BooksGridComponent(books=books).render()
+    class BookInfo(book_info.BookInfoComponent):
+        pass
