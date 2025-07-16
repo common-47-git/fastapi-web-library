@@ -56,7 +56,7 @@ class SQLAlchemyRepository(AbstractRepository):
             return result.scalars().first()
 
     async def read_all(self):
-        """Read one entry of a specified model from db."""
+        """Read all entries of a specified model from db."""
         async with session_local() as session:
             stmt = select(self.alchemy_model)
             result = await session.execute(stmt)

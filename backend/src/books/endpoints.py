@@ -27,8 +27,22 @@ router = APIRouter(
     },
 )
 async def get_all_books() -> list[books_schemas.BookRead]:
-    """Get a list of books with full info: id, name etc or raise 404."""
+    """Get a list of books with id, name etc or raise 404."""
     return await BooksServices().read_all()
+
+
+@router.get(
+    "/full-info",
+    response_model=list[books_schemas.BookRead],
+    summary="Get a list of books.",
+    responses={
+        200: http_exceptions.OK200().get_response_body(),
+        404: http_exceptions.NotFound404().get_response_body(),
+    },
+)
+async def get_all_books_with_full_info() -> list[books_schemas.BookRead]:
+    """Get a list of books with full info: id, name, tags etc or raise 404."""
+    return await BooksServices().read_all_books_with_full_info()
 
 
 @router.get(

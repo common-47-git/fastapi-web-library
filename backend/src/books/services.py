@@ -45,7 +45,7 @@ class BooksServices(BaseServices):
 
     async def read_books_by_tag_id(
         self,
-        tag_id: uuid.UUID,
+        tag_id: list[uuid.UUID],
     ) -> list[BooksModel]:
         books = await self.repository().read_books_by_tag_id(
             tag_id=tag_id,
@@ -93,13 +93,42 @@ class BooksServices(BaseServices):
             else []
         )
 
-        book_shelf = (
-            None  # UsersBooksServices().read_user_book_by_id(user_book=)
-        )
-
         return book_schemas.BookFullInfo(
             **book.__dict__,
             book_tags=tags,
             book_authors=authors,
-            book_shelf=book_shelf,
         )
+
+    async def read_all_books_with_full_info(self) -> list[book_schemas.BookFullInfo]:
+
+        books: list[BooksModel] = await BooksRepository().read_all()
+
+        books_with_full_info = []
+        for book in books:
+            tag_models = await TagsRepository().read_tags_by_book_id(
+                book_id=book.book_id,
+            )
+            author_models = await AuthorsRepository().read_authors_by_book_id(
+                book_id=book.book_id,
+            )
+
+            tags = [
+                tags_schemas.TagRead.model_validate(tag, from_attributes=True)
+                for tag in tag_models
+            ] if tag_models else []
+
+            authors = [
+                authors_schemas.AuthorRead.model_validate(author, from_attributes=True)
+                for author in author_models
+            ] if author_models else []
+
+            books_with_full_info.append(
+                book_schemas.BookFullInfo(
+                    **book.__dict__,
+                    book_tags=tags,
+                    book_authors=authors,
+                )
+            )
+
+        return books_with_full_info
+

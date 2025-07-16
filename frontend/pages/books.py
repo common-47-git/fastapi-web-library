@@ -4,7 +4,7 @@ from nicegui import app, ui
 
 from backend.src import http_exceptions
 from backend.src.books.endpoints import (
-    get_all_books,
+    get_all_books_with_full_info,
     get_book_by_id,
     get_books_with_author_id,
     get_books_with_tag_id,
@@ -15,6 +15,7 @@ from backend.src.users_books.endpoints import get_user_book_by_id
 from frontend.components.books import (
     book_info,
     books_grid,
+    filter_menu
 )
 from frontend.pages.base import BasePages
 
@@ -24,8 +25,9 @@ class BookPages(BasePages):
         @ui.page("/books")
         async def books() -> None:
             await self.Header().render()
-            books = await get_all_books()
-            books_grid.BooksGridComponent(books=books).render()
+            all_books = await get_all_books_with_full_info()
+            filter_menu.FilterMenuComponent(all_books).render()
+
 
         @ui.page("/books/{book_id}")
         async def books_id(book_id: uuid.UUID) -> None:
@@ -64,4 +66,3 @@ class BookPages(BasePages):
             await self.Header().render()
             books = await get_books_with_tag_id(tag_id=tag_id)
             books_grid.BooksGridComponent(books=books).render()
-

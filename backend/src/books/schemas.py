@@ -49,4 +49,3 @@ class BookFullInfo(BookBase):
     book_id: UUID4
     book_tags: list[tags_schemas.TagRead] | None
     book_authors: list[authors_schemas.AuthorRead] | None
-    book_shelf: str | None
