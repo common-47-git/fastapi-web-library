@@ -1,4 +1,4 @@
-"""users_books rels
+"""users_books rels.
 
 Revision ID: bc80799c494c
 Revises:

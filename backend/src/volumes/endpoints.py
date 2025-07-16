@@ -47,7 +47,7 @@ async def delete_volume_by_id(
     existing_volume: Annotated[
         VolumesModel,
         Depends(VolumesDeps.one_exists),
-    ],
+    ], volume_id,
 ):
     """Delete a volume by id or raise 404."""
     return await VolumesServices().delete_one(alchemy_object=existing_volume)

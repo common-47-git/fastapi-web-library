@@ -20,15 +20,15 @@ from frontend.pages.base import BasePages
 
 
 class BookPages(BasePages):
-    def __init__(self):
+    def __init__(self) -> None:
         @ui.page("/books")
-        async def books():
+        async def books() -> None:
             await self.Header().render()
             books = await get_all_books()
-            self.BooksGrid(books=books).render()
+            books_grid.BooksGridComponent(books=books).render()
 
         @ui.page("/books/{book_id}")
-        async def books_id(book_id: uuid.UUID):
+        async def books_id(book_id: uuid.UUID) -> None:
             await self.Header().render()
 
             book = await get_book_by_id(book_id=book_id)
@@ -47,26 +47,21 @@ class BookPages(BasePages):
                 except http_exceptions.NotFound404:
                     pass
 
-            await self.BookInfo(
+            await book_info.BookInfoComponent(
                 book=book,
                 authed_user=authed_user,
                 current_book_shelf=shelf,
             ).render()
 
         @ui.page("/books/with-author/{author_id}")
-        async def book_with_author_id(author_id: uuid.UUID):
+        async def book_with_author_id(author_id: uuid.UUID) -> None:
             await self.Header().render()
             books = await get_books_with_author_id(author_id=author_id)
-            self.BooksGrid(books=books).render()
+            books_grid.BooksGridComponent(books=books).render()
 
         @ui.page("/books/with-tag/{tag_id}")
-        async def book_with_tag_id(tag_id: uuid.UUID):
+        async def book_with_tag_id(tag_id: uuid.UUID) -> None:
             await self.Header().render()
             books = await get_books_with_tag_id(tag_id=tag_id)
-            self.BooksGrid(books=books).render()
+            books_grid.BooksGridComponent(books=books).render()
 
-    class BooksGrid(books_grid.BooksGridComponent):
-        pass
-
-    class BookInfo(book_info.BookInfoComponent):
-        pass

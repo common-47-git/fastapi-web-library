@@ -19,7 +19,7 @@ class BookInfoComponent:
         book: books_schemas.BookFullInfo,
         authed_user: UsersModel | None,
         current_book_shelf: str | None,
-    ):
+    ) -> None:
         self.book = book
         self.authed_user = authed_user
         self.current_book_shelf = current_book_shelf
@@ -32,7 +32,7 @@ class BookInfoComponent:
             await self.Right(self).render()
 
     class Left:
-        def __init__(self, parent: "BookInfoComponent"):
+        def __init__(self, parent: "BookInfoComponent") -> None:
             self.parent = parent
 
         async def render(self):
@@ -42,7 +42,7 @@ class BookInfoComponent:
                 await self.ReadButton(self.parent).render()
 
         class Image:
-            def __init__(self, parent):
+            def __init__(self, parent) -> None:
                 self.book = parent.book
 
             async def render(self):
@@ -51,7 +51,7 @@ class BookInfoComponent:
                 )
 
         class ReadButton:
-            def __init__(self, parent):
+            def __init__(self, parent) -> None:
                 self.book = parent.book
 
             async def render(
@@ -67,7 +67,7 @@ class BookInfoComponent:
                 ).classes("w-full self-center bg-sky-900 text-lg rounded")
 
     class Right:
-        def __init__(self, parent: "BookInfoComponent"):
+        def __init__(self, parent: "BookInfoComponent") -> None:
             self.parent = parent
 
         async def render(self):
@@ -97,7 +97,7 @@ class BookInfoComponent:
                 ).render()
 
         class Title:
-            def __init__(self, title: str):
+            def __init__(self, title: str) -> None:
                 self.title = title
 
             def render(self):
@@ -106,7 +106,7 @@ class BookInfoComponent:
                 )
 
         class Description:
-            def __init__(self, description: str | None):
+            def __init__(self, description: str | None) -> None:
                 self.description = description or "No description"
 
             def render(self):
@@ -115,7 +115,7 @@ class BookInfoComponent:
                 )
 
         class Authors:
-            def __init__(self, authors: list | None):
+            def __init__(self, authors: list | None) -> None:
                 self.authors = authors
 
             async def render(self):
@@ -137,7 +137,7 @@ class BookInfoComponent:
                                 )
 
         class Tags:
-            def __init__(self, tags: list | None):
+            def __init__(self, tags: list | None) -> None:
                 self.tags = tags
 
             async def render(self):
@@ -154,12 +154,12 @@ class BookInfoComponent:
                         )
 
     class ShelfSelector:
-        def __init__(self, parent: "BookInfoComponent"):
+        def __init__(self, parent: "BookInfoComponent") -> None:
             self.book_id = parent.book.book_id
             self.authed_user = parent.authed_user
             self.current_book_shelf = parent.current_book_shelf
 
-        async def _handle_update(self, e: Enum):
+        async def _handle_update(self, e: Enum) -> None:
             selected = BookShelfEnum(e.value)
             await patch_user_book_shelf(
                 users_books_schemas.UsersBooksUpdate(
@@ -170,7 +170,7 @@ class BookInfoComponent:
             )
             ui.notify(f"Moved to: {selected.value}", color="primary")
 
-        async def _handle_create(self, e: Enum):
+        async def _handle_create(self, e: Enum) -> None:
             selected = BookShelfEnum(e.value)
             await post_user_book(
                 users_books_schemas.UsersBooksCreate(
@@ -181,7 +181,7 @@ class BookInfoComponent:
             )
             ui.notify(f"Added to: {selected.value}", color="primary")
 
-        async def _handle_unauthenticated(self, _: Enum):
+        async def _handle_unauthenticated(self, _: Enum) -> None:
             ui.notify("Log in first", color="primary")
 
         async def render(self):

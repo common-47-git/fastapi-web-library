@@ -1,23 +1,23 @@
 from nicegui import app, ui
 
+from backend.src import http_exceptions
 from backend.src.books.endpoints import get_books_with_user_id
 from backend.src.users.endpoints import get_me
 from backend.src.users_books import schemas as users_books_schemas
-from backend.src import http_exceptions
 from frontend.components.users.my_info import MyInfoComponent
 from frontend.components.users.user_login import UserLoginComponent
 from frontend.pages.base import BasePages
 
 
 class UserPages(BasePages):
-    def __init__(self):
+    def __init__(self)  -> None:
         @ui.page("/users/login")
-        async def login_page():
+        async def login_page()  -> None:
             await self.Header().render()
             await UserLoginComponent().render()
 
         @ui.page("/users/me")
-        async def get_me_page():
+        async def get_me_page() -> None:
             await self.Header().render()
 
             if "access_token" not in app.storage.user:
@@ -66,7 +66,7 @@ class UserPages(BasePages):
             shelves: list[str],
             selected_shelf: str | None,
             on_change: callable,
-        ):
+        ) -> None:
             self.shelves = shelves
             self.selected_shelf = selected_shelf
             self.on_change = on_change
@@ -107,7 +107,7 @@ def render_books_grid_by_shelf(
                         )
                     card.on(
                         "click",
-                        lambda e, book_id=book.book_id: ui.navigate.to(
+                        lambda _, book_id=book.book_id: ui.navigate.to(
                             f"/books/{book_id}",
                         ),
                     )

@@ -33,7 +33,7 @@ async def test_post_book_conflict(
 
     assert response.status_code == status.HTTP_201_CREATED
 
-    book_id = response.json()["book_id"]
+    response.json()["book_id"]
 
     response = await async_client.post(
         "/books/add",

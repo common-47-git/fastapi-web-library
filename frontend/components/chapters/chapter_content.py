@@ -8,8 +8,8 @@ from backend.src.chapters.endpoints import get_chapter_by_book_id
 
 class ChapterContentComponent:
     def __init__(
-        self, book_id: uuid.UUID, volume_number: int, chapter_number: int
-    ):
+        self, book_id: uuid.UUID, volume_number: int, chapter_number: int,
+    ) -> None:
         self.book_id = book_id
         self.volume_number = volume_number
         self.chapter_number = chapter_number
@@ -28,7 +28,7 @@ class ChapterContentComponent:
         except http_exceptions.NotFound404:
             return False
 
-    async def _fetch_chapter(self):
+    async def _fetch_chapter(self) -> bool:
         try:
             self.chapter = await get_chapter_by_book_id(
                 self.book_id,
@@ -40,26 +40,26 @@ class ChapterContentComponent:
             return False
         return True
 
-    async def _check_nav_buttons(self):
+    async def _check_nav_buttons(self) -> None:
         if self.chapter_number > 1:
             self.prev_exists = await self._check_chapter_exists(
-                self.chapter_number - 1
+                self.chapter_number - 1,
             )
         self.next_exists = await self._check_chapter_exists(
-            self.chapter_number + 1
+            self.chapter_number + 1,
         )
 
-    def _render_header(self):
+    def _render_header(self) -> None:
         ui.label(f"📖 {self.chapter.chapter_name}").classes(
-            "text-2xl font-bold"
+            "text-2xl font-bold",
         )
 
-    def _render_body(self):
+    def _render_body(self) -> None:
         ui.label(self.chapter.chapter_content).classes("text-xl").style(
-            "white-space: pre-wrap;"
+            "white-space: pre-wrap;",
         )
 
-    def _render_nav_buttons(self):
+    def _render_nav_buttons(self) -> None:
         with ui.row().classes("self-center justify-center gap-4 mt-6"):
             # Prev button
             if self.prev_exists:

@@ -7,7 +7,7 @@ class BooksGridComponent:
     def __init__(
         self,
         books: list[books_schemas.BookRead],
-    ):
+    ) -> None:
         self.books = books
 
     def render(self):
@@ -18,7 +18,7 @@ class BooksGridComponent:
                 self.BookCard(book).render()
 
     class BookCard:
-        def __init__(self, book: books_schemas.BookRead):
+        def __init__(self, book: books_schemas.BookRead) -> None:
             self.book = book
 
         def render(self):
@@ -30,7 +30,7 @@ class BooksGridComponent:
                 self.Navigation(card, self.book).bind()
 
         class Image:
-            def __init__(self, book: books_schemas.BookRead):
+            def __init__(self, book: books_schemas.BookRead) -> None:
                 self.book = book
 
             def render(self):
@@ -39,7 +39,7 @@ class BooksGridComponent:
                 )
 
         class Overlay:
-            def __init__(self, book: books_schemas.BookRead):
+            def __init__(self, book: books_schemas.BookRead) -> None:
                 self.book = book
 
             def render(self):
@@ -55,7 +55,7 @@ class BooksGridComponent:
                     )
 
         class Navigation:
-            def __init__(self, card: ui.element, book: books_schemas.BookRead):
+            def __init__(self, card: ui.element, book: books_schemas.BookRead) -> None:
                 self.card = card
                 self.book = book
 

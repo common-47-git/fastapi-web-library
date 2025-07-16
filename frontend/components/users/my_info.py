@@ -5,7 +5,7 @@ from frontend.components import info_line
 
 
 class MyInfoComponent:
-    def __init__(self, current_user: UserRead):
+    def __init__(self, current_user: UserRead) -> None:
         self.current_user = current_user
 
     async def render(self):
@@ -19,7 +19,7 @@ class MyInfoComponent:
                 await info_line.InfoLineComponent(
                     title="Registered",
                     value=self.current_user.registration_date.strftime(
-                        "%d %b %Y"
+                        "%d %b %Y",
                     ).lstrip("0"),
                 ).render()
             ui.button("Logout", on_click=self.logout).classes(
@@ -27,7 +27,7 @@ class MyInfoComponent:
             )
 
     class UsernameTitle:
-        def __init__(self, title: str):
+        def __init__(self, title: str) -> None:
             self.title = title
 
         async def render(self):

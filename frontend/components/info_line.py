@@ -3,24 +3,24 @@ from nicegui import ui
 
 class InfoLineComponent:
     class LabelTitle:
-        def __init__(self, text: str):
+        def __init__(self, text: str) -> None:
             self.text = text
 
         def render(self):
             ui.label(self.text).classes("text-lg")
 
     class LabelValue:
-        def __init__(self, value: str | None):
+        def __init__(self, value: str | None) -> None:
             self.value = value or "Unknown"
 
         def render(self):
             ui.label(self.value).classes("text-lg")
 
-    def __init__(self, title: str, value: str | None):
+    def __init__(self, title: str, value: str | None) -> None:
         self.title = title
         self.value = value
 
-    async def render(self):
+    async def render(self) -> None:
         with ui.row().classes(
             "w-full justify-between border-b border-gray-600 pb-1",
         ):

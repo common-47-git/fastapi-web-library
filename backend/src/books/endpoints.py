@@ -130,7 +130,7 @@ async def post_book(
     },
 )
 async def delete_book_by_id(
-    existing_book: Annotated[BooksModel, Depends(BooksDeps.one_exists)],
+    existing_book: Annotated[BooksModel, Depends(BooksDeps.one_exists)], book_id,
 ):
     """Delete a book by id or raise 404."""
     return await BooksServices().delete_one(

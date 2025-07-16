@@ -9,15 +9,15 @@ from frontend.pages.base import BasePages
 
 
 class ChapterPages(BasePages):
-    def __init__(self):
+    def __init__(self) -> None:
         @ui.page(
-            "/chapters/read-id/{book_id}/{volume_number}/{chapter_number}"
+            "/chapters/read-id/{book_id}/{volume_number}/{chapter_number}",
         )
         async def chapter_read_book_name(
             book_id: uuid.UUID,
             volume_number: int,
             chapter_number: int,
-        ):
+        ) -> None:
             await self.Header().render()
 
             await ChapterContentComponent(
