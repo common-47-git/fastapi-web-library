@@ -1,7 +1,8 @@
 from nicegui import app, ui
 
 from backend.src.users.schemas.users import UserRead
-from frontend.components import info_line
+from frontend.components.base import info_line
+from frontend.static import classes
 
 
 class MyInfoComponent:
@@ -9,9 +10,9 @@ class MyInfoComponent:
         self.current_user = current_user
 
     async def render(self):
-        with ui.card().classes("p-4 max-w-xl mx-auto mt-8"):
+        with ui.card().classes(classes.MY_INFO_CARD):
             await self.UsernameTitle(self.current_user.username).render()
-            with ui.row().classes("w-full"):
+            with ui.row().classes(classes.MY_INFO_ROW):
                 await info_line.InfoLineComponent(
                     title="Email",
                     value=self.current_user.email,
@@ -22,20 +23,16 @@ class MyInfoComponent:
                         "%d %b %Y",
                     ).lstrip("0"),
                 ).render()
-            ui.button("Logout", on_click=self.logout).classes(
-                "self-center bg-red-600 text-white text-lg px-4 py-2 rounded-md hover:bg-red-700 transition",
-            )
+            ui.button("Logout", on_click=self._logout).classes(classes.MY_INFO_LOGOUT_BUTTON)
 
     class UsernameTitle:
         def __init__(self, title: str) -> None:
             self.title = title
 
         async def render(self):
-            ui.label(self.title).classes(
-                "text-3xl self-center border-b border-gray-600 pb-1",
-            )
+            ui.label(self.title).classes(classes.MY_INFO_USERNAME)
 
-    def logout(self):
+    def _logout(self):
         app.storage.user.clear()
         ui.notify("Logged out", color="warning")
         ui.navigate.to("/users/login")

@@ -2,24 +2,21 @@ from nicegui import app, ui
 
 from backend.src import http_exceptions
 from backend.src.users.endpoints import get_me
+from frontend.static import classes
 
 
 class HeaderComponent:
     class LabelTitle:
         def render(self) -> None:
-            ui.label("📖 Books library").classes("text-2xl font-bold")
+            ui.label("📖 Books library").classes(classes.HEADER_SITE_TITLE)
 
     class NavLink:
         def __init__(self, text: str, target: str) -> None:
             self.text = text
             self.target = target
-            self.classes = (
-                "text-white text-lg font-medium px-4 py-2 rounded-md "
-                "hover:bg-sky-700 hover:text-white transition duration-200 no-underline"
-            )
 
         def render(self) -> None:
-            ui.link(self.text, self.target).classes(self.classes)
+            ui.link(self.text, self.target).classes(classes.HEADER_NAV_LINK)
 
     class LinksRow:
         def __init__(self) -> None:
@@ -37,9 +34,10 @@ class HeaderComponent:
         self.links_row = self.LinksRow()
 
     async def render(self) -> None:
-        with ui.header().classes(
-            "bg-transparent text-white px-9 py-4 border-b border-gray-600",
-        ), ui.row().classes("justify-between items-center w-full"):
+        with (
+            ui.header().classes(classes.HEADER_CONTAINER),
+            ui.row().classes(classes.HEADER_ROW),
+        ):
             self.LabelTitle().render()
 
             self.links_row.add_link("📚 Books", "/books")
@@ -62,3 +60,5 @@ class HeaderComponent:
         app.storage.user.clear()
         ui.notify("Logged out", color="warning")
         ui.navigate.to("/users/login")
+
+

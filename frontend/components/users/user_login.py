@@ -6,6 +6,7 @@ from backend.src import http_exceptions
 from backend.src.users.endpoints import login_for_access_token, post_user
 from backend.src.users.schemas.users import UserCreate
 
+from frontend.static import classes
 
 class UserLoginComponent:
     def __init__(self):
@@ -15,9 +16,7 @@ class UserLoginComponent:
         self.register_checkbox = None
 
     async def render(self):
-        with ui.column().classes(
-            "h-[87vh] items-center justify-center self-center",
-        ):
+        with ui.column().classes(classes.LOGIN_CONTAINER):
             self.username_input = ui.input("Username").props("outlined")
             self.password_input = (
                 ui.input("Password", password=True)
@@ -27,14 +26,14 @@ class UserLoginComponent:
             self.email_input = ui.input("Email").props("outlined")
             self.email_input.visible = False
 
-            ui.button("Submit", on_click=self.do_submit).classes("w-full")
+            ui.button("Submit", on_click=self.do_submit).classes(classes.LOGIN_BUTTON)
 
             self.register_checkbox = ui.checkbox(
                 "Register",
                 on_change=lambda e: setattr(
                     self.email_input, "visible", e.value,
                 ),
-            ).classes("self-left")
+            ).classes(classes.LOGIN_CHECKBOX)
 
     async def do_submit(self):
         if self.register_checkbox.value:

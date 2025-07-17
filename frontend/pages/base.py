@@ -1,4 +1,4 @@
-from frontend.components.header import HeaderComponent
+from frontend.components.base.header import HeaderComponent
 
 
 class BasePages:

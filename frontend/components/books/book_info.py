@@ -10,7 +10,8 @@ from backend.src.users_books.endpoints import (
     patch_user_book_shelf,
     post_user_book,
 )
-from frontend.components import info_line
+from frontend.components.base import info_line
+from frontend.static import classes
 
 
 class BookInfoComponent:
@@ -25,9 +26,7 @@ class BookInfoComponent:
         self.current_book_shelf = current_book_shelf
 
     async def render(self):
-        with ui.row().classes(
-            "items-start justify-center gap-8 pt-6 self-center",
-        ):
+        with ui.row().classes(classes.BOOK_INFO_ROW):
             await self.Left(self).render()
             await self.Right(self).render()
 
@@ -64,7 +63,7 @@ class BookInfoComponent:
                     on_click=lambda: ui.navigate.to(
                         f"/chapters/read-id/{self.book.book_id}/{volume_number}/{chapter_number}",
                     ),
-                ).classes("w-full self-center bg-sky-900 text-lg rounded")
+                ).classes(classes.BOOK_INFO_READ_BUTTON)
 
     class Right:
         def __init__(self, parent: "BookInfoComponent") -> None:
@@ -72,7 +71,7 @@ class BookInfoComponent:
 
         async def render(self):
             book = self.parent.book
-            with ui.column().classes("gap-4 max-w-2xl"):
+            with ui.column().classes(classes.BOOK_INFO_COLUMN):
                 BookInfoComponent.Right.Title(book.book_name).render()
                 await info_line.InfoLineComponent(
                     "🌍 Country",
@@ -102,7 +101,7 @@ class BookInfoComponent:
 
             def render(self):
                 ui.label(self.title).classes(
-                    "text-3xl self-center border-b border-gray-600 pb-1",
+                    classes.INFO_TITLE,
                 )
 
         class Description:
@@ -110,7 +109,7 @@ class BookInfoComponent:
                 self.description = description or "No description"
 
             def render(self):
-                ui.label(self.description).classes("text-lg").style(
+                ui.label(self.description).classes(classes.TEXT).style(
                     "white-space: pre-wrap;",
                 )
 
@@ -119,21 +118,19 @@ class BookInfoComponent:
                 self.authors = authors
 
             async def render(self):
-                with ui.row().classes(
-                    "w-full justify-between border-b border-gray-600 pb-1",
-                ):
-                    ui.label("✍️ Authors").classes("text-lg")
+                with ui.row().classes(classes.INFO_LINE_BORDER):
+                    ui.label("✍️ Authors").classes(classes.TEXT)
                     if not self.authors:
-                        ui.label("Unknown").classes("text-lg")
+                        ui.label("Unknown").classes(classes.TEXT)
                     else:
-                        with ui.row().classes("flex-wrap gap-2"):
+                        with ui.row().classes(classes.BOOK_INFO_PROPERTY_CONTAINER):
                             for author in self.authors:
                                 full_name = f"{author.author_name} {author.author_surname}"
                                 ui.link(
                                     text=full_name,
                                     target=f"/books/with-author/{author.author_id}",
                                 ).classes(
-                                    "bg-sky-900 rounded px-2 text-base text-white no-underline",
+                                    classes.BOOK_INFO_PROPERTY_LINK,
                                 )
 
         class Tags:
@@ -143,15 +140,13 @@ class BookInfoComponent:
             async def render(self):
                 if not self.tags:
                     return
-                with ui.row().classes("flex-wrap gap-2"):
-                    ui.label("🏷️").classes("text-lg font-medium")
+                with ui.row().classes(classes.BOOK_INFO_PROPERTY_CONTAINER):
+                    ui.label("🏷️").classes(classes.BOOK_INFO_TAG_LABEL)
                     for tag in self.tags:
                         ui.link(
                             text=tag.tag_name,
                             target=f"/books/with-tag/{tag.tag_id}",
-                        ).classes(
-                            "bg-sky-900 rounded px-2 text-base text-white no-underline",
-                        )
+                        ).classes(classes.BOOK_INFO_PROPERTY_LINK)
 
     class ShelfSelector:
         def __init__(self, parent: "BookInfoComponent") -> None:
@@ -206,4 +201,4 @@ class BookInfoComponent:
                 value=selected_value,
                 label="Choose shelf",
                 on_change=on_change_handler,
-            ).classes("w-full self-center")
+            ).classes(classes.BOOK_INFO_SHELF_SELECT)

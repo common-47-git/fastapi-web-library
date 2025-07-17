@@ -5,6 +5,7 @@ from nicegui import ui
 from backend.src import http_exceptions
 from backend.src.chapters.endpoints import get_chapter_by_book_id
 
+from frontend.static import classes
 
 class ChapterContentComponent:
     def __init__(
@@ -50,17 +51,15 @@ class ChapterContentComponent:
         )
 
     def _render_header(self) -> None:
-        ui.label(f"📖 {self.chapter.chapter_name}").classes(
-            "text-2xl font-bold",
-        )
+        ui.label(f"📖 {self.chapter.chapter_name}").classes(classes.CHAPTER_HEADER)
 
     def _render_body(self) -> None:
-        ui.label(self.chapter.chapter_content).classes("text-xl").style(
+        ui.label(self.chapter.chapter_content).classes(classes.CHAPTER_BODY).style(
             "white-space: pre-wrap;",
         )
 
     def _render_nav_buttons(self) -> None:
-        with ui.row().classes("self-center justify-center gap-4 mt-6"):
+        with ui.row().classes(classes.CHAPTER_NAV_ROW):
             # Prev button
             if self.prev_exists:
                 ui.button(
@@ -68,16 +67,16 @@ class ChapterContentComponent:
                     on_click=lambda: ui.navigate.to(
                         f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number - 1}",
                     ),
-                ).classes("text-lg bg-sky-800 text-white")
+                ).classes(classes.CHAPTER_NAV_BUTTON)
             else:
-                ui.button("Prev").classes("text-lg text-white").style(
+                ui.button("Prev").classes(classes.CHAPTER_NAV_DISABLED).style(
                     "background-color: gray; cursor: not-allowed",
                 ).props("disabled")
 
             ui.button(
                 "📘 To Book",
                 on_click=lambda: ui.navigate.to(f"/books/{self.book_id}"),
-            ).classes("text-lg bg-gray-700 text-white")
+            ).classes(classes.CHAPTER_BACK_TO_BOOK)
 
             if self.next_exists:
                 ui.button(
@@ -85,9 +84,9 @@ class ChapterContentComponent:
                     on_click=lambda: ui.navigate.to(
                         f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number + 1}",
                     ),
-                ).classes("text-lg bg-sky-800 text-white")
+                ).classes(classes.CHAPTER_NAV_BUTTON)
             else:
-                ui.button("Next").classes("text-lg text-white").style(
+                ui.button("Next").classes(classes.CHAPTER_NAV_DISABLED).style(
                     "background-color: gray; cursor: not-allowed",
                 ).props("disabled")
 
@@ -99,7 +98,7 @@ class ChapterContentComponent:
 
         with (
             ui.column()
-            .classes("self-center items-center gap-6")
+            .classes(classes.CHAPTER_CONTENT_CONTAINER)
             .style("width: 1024px")
         ):
             self._render_header()

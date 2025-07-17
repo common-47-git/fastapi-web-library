@@ -1,5 +1,5 @@
 from nicegui import ui
-
+from frontend.static import classes
 
 class InfoLineComponent:
     class LabelTitle:
@@ -7,22 +7,20 @@ class InfoLineComponent:
             self.text = text
 
         def render(self):
-            ui.label(self.text).classes("text-lg")
+            ui.label(self.text).classes(classes.TEXT)
 
     class LabelValue:
         def __init__(self, value: str | None) -> None:
             self.value = value or "Unknown"
 
         def render(self):
-            ui.label(self.value).classes("text-lg")
+            ui.label(self.value).classes(classes.TEXT)
 
     def __init__(self, title: str, value: str | None) -> None:
         self.title = title
         self.value = value
 
     async def render(self) -> None:
-        with ui.row().classes(
-            "w-full justify-between border-b border-gray-600 pb-1",
-        ):
+        with ui.row().classes(classes.INFO_LINE_BORDER):
             self.LabelTitle(self.title).render()
             self.LabelValue(self.value).render()
