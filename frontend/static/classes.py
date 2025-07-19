@@ -6,7 +6,7 @@ TEXT = "text-lg"
 HEADER_NAV_LINK = "text-white text-lg font-medium px-4 py-2 rounded-md hover:bg-sky-700 hover:text-white transition duration-200 no-underline"
 HEADER_CONTAINER = "transparent flex items-center justify-between text-white border-b border-gray-900"
 HEADER_ROW = "justify-between w-full"
-HEADER_SITE_TITLE = "sm:hidden text-2xl font-bold"
+HEADER_SITE_TITLE = "flex max-sm:hidden text-2xl font-bold"
 
 FILTER_MENU_CONTAINER = "w-full justify-center gap-10 px-4"
 FILTER_MENU_GRID_CONTAINER = "items-center"
@@ -40,7 +40,7 @@ CHAPTER_NAV_DISABLED = "text-lg text-white"
 CHAPTER_BACK_TO_BOOK = "text-lg bg-gray-700 text-white"
 
 
-MY_INFO_CARD = "p-4 max-w-xl mx-auto mt-8"
+MY_INFO_CARD = "p-4 pb-8 max-w-xl mx-auto mt-8"
 MY_INFO_ROW = "w-full"
 MY_INFO_USERNAME = "text-3xl self-center border-b border-gray-600 pb-1"
 MY_INFO_LOGOUT_BUTTON = "self-center bg-red-600 text-white text-lg px-4 py-2 rounded-md hover:bg-red-700 transition"

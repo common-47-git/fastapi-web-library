@@ -24,26 +24,20 @@ class HeaderComponent(ui.header):
         )
 
         with self:
-            self.title = ui.label("📖 Books library").classes(
-                "flex max-sm:hidden text-2xl font-bold",
-            )
+            self.title = ui.label("📖 Books library").classes(classes.HEADER_SITE_TITLE)
 
-            with ui.row().classes("flex max-sm:hidden"):
-                ui.link("📚 Books", "/books").classes(classes.HEADER_NAV_LINK)
-                if "access_token" not in app.storage.user:
-                    ui.link("Login", "/users/login").classes(
-                        classes.HEADER_NAV_LINK,
-                    )
-                else:
-                    ui.link("🦲 Me", "/users/me").classes(
-                        classes.HEADER_NAV_LINK,
-                    )
-
-            with ui.button(icon="menu").classes("flex sm:hidden"), ui.menu():
-                ui.menu_item("Books", lambda _: ui.navigate.to("/books"))
+            with ui.row(), ui.button(icon="menu"), ui.menu():
+                ui.menu_item("BOOKS", lambda _: ui.navigate.to("/books"))
                 if "access_token" not in app.storage.user:
                     ui.menu_item(
-                        "Login", lambda _: ui.navigate.to("/users/login"),
+                        "LOG IN", lambda _: ui.navigate.to("/users/login"),
                     )
                 else:
-                    ui.menu_item("Me", lambda _: ui.navigate.to("/users/me"))
+                    ui.menu_item("ME", lambda _: ui.navigate.to("/users/me"))
+                    ui.menu_item("LOG OUT", lambda _: self._logout())
+
+
+    def _logout(self):
+        app.storage.user.clear()
+        ui.notify("Logged out", color="warning")
+        ui.navigate.to("/users/login")

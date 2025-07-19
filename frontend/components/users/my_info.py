@@ -23,9 +23,6 @@ class MyInfoComponent:
                         "%d %b %Y",
                     ).lstrip("0"),
                 ).render()
-            ui.button("Logout", on_click=self._logout).classes(
-                classes.MY_INFO_LOGOUT_BUTTON,
-            )
 
     class UsernameTitle:
         def __init__(self, title: str) -> None:
@@ -34,7 +31,3 @@ class MyInfoComponent:
         async def render(self):
             ui.label(self.title).classes(classes.MY_INFO_USERNAME)
 
-    def _logout(self):
-        app.storage.user.clear()
-        ui.notify("Logged out", color="warning")
-        ui.navigate.to("/users/login")
