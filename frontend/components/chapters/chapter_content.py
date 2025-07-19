@@ -5,11 +5,16 @@ from nicegui import ui
 from backend.src import http_exceptions
 from backend.src.chapters.endpoints import get_chapter_by_book_id
 
+from frontend.components.base.link_button import LinkButton
 from frontend.static import classes
+
 
 class ChapterContentComponent:
     def __init__(
-        self, book_id: uuid.UUID, volume_number: int, chapter_number: int,
+        self,
+        book_id: uuid.UUID,
+        volume_number: int,
+        chapter_number: int,
     ) -> None:
         self.book_id = book_id
         self.volume_number = volume_number
@@ -51,44 +56,54 @@ class ChapterContentComponent:
         )
 
     def _render_header(self) -> None:
-        ui.label(f"📖 {self.chapter.chapter_name}").classes(classes.CHAPTER_HEADER)
+        ui.label(f"📖 {self.chapter.chapter_name}").classes(
+            classes.CHAPTER_HEADER
+        )
 
     def _render_body(self) -> None:
-        ui.label(self.chapter.chapter_content).classes(classes.CHAPTER_BODY).style(
+        ui.label(self.chapter.chapter_content).classes(
+            classes.CHAPTER_BODY
+        ).style(
             "white-space: pre-wrap;",
         )
 
-    def _render_nav_buttons(self) -> None:
+    async def _render_nav_buttons(self) -> None:
         with ui.row().classes(classes.CHAPTER_NAV_ROW):
-            # Prev button
-            if self.prev_exists:
-                ui.button(
-                    "Prev",
-                    on_click=lambda: ui.navigate.to(
-                        f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number - 1}",
-                    ),
-                ).classes(classes.CHAPTER_NAV_BUTTON)
-            else:
-                ui.button("Prev").classes(classes.CHAPTER_NAV_DISABLED).style(
-                    "background-color: gray; cursor: not-allowed",
-                ).props("disabled")
+            try:
+                resp = await get_chapter_by_book_id(
+                    self.book_id,
+                    self.volume_number,
+                    self.chapter_number - 1,
+                )
+            except http_exceptions.APIException as e:
+                resp = e
 
-            ui.button(
-                "📘 To Book",
-                on_click=lambda: ui.navigate.to(f"/books/{self.book_id}"),
+            LinkButton(
+                text="Prev",
+                link=f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number - 1}",
+                response_detail=resp,
+            ).classes(classes.CHAPTER_NAV_BUTTON)
+
+
+            LinkButton(
+                text="To Book",
+                link=f"/books/{self.book_id}",
             ).classes(classes.CHAPTER_BACK_TO_BOOK)
 
-            if self.next_exists:
-                ui.button(
-                    "Next",
-                    on_click=lambda: ui.navigate.to(
-                        f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number + 1}",
-                    ),
-                ).classes(classes.CHAPTER_NAV_BUTTON)
-            else:
-                ui.button("Next").classes(classes.CHAPTER_NAV_DISABLED).style(
-                    "background-color: gray; cursor: not-allowed",
-                ).props("disabled")
+            try:
+                resp = await get_chapter_by_book_id(
+                    self.book_id,
+                    self.volume_number,
+                    self.chapter_number + 1,
+                )
+            except http_exceptions.APIException as e:
+                resp = e
+
+            LinkButton(
+                text="Next",
+                link=f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number + 1}",
+                response_detail=resp,
+            ).classes(classes.CHAPTER_NAV_BUTTON)
 
     async def render(self):
         if not await self._fetch_chapter():
@@ -103,4 +118,4 @@ class ChapterContentComponent:
         ):
             self._render_header()
             self._render_body()
-            self._render_nav_buttons()
+            await self._render_nav_buttons()

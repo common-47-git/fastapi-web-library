@@ -2,7 +2,9 @@ from enum import Enum
 
 from nicegui import ui
 
+from backend.src import http_exceptions
 from backend.src.books import schemas as books_schemas
+from backend.src.chapters.endpoints import get_chapter_by_book_id
 from backend.src.enums import BookShelfEnum
 from backend.src.users.models import UsersModel
 from backend.src.users_books import schemas as users_books_schemas
@@ -11,6 +13,7 @@ from backend.src.users_books.endpoints import (
     post_user_book,
 )
 from frontend.components.base import info_line
+from frontend.components.base.link_button import LinkButton
 from frontend.static import classes
 
 
@@ -38,7 +41,19 @@ class BookInfoComponent:
             with ui.column():
                 await self.Image(self.parent).render()
                 await BookInfoComponent.ShelfSelector(self.parent).render()
-                await self.ReadButton(self.parent).render()
+                try:
+                    resp = await get_chapter_by_book_id(
+                        self.parent.book.book_id,
+                        1,
+                        1,
+                    )
+                except http_exceptions.APIException as e:
+                    resp = e
+                LinkButton(
+                    text="📖 READ",
+                    link=f"/chapters/read-id/{self.parent.book.book_id}/1/1",
+                    response_detail=resp,
+                ).classes(classes.BOOK_INFO_READ_BUTTON)
 
         class Image:
             def __init__(self, parent) -> None:
@@ -48,22 +63,6 @@ class BookInfoComponent:
                 ui.image(self.book.book_cover).style(
                     "width: 250px; height: 400px; object-fit: cover;",
                 )
-
-        class ReadButton:
-            def __init__(self, parent) -> None:
-                self.book = parent.book
-
-            async def render(
-                self,
-                chapter_number: int = 1,
-                volume_number: int = 1,
-            ):
-                ui.button(
-                    "📖 Read",
-                    on_click=lambda: ui.navigate.to(
-                        f"/chapters/read-id/{self.book.book_id}/{volume_number}/{chapter_number}",
-                    ),
-                ).classes(classes.BOOK_INFO_READ_BUTTON)
 
     class Right:
         def __init__(self, parent: "BookInfoComponent") -> None:
@@ -123,7 +122,9 @@ class BookInfoComponent:
                     if not self.authors:
                         ui.label("Unknown").classes(classes.TEXT)
                     else:
-                        with ui.row().classes(classes.BOOK_INFO_PROPERTY_CONTAINER):
+                        with ui.row().classes(
+                            classes.BOOK_INFO_PROPERTY_CONTAINER
+                        ):
                             for author in self.authors:
                                 full_name = f"{author.author_name} {author.author_surname}"
                                 ui.link(
