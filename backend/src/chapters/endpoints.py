@@ -91,7 +91,6 @@ async def delete_chapter_by_id(
         ChaptersModel,
         Depends(ChaptersDeps.one_exists),
     ],
-    chapter_id,
 ):
     """Delete a chapter by id or raise 404."""
     return await ChaptersServices().delete_one(

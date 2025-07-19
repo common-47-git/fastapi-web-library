@@ -1,4 +1,4 @@
-from nicegui import app, ui
+from nicegui import ui
 
 from backend.src.users.schemas.users import UserRead
 from frontend.components.base import info_line
@@ -30,4 +30,3 @@ class MyInfoComponent:
 
         async def render(self):
             ui.label(self.title).classes(classes.MY_INFO_USERNAME)
-

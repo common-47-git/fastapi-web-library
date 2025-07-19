@@ -25,7 +25,8 @@ class BooksModel(BaseAlchemyModel):
     book_country: Mapped[str] = mapped_column(String(50), nullable=True)
     book_release_date: Mapped[DATE] = mapped_column(DATE, nullable=True)
     book_translation_status: Mapped[str] = mapped_column(
-        String(50), default=TranslationStatusEnum.ABSENT.value,
+        String(50),
+        default=TranslationStatusEnum.ABSENT.value,
     )
     book_description: Mapped[str] = mapped_column(String(1500), nullable=True)
     book_cover: Mapped[str] = mapped_column(String(500), nullable=False)

@@ -80,10 +80,10 @@ class UsersServices(BaseServices):
                 raise http_exceptions.Unauthorized401
         except ExpiredSignatureError as jwt_expired_e:
             raise http_exceptions.Unauthorized401(
-                jwt_expired_e,
+                str(jwt_expired_e),
             ) from jwt_expired_e
         except JWTError as jwt_e:
-            raise http_exceptions.Unauthorized401(jwt_e) from jwt_e
+            raise http_exceptions.Unauthorized401(str(jwt_e)) from jwt_e
         return user
 
     def _verify_password(

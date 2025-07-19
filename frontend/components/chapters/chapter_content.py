@@ -22,17 +22,6 @@ class ChapterContentComponent:
         self.prev_exists = False
         self.next_exists = False
 
-    async def _check_chapter_exists(self, chapter_number: int) -> bool:
-        try:
-            await get_chapter_by_book_id(
-                self.book_id,
-                self.volume_number,
-                chapter_number,
-            )
-            return True
-        except http_exceptions.NotFound404:
-            return False
-
     async def _fetch_chapter(self) -> bool:
         try:
             self.chapter = await get_chapter_by_book_id(
@@ -44,15 +33,6 @@ class ChapterContentComponent:
             ui.navigate.to(f"/books/{self.book_id}")
             return False
         return True
-
-    async def _check_nav_buttons(self) -> None:
-        if self.chapter_number > 1:
-            self.prev_exists = await self._check_chapter_exists(
-                self.chapter_number - 1,
-            )
-        self.next_exists = await self._check_chapter_exists(
-            self.chapter_number + 1,
-        )
 
     def _render_header(self) -> None:
         ui.label(f"📖 {self.chapter.chapter_name}").classes(
@@ -107,12 +87,8 @@ class ChapterContentComponent:
         if not await self._fetch_chapter():
             return
 
-        await self._check_nav_buttons()
-
-        with (
-            ui.column()
-            .classes(classes.CHAPTER_CONTENT_CONTAINER)
-            .style("width: 1024px")
+        with ui.column().classes(
+            classes.CHAPTER_CONTENT_CONTAINER + " md:container md:mx-auto"
         ):
             self._render_header()
             self._render_body()

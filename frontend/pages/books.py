@@ -30,8 +30,12 @@ class BookPages(BasePages):
             self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
 
             book = await get_book_by_id(book_id=book_id)
-            token = app.storage.user.get("access_token")
-            authed_user = await get_me(jwt_token=token) if token else None
+            authed_user = None
+            try:
+                token = app.storage.user.get("access_token")
+                authed_user = await get_me(jwt_token=token) if token else None
+            except http_exceptions.Unauthorized401:
+                ui.navigate.to("/users/login")
             shelf = None
             if authed_user:
                 try:
