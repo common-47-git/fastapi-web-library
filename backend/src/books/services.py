@@ -116,7 +116,8 @@ class BooksServices(BaseServices):
             tags = (
                 [
                     tags_schemas.TagRead.model_validate(
-                        tag, from_attributes=True,
+                        tag,
+                        from_attributes=True,
                     )
                     for tag in tag_models
                 ]
@@ -127,7 +128,8 @@ class BooksServices(BaseServices):
             authors = (
                 [
                     authors_schemas.AuthorRead.model_validate(
-                        author, from_attributes=True,
+                        author,
+                        from_attributes=True,
                     )
                     for author in author_models
                 ]

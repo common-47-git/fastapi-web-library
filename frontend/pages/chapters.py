@@ -6,6 +6,7 @@ from frontend.components.chapters.chapter_content import (
     ChapterContentComponent,
 )
 from frontend.pages.base import BasePages
+from frontend.static import classes
 
 
 class ChapterPages(BasePages):
@@ -18,7 +19,7 @@ class ChapterPages(BasePages):
             volume_number: int,
             chapter_number: int,
         ) -> None:
-            await self.Header().render()
+            self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
 
             await ChapterContentComponent(
                 book_id=book_id,

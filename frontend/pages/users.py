@@ -7,18 +7,19 @@ from backend.src.users_books import schemas as users_books_schemas
 from frontend.components.users.my_info import MyInfoComponent
 from frontend.components.users.user_login import UserLoginComponent
 from frontend.pages.base import BasePages
+from frontend.static import classes
 
 
 class UserPages(BasePages):
     def __init__(self) -> None:
         @ui.page("/users/login")
         async def login_page() -> None:
-            await self.Header().render()
+            self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
             await UserLoginComponent().render()
 
         @ui.page("/users/me")
         async def get_me_page() -> None:
-            await self.Header().render()
+            self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
 
             if "access_token" not in app.storage.user:
                 ui.navigate.to("/users/login")

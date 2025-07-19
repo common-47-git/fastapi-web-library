@@ -13,7 +13,7 @@ from backend.src.users_books.endpoints import (
     post_user_book,
 )
 from frontend.components.base import info_line
-from frontend.components.base.link_button import LinkButton
+from frontend.components.base.link_button import LinkButtonComponent
 from frontend.static import classes
 
 
@@ -49,7 +49,7 @@ class BookInfoComponent:
                     )
                 except http_exceptions.APIException as e:
                     resp = e
-                LinkButton(
+                LinkButtonComponent(
                     text="📖 READ",
                     link=f"/chapters/read-id/{self.parent.book.book_id}/1/1",
                     response_detail=resp,

@@ -14,19 +14,20 @@ from backend.src.users_books import schemas as users_books_schemas
 from backend.src.users_books.endpoints import get_user_book_by_id
 from frontend.components.books import book_info, books_grid, filter_menu
 from frontend.pages.base import BasePages
+from frontend.static import classes
 
 
 class BookPages(BasePages):
     def __init__(self) -> None:
         @ui.page("/books")
         async def books() -> None:
-            await self.Header().render()
+            self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
             all_books = await get_all_books_with_full_info()
             filter_menu.FilterMenuComponent(all_books).render()
 
         @ui.page("/books/{book_id}")
         async def books_id(book_id: uuid.UUID) -> None:
-            await self.Header().render()
+            self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
 
             book = await get_book_by_id(book_id=book_id)
             token = app.storage.user.get("access_token")
@@ -52,12 +53,12 @@ class BookPages(BasePages):
 
         @ui.page("/books/with-author/{author_id}")
         async def book_with_author_id(author_id: uuid.UUID) -> None:
-            await self.Header().render()
+            self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
             books = await get_books_with_author_id(author_id=author_id)
             books_grid.BooksGridComponent(books=books).render()
 
         @ui.page("/books/with-tag/{tag_id}")
         async def book_with_tag_id(tag_id: uuid.UUID) -> None:
-            await self.Header().render()
+            self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
             books = await get_books_with_tag_id(tag_id=tag_id)
             books_grid.BooksGridComponent(books=books).render()

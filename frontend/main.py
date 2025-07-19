@@ -17,4 +17,5 @@ def init(fastapi_app: FastAPI) -> None:
         mount_path="/gui",
         storage_secret=AuthConfig().SECRET_KEY,
         dark=True,
+        tailwind=True,
     )

@@ -5,7 +5,7 @@ from nicegui import ui
 from backend.src import http_exceptions
 
 
-class LinkButton(ui.button):
+class LinkButtonComponent(ui.button):
     def __init__(
         self,
         link: str,

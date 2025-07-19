@@ -4,15 +4,17 @@ TEXT = "text-lg"
 
 
 HEADER_NAV_LINK = "text-white text-lg font-medium px-4 py-2 rounded-md hover:bg-sky-700 hover:text-white transition duration-200 no-underline"
-HEADER_CONTAINER = "justify-between w-full   bg-transparent text-white px-9 py-4 border-b border-gray-600"
+HEADER_CONTAINER = "transparent flex items-center justify-between text-white border-b border-gray-900"
 HEADER_ROW = "justify-between w-full"
-HEADER_SITE_TITLE = "text-2xl font-bold"
+HEADER_SITE_TITLE = "sm:hidden text-2xl font-bold"
 
 FILTER_MENU_CONTAINER = "w-full justify-center gap-10 px-4"
 FILTER_MENU_GRID_CONTAINER = "items-center"
 FILTER_MENU_TAGS_CONTAINER = "gap-2 p-4 pb-5 border border-gray-600 rounded-lg"
 
-BOOKS_GRID_CONTAINER = "grid grid-cols-1 md:grid-cols-3 gap-4 self-center" # responsive grid
+BOOKS_GRID_CONTAINER = (
+    "grid grid-cols-1 md:grid-cols-3 gap-4 self-center"  # responsive grid
+)
 BOOK_CARD = "relative w-64 h-96 cursor-pointer group overflow-hidden rounded shadow-lg p-0"
 BOOK_CARD_IMG = "w-full h-full object-cover"
 BOOK_CARD_OVERLAY = "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 justify-center items-center"
@@ -22,7 +24,9 @@ BOOK_CARD_LABEL = "text-white text-xl font-semibold text-center px-2"
 BOOK_INFO_ROW = "items-start justify-center gap-8 pt-6 self-center"
 BOOK_INFO_COLUMN = "gap-4 max-w-2xl"
 BOOK_INFO_READ_BUTTON = "w-full self-center bg-sky-900 text-lg rounded"
-BOOK_INFO_PROPERTY_LINK = "bg-sky-900 rounded px-2 text-base text-white no-underline"
+BOOK_INFO_PROPERTY_LINK = (
+    "bg-sky-900 rounded px-2 text-base text-white no-underline"
+)
 BOOK_INFO_PROPERTY_CONTAINER = "flex-wrap gap-2"
 BOOK_INFO_TAG_LABEL = "text-lg font-medium"
 BOOK_INFO_SHELF_SELECT = "w-full self-center"

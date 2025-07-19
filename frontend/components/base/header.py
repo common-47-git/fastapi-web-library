@@ -1,64 +1,49 @@
 from nicegui import app, ui
 
-from backend.src import http_exceptions
-from backend.src.users.endpoints import get_me
 from frontend.static import classes
 
 
-class HeaderComponent:
-    class LabelTitle:
-        def render(self) -> None:
-            ui.label("📖 Books library").classes(classes.HEADER_SITE_TITLE)
+class HeaderComponent(ui.header):
+    def __init__(
+        self,
+        *,
+        value: bool = True,
+        fixed: bool = True,
+        bordered: bool = False,
+        elevated: bool = False,
+        wrap: bool = True,
+        add_scroll_padding: bool = True,
+    ):
+        super().__init__(
+            value=value,
+            fixed=fixed,
+            bordered=bordered,
+            elevated=elevated,
+            wrap=wrap,
+            add_scroll_padding=add_scroll_padding,
+        )
 
-    class NavLink:
-        def __init__(self, text: str, target: str) -> None:
-            self.text = text
-            self.target = target
+        with self:
+            self.title = ui.label("📖 Books library").classes(
+                "flex max-sm:hidden text-2xl font-bold",
+            )
 
-        def render(self) -> None:
-            ui.link(self.text, self.target).classes(classes.HEADER_NAV_LINK)
-
-    class LinksRow:
-        def __init__(self) -> None:
-            self.links = []
-
-        def add_link(self, text: str, target: str) -> None:
-            self.links.append(HeaderComponent.NavLink(text, target))
-
-        def render(self) -> None:
-            with ui.row():
-                for link in self.links:
-                    link.render()
-
-    def __init__(self) -> None:
-        self.links_row = self.LinksRow()
-
-    async def render(self) -> None:
-        with (
-            ui.header().classes(classes.HEADER_CONTAINER),
-            ui.row().classes(classes.HEADER_ROW),
-        ):
-            self.LabelTitle().render()
-
-            self.links_row.add_link("📚 Books", "/books")
-            if "access_token" not in app.storage.user:
-                self.links_row.add_link("Login", "/users/login")
-            else:
-                try:
-                    await get_me(
-                        jwt_token=app.storage.user["access_token"],
+            with ui.row().classes("flex max-sm:hidden"):
+                ui.link("📚 Books", "/books").classes(classes.HEADER_NAV_LINK)
+                if "access_token" not in app.storage.user:
+                    ui.link("Login", "/users/login").classes(
+                        classes.HEADER_NAV_LINK,
                     )
-                    self.links_row.add_link("🦲 Me", "/users/me")
-                except http_exceptions.Unauthorized401 as e:
-                    self.logout()
-                    ui.notify(f"Unauthorized {e}", color="warning")
-                    return
+                else:
+                    ui.link("🦲 Me", "/users/me").classes(
+                        classes.HEADER_NAV_LINK,
+                    )
 
-            self.links_row.render()
-
-    def logout(self) -> None:
-        app.storage.user.clear()
-        ui.notify("Logged out", color="warning")
-        ui.navigate.to("/users/login")
-
-
+            with ui.button(icon="menu").classes("flex sm:hidden"), ui.menu():
+                ui.menu_item("Books", lambda _: ui.navigate.to("/books"))
+                if "access_token" not in app.storage.user:
+                    ui.menu_item(
+                        "Login", lambda _: ui.navigate.to("/users/login"),
+                    )
+                else:
+                    ui.menu_item("Me", lambda _: ui.navigate.to("/users/me"))

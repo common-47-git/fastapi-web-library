@@ -12,10 +12,7 @@ class BooksGridComponent:
         self.books = books
 
     def render(self):
-        with (
-            ui.row()
-            .classes(classes.BOOKS_GRID_CONTAINER)
-        ):
+        with ui.row().classes(classes.BOOKS_GRID_CONTAINER):
             for book in self.books:
                 self.BookCard(book).render()
 
@@ -52,7 +49,9 @@ class BooksGridComponent:
 
         class Navigation:
             def __init__(
-                self, card: ui.element, book: books_schemas.BookRead,
+                self,
+                card: ui.element,
+                book: books_schemas.BookRead,
             ) -> None:
                 self.card = card
                 self.book = book
