@@ -61,7 +61,8 @@ async def delete_tag_by_id(
     existing_tag: Annotated[
         TagsModel,
         Depends(TagsDeps.one_exists),
-    ], tag_id,
+    ],
+    tag_id,
 ):
     """Delete a tag by id or raise 404."""
     return await TagsServices().delete_one(alchemy_object=existing_tag)

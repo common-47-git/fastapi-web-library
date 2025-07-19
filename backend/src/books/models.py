@@ -1,8 +1,6 @@
 import uuid
-from enum import Enum
 
 from sqlalchemy import DATE, String
-from sqlalchemy.dialects.postgresql import ENUM as POSTGRESQL_ENUM
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -26,16 +24,7 @@ class BooksModel(BaseAlchemyModel):
     )
     book_country: Mapped[str] = mapped_column(String(50), nullable=True)
     book_release_date: Mapped[DATE] = mapped_column(DATE, nullable=True)
-    book_translation_status: Mapped[Enum] = mapped_column(
-        POSTGRESQL_ENUM(
-            TranslationStatusEnum,
-            name="translation_status_enum",
-            values_callable=lambda obj: [e.value for e in obj],
-            create_type=False,
-        ),
-        nullable=True,
-        default=TranslationStatusEnum.ABSENT,
-    )
+    book_translation_status: Mapped[str] = mapped_column(String(50), default=TranslationStatusEnum.ABSENT.value)
     book_description: Mapped[str] = mapped_column(String(1500), nullable=True)
     book_cover: Mapped[str] = mapped_column(String(500), nullable=False)
 

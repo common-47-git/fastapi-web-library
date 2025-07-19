@@ -3,6 +3,7 @@ from nicegui import ui
 from backend.src.books import schemas as books_schemas
 from frontend.static import classes
 
+
 class BooksGridComponent:
     def __init__(
         self,
@@ -11,7 +12,10 @@ class BooksGridComponent:
         self.books = books
 
     def render(self):
-        with ui.row().classes(classes.BOOKS_GRID_CONTAINER).style("width: 900px"):
+        with (
+            ui.row()
+            .classes(classes.BOOKS_GRID_CONTAINER)
+        ):
             for book in self.books:
                 self.BookCard(book).render()
 
@@ -42,10 +46,14 @@ class BooksGridComponent:
                     .classes(classes.BOOK_CARD_OVERLAY)
                     .style("background-color: rgba(0, 0, 0, 0.7);")
                 ):
-                    ui.label(self.book.book_name).classes(classes.BOOK_CARD_LABEL)
+                    ui.label(self.book.book_name).classes(
+                        classes.BOOK_CARD_LABEL,
+                    )
 
         class Navigation:
-            def __init__(self, card: ui.element, book: books_schemas.BookRead) -> None:
+            def __init__(
+                self, card: ui.element, book: books_schemas.BookRead,
+            ) -> None:
                 self.card = card
                 self.book = book
 

@@ -123,7 +123,7 @@ class BookInfoComponent:
                         ui.label("Unknown").classes(classes.TEXT)
                     else:
                         with ui.row().classes(
-                            classes.BOOK_INFO_PROPERTY_CONTAINER
+                            classes.BOOK_INFO_PROPERTY_CONTAINER,
                         ):
                             for author in self.authors:
                                 full_name = f"{author.author_name} {author.author_surname}"

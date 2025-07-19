@@ -4,15 +4,15 @@ TEXT = "text-lg"
 
 
 HEADER_NAV_LINK = "text-white text-lg font-medium px-4 py-2 rounded-md hover:bg-sky-700 hover:text-white transition duration-200 no-underline"
-HEADER_CONTAINER = "bg-transparent text-white px-9 py-4 border-b border-gray-600"
-HEADER_ROW = "justify-between items-center w-full"
+HEADER_CONTAINER = "justify-between w-full   bg-transparent text-white px-9 py-4 border-b border-gray-600"
+HEADER_ROW = "justify-between w-full"
 HEADER_SITE_TITLE = "text-2xl font-bold"
 
 FILTER_MENU_CONTAINER = "w-full justify-center gap-10 px-4"
 FILTER_MENU_GRID_CONTAINER = "items-center"
 FILTER_MENU_TAGS_CONTAINER = "gap-2 p-4 pb-5 border border-gray-600 rounded-lg"
 
-BOOKS_GRID_CONTAINER = "flex flex-wrap gap-6 self-center"
+BOOKS_GRID_CONTAINER = "grid grid-cols-1 md:grid-cols-3 gap-4 self-center" # responsive grid
 BOOK_CARD = "relative w-64 h-96 cursor-pointer group overflow-hidden rounded shadow-lg p-0"
 BOOK_CARD_IMG = "w-full h-full object-cover"
 BOOK_CARD_OVERLAY = "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 justify-center items-center"
@@ -40,8 +40,6 @@ MY_INFO_CARD = "p-4 max-w-xl mx-auto mt-8"
 MY_INFO_ROW = "w-full"
 MY_INFO_USERNAME = "text-3xl self-center border-b border-gray-600 pb-1"
 MY_INFO_LOGOUT_BUTTON = "self-center bg-red-600 text-white text-lg px-4 py-2 rounded-md hover:bg-red-700 transition"
-
-
 
 
 LOGIN_CONTAINER = "h-[87vh] items-center justify-center self-center"

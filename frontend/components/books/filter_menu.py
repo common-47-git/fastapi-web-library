@@ -15,12 +15,15 @@ class FilterMenuComponent:
 
     def render(self):
         with ui.row().classes(classes.FILTER_MENU_CONTAINER):
-
             # Left side: Grid container
-            with ui.column().classes(classes.FILTER_MENU_GRID_CONTAINER) as self.grid_container:
+            with ui.column().classes(
+                classes.FILTER_MENU_GRID_CONTAINER,
+            ) as self.grid_container:
                 pass
             # Right side: Tag menu
-            with ui.column().classes(classes.FILTER_MENU_TAGS_CONTAINER) as self.menu_container:
+            with ui.column().classes(
+                classes.FILTER_MENU_TAGS_CONTAINER,
+            ) as self.menu_container:
                 for tag_name in sorted(
                     {
                         tag.tag_name
@@ -51,7 +54,7 @@ class FilterMenuComponent:
                 book
                 for book in self.all_books
                 if self.selected_tags.issubset(
-                    {tag.tag_name for tag in book.book_tags}
+                    {tag.tag_name for tag in book.book_tags},
                 )
             ]
             if self.selected_tags

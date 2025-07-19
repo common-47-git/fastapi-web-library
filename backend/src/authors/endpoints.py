@@ -58,7 +58,8 @@ async def post_author(
     },
 )
 async def delete_author_by_id(
-    existing_author: Annotated[AuthorsModel, Depends(AuthorsDeps.one_exists)], author_id,
+    existing_author: Annotated[AuthorsModel, Depends(AuthorsDeps.one_exists)],
+    author_id,
 ):
     """Delete an author by id or raise 404."""
     return await AuthorsServices().delete_one(alchemy_object=existing_author)

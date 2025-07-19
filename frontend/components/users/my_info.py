@@ -23,7 +23,9 @@ class MyInfoComponent:
                         "%d %b %Y",
                     ).lstrip("0"),
                 ).render()
-            ui.button("Logout", on_click=self._logout).classes(classes.MY_INFO_LOGOUT_BUTTON)
+            ui.button("Logout", on_click=self._logout).classes(
+                classes.MY_INFO_LOGOUT_BUTTON,
+            )
 
     class UsernameTitle:
         def __init__(self, title: str) -> None:

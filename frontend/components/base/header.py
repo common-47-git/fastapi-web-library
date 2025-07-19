@@ -26,7 +26,7 @@ class HeaderComponent:
             self.links.append(HeaderComponent.NavLink(text, target))
 
         def render(self) -> None:
-            with ui.row().classes("gap-4 self-center"):
+            with ui.row():
                 for link in self.links:
                     link.render()
 

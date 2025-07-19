@@ -5,8 +5,8 @@ from pydantic import ValidationError
 from backend.src import http_exceptions
 from backend.src.users.endpoints import login_for_access_token, post_user
 from backend.src.users.schemas.users import UserCreate
-
 from frontend.static import classes
+
 
 class UserLoginComponent:
     def __init__(self):
@@ -26,12 +26,16 @@ class UserLoginComponent:
             self.email_input = ui.input("Email").props("outlined")
             self.email_input.visible = False
 
-            ui.button("Submit", on_click=self.do_submit).classes(classes.LOGIN_BUTTON)
+            ui.button("Submit", on_click=self.do_submit).classes(
+                classes.LOGIN_BUTTON,
+            )
 
             self.register_checkbox = ui.checkbox(
                 "Register",
                 on_change=lambda e: setattr(
-                    self.email_input, "visible", e.value,
+                    self.email_input,
+                    "visible",
+                    e.value,
                 ),
             ).classes(classes.LOGIN_CHECKBOX)
 
@@ -40,7 +44,8 @@ class UserLoginComponent:
             # Registration flow
             if not self.email_input.value:
                 ui.notify(
-                    "Please enter an email to register", color="negative",
+                    "Please enter an email to register",
+                    color="negative",
                 )
                 return
             try:
@@ -65,7 +70,8 @@ class UserLoginComponent:
 
             except http_exceptions.Conflict409 as conflict_e:
                 ui.notify(
-                    f"{conflict_e}".lstrip("409: "), color="negative",
+                    f"{conflict_e}".lstrip("409: "),
+                    color="negative",
                 )
             except ValidationError as e:
                 messages = [error["msg"] for error in e.errors()]
@@ -91,7 +97,8 @@ class UserLoginComponent:
                 ui.notify("User not found. Please register.", color="warning")
             except http_exceptions.Unauthorized401:
                 ui.notify(
-                    "Unauthorized: Check your credentials.", color="negative",
+                    "Unauthorized: Check your credentials.",
+                    color="negative",
                 )
             except ValidationError as e:
                 messages = [error["msg"] for error in e.errors()]

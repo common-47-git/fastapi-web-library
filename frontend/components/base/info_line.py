@@ -1,5 +1,7 @@
 from nicegui import ui
+
 from frontend.static import classes
+
 
 class InfoLineComponent:
     class LabelTitle:

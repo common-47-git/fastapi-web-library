@@ -10,9 +10,9 @@ from frontend.pages.base import BasePages
 
 
 class UserPages(BasePages):
-    def __init__(self)  -> None:
+    def __init__(self) -> None:
         @ui.page("/users/login")
-        async def login_page()  -> None:
+        async def login_page() -> None:
             await self.Header().render()
             await UserLoginComponent().render()
 

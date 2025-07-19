@@ -12,11 +12,7 @@ from backend.src.books.endpoints import (
 from backend.src.users.endpoints import get_me
 from backend.src.users_books import schemas as users_books_schemas
 from backend.src.users_books.endpoints import get_user_book_by_id
-from frontend.components.books import (
-    book_info,
-    books_grid,
-    filter_menu
-)
+from frontend.components.books import book_info, books_grid, filter_menu
 from frontend.pages.base import BasePages
 
 
@@ -27,7 +23,6 @@ class BookPages(BasePages):
             await self.Header().render()
             all_books = await get_all_books_with_full_info()
             filter_menu.FilterMenuComponent(all_books).render()
-
 
         @ui.page("/books/{book_id}")
         async def books_id(book_id: uuid.UUID) -> None:

@@ -4,7 +4,6 @@ from nicegui import ui
 
 from backend.src import http_exceptions
 from backend.src.chapters.endpoints import get_chapter_by_book_id
-
 from frontend.components.base.link_button import LinkButton
 from frontend.static import classes
 
@@ -57,12 +56,12 @@ class ChapterContentComponent:
 
     def _render_header(self) -> None:
         ui.label(f"📖 {self.chapter.chapter_name}").classes(
-            classes.CHAPTER_HEADER
+            classes.CHAPTER_HEADER,
         )
 
     def _render_body(self) -> None:
         ui.label(self.chapter.chapter_content).classes(
-            classes.CHAPTER_BODY
+            classes.CHAPTER_BODY,
         ).style(
             "white-space: pre-wrap;",
         )
@@ -83,7 +82,6 @@ class ChapterContentComponent:
                 link=f"/chapters/read-id/{self.book_id}/{self.volume_number}/{self.chapter_number - 1}",
                 response_detail=resp,
             ).classes(classes.CHAPTER_NAV_BUTTON)
-
 
             LinkButton(
                 text="To Book",
