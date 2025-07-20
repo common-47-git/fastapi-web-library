@@ -72,20 +72,20 @@ class BookInfoComponent:
             book = self.parent.book
             with ui.column().classes(classes.BOOK_INFO_COLUMN):
                 BookInfoComponent.Right.Title(book.book_name).render()
-                await info_line.InfoLineComponent(
+                info_line.InfoLineComponent(
                     "🌍 Country",
                     book.book_country,
-                ).render()
-                await info_line.InfoLineComponent(
+                )
+                info_line.InfoLineComponent(
                     "📅 Released",
                     book.book_release_date.strftime("%d %b %Y").lstrip("0")
                     if book.book_release_date
                     else None,
-                ).render()
-                await info_line.InfoLineComponent(
+                )
+                info_line.InfoLineComponent(
                     "🈳 Translation",
                     book.book_translation_status.value,
-                ).render()
+                )
                 await BookInfoComponent.Right.Authors(
                     book.book_authors,
                 ).render()

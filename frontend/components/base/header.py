@@ -25,7 +25,7 @@ class HeaderComponent(ui.header):
 
         with self:
             self.title = ui.label("📖 Books library").classes(
-                classes.HEADER_SITE_TITLE
+                classes.HEADER_SITE_TITLE,
             )
 
             with ui.row(), ui.button(icon="menu"), ui.menu():

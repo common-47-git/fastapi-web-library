@@ -31,7 +31,7 @@ BOOK_INFO_PROPERTY_CONTAINER = "flex-wrap gap-2"
 BOOK_INFO_TAG_LABEL = "text-lg font-medium"
 BOOK_INFO_SHELF_SELECT = "w-full self-center"
 
-CHAPTER_CONTENT_CONTAINER = "self-center items-center gap-6"
+CHAPTER_CONTENT_CONTAINER = "max-w-5xl self-center items-center gap-6"
 CHAPTER_HEADER = "text-2xl font-bold"
 CHAPTER_BODY = "text-xl"
 CHAPTER_NAV_ROW = "self-center justify-center gap-4 mt-6"

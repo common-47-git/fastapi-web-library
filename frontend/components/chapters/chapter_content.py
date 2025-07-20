@@ -88,7 +88,7 @@ class ChapterContentComponent:
             return
 
         with ui.column().classes(
-            classes.CHAPTER_CONTENT_CONTAINER + " md:container md:mx-auto"
+            classes.CHAPTER_CONTENT_CONTAINER,
         ):
             self._render_header()
             self._render_body()

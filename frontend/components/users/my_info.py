@@ -13,16 +13,16 @@ class MyInfoComponent:
         with ui.card().classes(classes.MY_INFO_CARD):
             await self.UsernameTitle(self.current_user.username).render()
             with ui.row().classes(classes.MY_INFO_ROW):
-                await info_line.InfoLineComponent(
+                info_line.InfoLineComponent(
                     title="Email",
                     value=self.current_user.email,
-                ).render()
-                await info_line.InfoLineComponent(
+                )
+                info_line.InfoLineComponent(
                     title="Registered",
                     value=self.current_user.registration_date.strftime(
                         "%d %b %Y",
                     ).lstrip("0"),
-                ).render()
+                )
 
     class UsernameTitle:
         def __init__(self, title: str) -> None:

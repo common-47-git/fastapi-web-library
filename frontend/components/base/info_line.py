@@ -1,28 +1,25 @@
+from typing import Literal, Optional
 from nicegui import ui
 
 from frontend.static import classes
 
 
-class InfoLineComponent:
-    class LabelTitle:
-        def __init__(self, text: str) -> None:
-            self.text = text
-
-        def render(self):
-            ui.label(self.text).classes(classes.TEXT)
-
-    class LabelValue:
-        def __init__(self, value: str | None) -> None:
-            self.value = value or "Unknown"
-
-        def render(self):
-            ui.label(self.value).classes(classes.TEXT)
-
-    def __init__(self, title: str, value: str | None) -> None:
+class InfoLineComponent(ui.row):
+    def __init__(
+        self,
+        title: str,
+        value: str | None,
+        *,
+        wrap: bool = True,
+        align_items: Optional[
+            Literal["start", "end", "center", "baseline", "stretch"]
+        ] = None,
+    ) -> None:
+        super().__init__(wrap=wrap, align_items=align_items)
         self.title = title
         self.value = value
+        with self.classes(classes.INFO_LINE_BORDER):
+            self.title_label = ui.label(self.title).classes(classes.TEXT)
+            self.value_label = ui.label(self.value or "Unknown").classes(classes.TEXT)
 
-    async def render(self) -> None:
-        with ui.row().classes(classes.INFO_LINE_BORDER):
-            self.LabelTitle(self.title).render()
-            self.LabelValue(self.value).render()
+
