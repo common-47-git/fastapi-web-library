@@ -82,9 +82,9 @@ dependencies = [
 ]
 
 [tool.ruff]
-line-length = 79
+line-length = 80
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D100", "D101", "D102", "D104", "D103", "D107", "D203", "D213", "F821", "ANN201", "S101"]
+ignore = ["COM812", "D100", "D101", "D102", "D104", "D103", "D106", "D107", "D203", "D213", "F821", "ANN201", "S101"]
 fixable = ["ALL"]

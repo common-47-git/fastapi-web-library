@@ -22,11 +22,20 @@ class UserPages(BasePages):
             self.Header(fixed=False).classes(classes.HEADER_CONTAINER)
 
             if "access_token" not in app.storage.user:
+                app.storage.user.clear()
                 ui.navigate.to("/users/login")
                 return
+            current_user = None
+            try:
+                token = app.storage.user.get("access_token")
+                current_user = await get_me(jwt_token=token) if token else None
+            except http_exceptions.Unauthorized401:
+                ui.navigate.to("/users/login")
 
-            jwt_token = app.storage.user["access_token"]
-            current_user = await get_me(jwt_token=jwt_token)
+            if current_user is None:
+                app.storage.user.clear()
+                ui.navigate.to("/users/login")
+                return
 
             try:
                 books = await get_books_with_user_id(
@@ -91,7 +100,8 @@ def render_books_grid_by_shelf(
         for book in books:
             if book.book_shelf == shelf:
                 with ui.element("div").classes(
-                    "relative w-64 h-96 cursor-pointer group overflow-hidden rounded shadow-lg",
+                    "relative w-64 h-96 cursor-pointer"
+                    "group overflow-hidden rounded shadow-lg",
                 ) as card:
                     ui.image(book.book_cover).classes(
                         "w-full h-full object-cover",
@@ -99,7 +109,10 @@ def render_books_grid_by_shelf(
                     with (
                         ui.element("div")
                         .classes(
-                            "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex justify-center items-center",
+                            "absolute inset-0 opacity-0"
+                            "group-hover:opacity-100"
+                            "transition-opacity duration-300 z-10"
+                            "flex justify-center items-center",
                         )
                         .style("background-color: rgba(0, 0, 0, 0.7);")
                     ):

@@ -11,7 +11,9 @@ class MyInfoComponent:
 
     async def render(self):
         with ui.card().classes(classes.MY_INFO_CARD):
-            await self.UsernameTitle(self.current_user.username).render()
+            self.username_title = ui.label(self.current_user.username).classes(
+                classes.MY_INFO_USERNAME
+            )
             with ui.row().classes(classes.MY_INFO_ROW):
                 info_line.InfoLineComponent(
                     title="Email",
@@ -23,10 +25,3 @@ class MyInfoComponent:
                         "%d %b %Y",
                     ).lstrip("0"),
                 )
-
-    class UsernameTitle:
-        def __init__(self, title: str) -> None:
-            self.title = title
-
-        async def render(self):
-            ui.label(self.title).classes(classes.MY_INFO_USERNAME)

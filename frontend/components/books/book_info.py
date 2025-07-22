@@ -30,10 +30,10 @@ class BookInfoComponent:
 
     async def render(self):
         with ui.row().classes(classes.BOOK_INFO_ROW):
-            await self.Left(self).render()
-            await self.Right(self).render()
+            await self.BookNav(self).render()
+            await self.BookInfo(self).render()
 
-    class Left:
+    class BookNav:
         def __init__(self, parent: "BookInfoComponent") -> None:
             self.parent = parent
 
@@ -56,7 +56,7 @@ class BookInfoComponent:
                 ).classes(classes.BOOK_INFO_READ_BUTTON)
 
         class Image:
-            def __init__(self, parent) -> None:
+            def __init__(self, parent) -> None:  # noqa: ANN001
                 self.book = parent.book
 
             async def render(self):
@@ -64,14 +64,16 @@ class BookInfoComponent:
                     "width: 250px; height: 400px; object-fit: cover;",
                 )
 
-    class Right:
+    class BookInfo:
         def __init__(self, parent: "BookInfoComponent") -> None:
             self.parent = parent
 
         async def render(self):
             book = self.parent.book
             with ui.column().classes(classes.BOOK_INFO_COLUMN):
-                BookInfoComponent.Right.Title(book.book_name).render()
+                ui.label(book.book_name).classes(
+                    classes.INFO_TITLE,
+                )
                 info_line.InfoLineComponent(
                     "🌍 Country",
                     book.book_country,
@@ -86,30 +88,13 @@ class BookInfoComponent:
                     "🈳 Translation",
                     book.book_translation_status.value,
                 )
-                await BookInfoComponent.Right.Authors(
+                await BookInfoComponent.BookInfo.Authors(
                     book.book_authors,
                 ).render()
-                await BookInfoComponent.Right.Tags(book.book_tags).render()
-                BookInfoComponent.Right.Description(
-                    book.book_description,
-                ).render()
+                await BookInfoComponent.BookInfo.Tags(book.book_tags).render()
 
-        class Title:
-            def __init__(self, title: str) -> None:
-                self.title = title
-
-            def render(self):
-                ui.label(self.title).classes(
-                    classes.INFO_TITLE,
-                )
-
-        class Description:
-            def __init__(self, description: str | None) -> None:
-                self.description = description or "No description"
-
-            def render(self):
-                ui.label(self.description).classes(classes.TEXT).style(
-                    "white-space: pre-wrap;",
+                ui.label(book.book_description or "No description(").classes(
+                    classes.TEXT
                 )
 
         class Authors:
@@ -126,7 +111,10 @@ class BookInfoComponent:
                             classes.BOOK_INFO_PROPERTY_CONTAINER,
                         ):
                             for author in self.authors:
-                                full_name = f"{author.author_name} {author.author_surname}"
+                                full_name = (
+                                    f"{author.author_name}"
+                                    f"{author.author_surname}"
+                                )
                                 ui.link(
                                     text=full_name,
                                     target=f"/books/with-author/{author.author_id}",
@@ -187,9 +175,7 @@ class BookInfoComponent:
             on_change_handler = self._handle_unauthenticated
             if self.authed_user:
                 selected_value = (
-                    self.current_book_shelf
-                    if self.current_book_shelf
-                    else None
+                    self.current_book_shelf if self.current_book_shelf else None
                 )
                 on_change_handler = (
                     self._handle_update

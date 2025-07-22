@@ -45,7 +45,7 @@ async def login_for_access_token(
         data={"sub": user.username},
         expires_delta=access_token_expires,
     )
-    return tokens_schemas.Token(access_token=access_token, token_type="bearer")
+    return tokens_schemas.Token(access_token=access_token, token_type="bearer")  # noqa: S106
 
 
 @router.post(
@@ -71,6 +71,7 @@ async def post_user(
     summary="Get current user.",
     responses={
         200: http_exceptions.OK200().get_response_body(),
+        401: http_exceptions.Unauthorized401().get_response_body(),
         404: http_exceptions.NotFound404().get_response_body(),
     },
 )
