@@ -2,6 +2,16 @@
 
 A modern, responsive web application for reading and managing digital books. Built with **FastAPI**, **NiceGUI**, and **SQLAlchemy**, it supports user authentication, book browsing, tagging,  authors, shelves. 
 
+## 🔧 Core Tools
+
+- **FastAPI** 
+- **Pydantic**  
+- **Alembic** 
+- **Pytest** 
+- **SQLAlchemy** 
+- **PostgreSQL** 
+- **Ruff** 
+
 ## 🌐 Demo
 
 
