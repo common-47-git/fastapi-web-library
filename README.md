@@ -38,21 +38,18 @@ A modern, responsive web application for reading and managing digital books. Bui
 
 ## 📱 Responsive Design
 
-The app is fully responsive:
+The app is fully responsive across devices and screen sizes:
 
-![[Pasted image 20250719233822.png|300]]
-
-![[Pasted image 20250719233952.png|300]]
-
-![[Pasted image 20250719233744.png|300]]
-
-![[Pasted image 20250719233633.png|300]]
-
-![[Pasted image 20250719233701.png|300]]
-
-![[Pasted image 20250719234028.png|300]]
-
-![[Pasted image 20250719233906.png|300]]
+<div align="center">
+  <img src="https://github.com/common-47-git/fastapi-web-library/blob/gifs/Pasted%20image%2020250719233539.png?raw=true" width="300"   /><br><br><br><br>
+  <img src="https://github.com/common-47-git/fastapi-web-library/blob/gifs/Pasted%20image%2020250719233633.png?raw=true" width="300"   /><br><br><br><br>
+  <img src="https://github.com/common-47-git/fastapi-web-library/blob/gifs/Pasted%20image%2020250719233701.png?raw=true" width="300"   /><br><br><br><br>
+  <img src="https://github.com/common-47-git/fastapi-web-library/blob/gifs/Pasted%20image%2020250719233744.png?raw=true" width="300"   /><br><br><br><br>
+  <img src="https://github.com/common-47-git/fastapi-web-library/blob/gifs/Pasted%20image%2020250719233822.png?raw=true" width="300"   /><br><br><br><br>
+  <img src="https://github.com/common-47-git/fastapi-web-library/blob/gifs/Pasted%20image%2020250719233906.png?raw=true" width="300"   /><br><br><br><br>
+  <img src="https://github.com/common-47-git/fastapi-web-library/blob/gifs/Pasted%20image%2020250719233952.png?raw=true" width="300"   /><br><br><br><br>
+  <img src="https://github.com/common-47-git/fastapi-web-library/blob/gifs/Pasted%20image%2020250719234028.png?raw=true" width="300"   />
+</div>
 
 ---
 
