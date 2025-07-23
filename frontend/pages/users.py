@@ -100,19 +100,14 @@ def render_books_grid_by_shelf(
         for book in books:
             if book.book_shelf == shelf:
                 with ui.element("div").classes(
-                    "relative w-64 h-96 cursor-pointer"
-                    "group overflow-hidden rounded shadow-lg",
-                ) as card:
+                        classes.BOOK_CARD,
+                    ) as card:
                     ui.image(book.book_cover).classes(
                         "w-full h-full object-cover",
                     )
                     with (
-                        ui.element("div")
-                        .classes(
-                            "absolute inset-0 opacity-0"
-                            "group-hover:opacity-100"
-                            "transition-opacity duration-300 z-10"
-                            "flex justify-center items-center",
+                        ui.element("div").classes(
+                            classes.BOOK_CARD_OVERLAY,
                         )
                         .style("background-color: rgba(0, 0, 0, 0.7);")
                     ):

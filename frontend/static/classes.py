@@ -15,9 +15,9 @@ FILTER_MENU_TAGS_CONTAINER = "gap-2 p-4 pb-5 border border-gray-600 rounded-lg"
 BOOKS_GRID_CONTAINER = (
     "grid grid-cols-1 md:grid-cols-3 gap-4 self-center"  # responsive grid
 )
-BOOK_CARD = "relative w-64 h-96 cursor-pointer group overflow-hidden rounded shadow-lg p-0"
+BOOK_CARD = "relative w-64 h-96 cursor-pointer group overflow-hidden rounded shadow-lg p-0"  # noqa: E501
 BOOK_CARD_IMG = "w-full h-full object-cover"
-BOOK_CARD_OVERLAY = "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 justify-center items-center"
+BOOK_CARD_OVERLAY = "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex justify-center items-center"  # noqa: E501
 BOOK_CARD_LABEL = "text-white text-xl font-semibold text-center px-2"
 
 
